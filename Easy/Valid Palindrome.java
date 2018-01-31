@@ -1,17 +1,21 @@
-public class Solution {
+class Solution {
     public boolean isPalindrome(String s) {
-        if (s=="" || s.length() == 0) {
-            return true;
-        }
-        else {
-            StringBuilder sb=new StringBuilder("");
-            s = s.toLowerCase();
-            for (int i=0;i<s.length();i++) {
-                if (((int) s.charAt(i) >= 97 && (int) s.charAt(i) <= 122) || Character.isDigit(s.charAt(i))) {
-                    sb.append(Character.toString(s.charAt(i)));
-                }
+        StringBuilder sb = new StringBuilder("");
+        
+        for (char c : s.toCharArray()) {
+            if (Character.isLetterOrDigit(c)) {
+                sb.append(c);
             }
-            return sb.toString().toLowerCase().equals(sb.reverse().toString().toLowerCase());
         }
+        
+        String S = sb.toString().toLowerCase();
+        
+        return isPalindromeImpl(S);
+    }
+    
+    public boolean isPalindromeImpl(String s) {
+        if (s.length() <= 1) return true;
+        
+        return s.charAt(0) == s.charAt(s.length()-1) && isPalindromeImpl(s.substring(1, s.length()-1));
     }
 }
