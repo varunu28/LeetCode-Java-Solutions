@@ -9,24 +9,12 @@
  */
 class Solution {
     public boolean hasPathSum(TreeNode root, int sum) {
-        if (root == null) {
-            return false;
+        
+        if (root == null) return false;
+        if (root.left == null && root.right == null) {
+            return sum - root.val == 0;
         }
         
-        boolean ans = false;
-        int subSum = sum - root.val;
-        
-        if (subSum == 0 && root.left == null && root.right == null) return true;
-        
-        if (root.left != null) {
-            ans = ans || hasPathSum(root.left, subSum);
-        }
-        
-        if (root.right != null) {
-            ans = ans || hasPathSum(root.right, subSum);
-        }
-        
-        
-        return ans;
+        return (root.left != null ? hasPathSum(root.left, sum-root.val) : false) | (root.right != null ? hasPathSum(root.right, sum-root.val) : false);
     }
 }
