@@ -8,25 +8,15 @@
  * }
  */
 class Solution {
+    Set<Integer> set = new HashSet<>();
     public boolean findTarget(TreeNode root, int k) {
         if (root == null) return false;
-        List<Integer> list = new ArrayList<>();
-        
-        inOrder(root,list);
-
-        for (int i=0;i<list.size();i++) {
-            if(list.indexOf(k-list.get(i)) != -1 && list.indexOf(k-list.get(i)) != i) {
-                return true;
-            }
+        if (set.contains(k - root.val)) {
+            return true;
         }
-        return false;
-    }
-    
-    public void inOrder(TreeNode root,List<Integer> list) {
-        if (root == null)return;
         
-        inOrder(root.left,list);
-        list.add(root.val);
-        inOrder(root.right,list);
+        set.add(root.val);
+        
+        return findTarget(root.right, k) || findTarget(root.left, k);
     }
 }
