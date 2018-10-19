@@ -9,19 +9,20 @@
  */
 class Solution {
     public TreeNode constructMaximumBinaryTree(int[] nums) {
-        if (nums == null) return null;
-        return constructMaximumBinaryTreeImpl(nums,0,nums.length-1);
+        if (nums.length == 0) {
+            return null;
+        }
+        
+        return constructTree(nums, 0, nums.length-1);
     }
     
-    public TreeNode constructMaximumBinaryTreeImpl(int[] nums, int start, int end) {
-        
+    private TreeNode constructTree(int[] nums, int start, int end) {
         if (start > end) {
             return null;
         }
         
         int idx = start;
-        
-        for (int i = start + 1; i <= end; i++) {
+        for (int i=start+1; i<=end; i++) {
             if (nums[i] > nums[idx]) {
                 idx = i;
             }
@@ -29,9 +30,8 @@ class Solution {
         
         TreeNode root = new TreeNode(nums[idx]);
         
-        root.left = constructMaximumBinaryTreeImpl(nums, start, idx-1);
-        
-        root.right = constructMaximumBinaryTreeImpl(nums, idx+1, end);
+        root.left = constructTree(nums, start, idx-1);
+        root.right = constructTree(nums, idx+1, end);
         
         return root;
     }
