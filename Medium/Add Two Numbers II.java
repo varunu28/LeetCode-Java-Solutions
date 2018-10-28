@@ -8,30 +8,60 @@
  */
 class Solution {
     public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
-        Stack<Integer> s1 = new Stack<Integer>();
-        Stack<Integer> s2 = new Stack<Integer>();
+        ListNode l1Rev = reverse(l1);
+        ListNode l2Rev = reverse(l2);
         
-        while(l1 != null) {
-            s1.push(l1.val);
-            l1 = l1.next;
-        };
-        while(l2 != null) {
-            s2.push(l2.val);
-            l2 = l2.next;
+        ListNode ans = new ListNode(-1);
+        ListNode curr = ans;
+        int carry = 0;
+        
+        while (l1Rev != null || l2Rev != null) {
+            int temp = 0;
+            if (l1Rev != null && l2Rev != null) {
+                temp = l1Rev.val + l2Rev.val + carry;
+                l1Rev = l1Rev.next;
+                l2Rev = l2Rev.next;
+            }
+            else if(l1Rev != null) {
+                temp = l1Rev.val + carry;
+                l1Rev = l1Rev.next;
+            }
+            else {
+                temp = l2Rev.val + carry;
+                l2Rev = l2Rev.next;
+            }
+            
+            if (temp > 9) {
+                carry = temp/10;
+                temp = temp%10;
+            }
+            else {
+                carry = 0;
+            }
+            curr.next = new ListNode(temp);
+            curr = curr.next;
         }
         
-        int sum = 0;
-        ListNode list = new ListNode(0);
-        while (!s1.empty() || !s2.empty()) {
-            if (!s1.empty()) sum += s1.pop();
-            if (!s2.empty()) sum += s2.pop();
-            list.val = sum % 10;
-            ListNode head = new ListNode(sum / 10);
-            head.next = list;
-            list = head;
-            sum /= 10;
+        if (carry != 0) {
+            curr.next = new ListNode(carry);
+            curr = curr.next;
         }
         
-        return list.val == 0 ? list.next : list;
+        return reverse(ans.next);
+    }
+    
+    private ListNode reverse(ListNode head) {
+        ListNode curr = head;
+        ListNode prev = null;
+        ListNode next = null;
+        
+        while (curr != null) {
+            next = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = next;
+        }
+        
+        return prev;
     }
 }
