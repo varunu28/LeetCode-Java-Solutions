@@ -10,55 +10,36 @@
 class Solution {
     public int widthOfBinaryTree(TreeNode root) {
         if (root == null) {
-            return 0;
+            return 1;
         }
         
-        List<TreeNode> list = new ArrayList<>();
-        list.add(root);
-        int res = 1;
+        int size = 0;
+        Queue<TreeNode> queue = new LinkedList<>();
+        Map<TreeNode, Integer> map = new HashMap<>();
+        map.put(root, 0);
+        queue.add(root);
         
-        while (list.size() != 0) {
-            List<TreeNode> temp = new ArrayList<>();
-            for (TreeNode node : list) {
-                if(node == null) {
-                    temp.add(null);
-                    temp.add(null);
+        while (!queue.isEmpty()) {
+            int len = queue.size();
+            int leftPos = map.get(queue.peek());
+            
+            for (int i=0; i<len; i++) {
+                TreeNode popped = queue.remove();
+                int currPos = map.get(popped);
+                size = Math.max(size, currPos - leftPos + 1);
+                
+                if (popped.left != null) {
+                    queue.add(popped.left);
+                    map.put(popped.left, 2 * currPos);
                 }
-                else {
-                    temp.add(node.left);
-                    temp.add(node.right);
+                
+                if (popped.right != null) {
+                    queue.add(popped.right);
+                    map.put(popped.right, 2 * currPos + 1);
                 }
             }
-            
-            temp = removeExtraNull(temp);
-            res = Math.max(res, temp.size());
-            list = temp;
         }
         
-        return res;
-    }
-    
-    private List<TreeNode> removeExtraNull(List<TreeNode> list) {
-        List<TreeNode> ans = new ArrayList<>();
-        if (list.size() == 0) {
-            return ans;
-        }
-        
-        int start = 0;
-        int end = list.size() - 1;
-        
-        while (start <= end && list.get(start) == null) {
-            start++;
-        }
-        
-        while (end >= 0 && list.get(end) == null) {
-            end--;
-        }
-        
-        while (start <= end) {
-            ans.add(list.get(start++));
-        }
-        
-        return ans;
+        return size;
     }
 }
