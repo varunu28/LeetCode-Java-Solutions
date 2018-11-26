@@ -1,46 +1,46 @@
 class Solution {
-    public static List<String> letterCombinations(String digits) {
-        Map<Integer, String> map = new HashMap<>();
+    public List<String> combinations;
+    public Map<Character, String> map;
 
-        map.put(2, "abc");
-        map.put(3, "def");
-        map.put(4, "ghi");
-        map.put(5, "jkl");
-        map.put(6, "mno");
-        map.put(7, "pqrs");
-        map.put(8, "tuv");
-        map.put(9, "wxyz");
+    public List<String> letterCombinations(String number) {
+        if (number.length() == 0) {
+            return new ArrayList<>();
+        }
+        
+        combinations = new ArrayList<>();
+        map = new HashMap<>();
+        char[] chars = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
+        String[] values = {"*", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
 
-        ArrayList<String> result = new ArrayList<String>();
-        if(digits == null || digits.length() == 0) {
-            return result;
+        for (int i=0; i<chars.length; i++) {
+            map.put(chars[i], values[i]);
         }
 
-        ArrayList<Character> temp = new ArrayList<Character>();
-        updateResult(digits, temp, result, map);
+        StringBuilder sb = new StringBuilder();
+        helper(number, sb, 0);
 
-        return result;
+        return combinations;
     }
 
-    private static void updateResult(String digits, ArrayList<Character> temp, ArrayList<String> result, Map<Integer, String> map) {
-        if (digits.length() == 0) {
-            char[] charArray = new char[temp.size()];
-
-            for (int i=0; i<temp.size(); i++) {
-                charArray[i] = temp.get(i);
-            }
-
-            result.add(String.valueOf(charArray));
+    private void helper(String num, StringBuilder sb, int start) {
+        if (sb.length() == num.length()) {
+            combinations.add(new StringBuilder(sb.toString()).toString());
             return;
         }
 
-        Integer curr = Integer.valueOf(digits.substring(0, 1));
-        String letters = map.get(curr);
+        for (int i=start; i<num.length(); i++) {
+            String val = map.get(num.charAt(i));
 
-        for (int i=0; i<letters.length(); i++) {
-            temp.add(letters.charAt(i));
-            updateResult(digits.substring(1), temp, result, map);
-            temp.remove(temp.size()-1);
+            for (char c : val.toCharArray()) {
+                // Choose
+                sb.append(c);
+
+                // Explore
+                helper(num, sb, i+1);
+
+                // Un-choose
+                sb.deleteCharAt(sb.length() - 1);
+            }
         }
     }
 }
