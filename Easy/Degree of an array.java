@@ -1,44 +1,42 @@
 class Solution {
     public int findShortestSubArray(int[] nums) {
+        Map<Integer, Entry> map = new HashMap<>();
         
-        int degree = 0;
-        Map<Integer, Integer> map = new HashMap<>();
-        Map<Integer, ArrayList<Integer>> mapCheck = new HashMap<>();
-        
-        for (int i=0;i<nums.length;i++) {
-            if(map.containsKey(nums[i])) {
-                map.put(nums[i],map.get(nums[i])+1);
+        for (int i = 0; i < nums.length; i++) {
+            if (map.containsKey(nums[i])) {
+                map.get(nums[i]).degree++;
+                map.get(nums[i]).endIdx = i;
             }
             else {
-                map.put(nums[i],1);
-            }
-            degree = Math.max(degree,map.get(nums[i]));
-            
-            if (mapCheck.containsKey(nums[i])) {
-                ArrayList<Integer> arr = new ArrayList<>();
-                arr.add(mapCheck.get(nums[i]).get(0));
-                arr.add(i);
-                mapCheck.put(nums[i], arr);
-            }
-            else {
-                ArrayList<Integer> arr = new ArrayList<>();
-                arr.add(i);
-                arr.add(i);
-                mapCheck.put(nums[i], arr);
+                map.put(nums[i], new Entry(1, i, i));
             }
         }
         
-        int minSize = Integer.MAX_VALUE;
-            
-        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
-            if (entry.getValue() == degree) {
-                int start = mapCheck.get(entry.getKey()).get(0);
-                int end = mapCheck.get(entry.getKey()).get(1);
+        int res = Integer.MAX_VALUE;
+        int degree = Integer.MIN_VALUE;
+        
+        for (Entry entry : map.values()) {
+            if (degree < entry.degree) {
+                degree = entry.degree;
+                res = entry.endIdx - entry.startIdx + 1;
+            }    
+            else if (degree == entry.degree) {
+                res = Math.min(entry.endIdx - entry.startIdx + 1, res);
+            }
+        }
+        
+        return res;
+    }
 
-                minSize = Math.min(end-start+1, minSize);
-            }
-        }
+    class Entry {
+        int degree;
+        int startIdx;
+        int endIdx;
         
-        return minSize;
+        public Entry(int degree, int startIdx, int endIdx) {
+            this.degree = degree;
+            this.startIdx = startIdx;
+            this.endIdx = endIdx;
+        }
     }
 }
