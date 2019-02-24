@@ -27,38 +27,35 @@
  * }
  */
 class Solution {
-    int maxDepth = 1;
-    int sum = 0;
+    int maxDepth;
+    int sum;
     public int depthSumInverse(List<NestedInteger> nestedList) {
-        for (NestedInteger n : nestedList) {
-            updateMaxDepth(n, 1);
-        }
+        maxDepth = 0;
+        maxDepthHelper(nestedList, 1);
         
-        for (NestedInteger n : nestedList) {
-            dfsHelper(n, maxDepth);
-        }
+        sum = 0;
+        helper(nestedList, maxDepth);
         
         return sum;
     }
     
-    private void dfsHelper(NestedInteger n, int depth) {
-        if (n.isInteger()) {
-            sum += n.getInteger() * depth;
-        }
-        else {
-            for (NestedInteger i : n.getList()) {
-                dfsHelper(i, depth-1);
+    private void helper(List<NestedInteger> nestedList, int level) {
+        for (NestedInteger nested : nestedList) {
+            if (nested.isInteger()) {
+                sum += nested.getInteger() * level;
+            }
+            else {
+                helper(nested.getList(), level - 1);
             }
         }
     }
     
-    private void updateMaxDepth(NestedInteger n, int depth) {
-        if (n.isInteger()) {
-            maxDepth = Math.max(maxDepth, depth);
-        }
-        else {
-            for (NestedInteger i : n.getList()) {
-                updateMaxDepth(i, depth+1);
+    private void maxDepthHelper(List<NestedInteger> nestedList, int currLevel) {
+        maxDepth = Math.max(maxDepth, currLevel);
+        
+        for (NestedInteger nestedInteger : nestedList) {
+            if (!nestedInteger.isInteger()) {
+                maxDepthHelper(nestedInteger.getList(), currLevel + 1);
             }
         }
     }

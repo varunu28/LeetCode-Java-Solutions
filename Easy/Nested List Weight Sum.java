@@ -27,23 +27,20 @@
  * }
  */
 class Solution {
-    int sum = 0;
-    
+    int sum;
     public int depthSum(List<NestedInteger> nestedList) {
-        for (NestedInteger n : nestedList) {
-            dfsHelper(n, 1);
-        }    
-        
+        sum = 0;
+        helper(nestedList, 1);
         return sum;
     }
     
-    private void dfsHelper(NestedInteger n, int depth) {
-        if (n.isInteger()) {
-            sum += n.getInteger() * depth;
-        }
-        else {
-            for (NestedInteger i : n.getList()) {
-                dfsHelper(i, depth+1);
+    private void helper(List<NestedInteger> nestedList, int level) {
+        for (NestedInteger nested : nestedList) {
+            if (nested.isInteger()) {
+                sum += nested.getInteger() * level;
+            }
+            else {
+                helper(nested.getList(), level + 1);
             }
         }
     }
