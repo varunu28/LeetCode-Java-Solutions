@@ -1,5 +1,5 @@
 class Solution {
-public int longestOnes(int[] A, int K) {
+    public int longestOnes(int[] A, int K) {
         int slow = 0;
         int fast = 0;
         int count = 0;

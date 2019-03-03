@@ -1,5 +1,5 @@
 class Solution {
- public List<String> commonChars(String[] A) {
+    public List<String> commonChars(String[] A) {
         int[] mainCounter = new int[26];
         Arrays.fill(mainCounter, Integer.MAX_VALUE);
 
