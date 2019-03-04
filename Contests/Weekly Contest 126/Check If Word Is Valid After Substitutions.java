@@ -1,15 +1,21 @@
 class Solution {
     public boolean isValid(String S) {
-        int[] counter = new int[3];
-
+        Stack<Character> stack = new Stack<>();
         for (char c : S.toCharArray()) {
-            counter[c - 'a']++;
-
-            if (counter[2] > counter[1] || counter[2] > counter[0] || counter[1] > counter[0]) {
-                return false;
+            if (c == 'a' || c == 'b') {
+                stack.push(c);            
+            }
+            else {
+                if (stack.isEmpty() || stack.pop() != 'b') {
+                    return false;
+                }
+                
+                if (stack.isEmpty() || stack.pop() != 'a') {
+                    return false;
+                }
             }
         }
         
-        return counter[1] == counter[0]  && counter[0] == counter[2];
+        return stack.size() == 0;
     }
 }
