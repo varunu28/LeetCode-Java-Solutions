@@ -8,24 +8,32 @@
  */
 class Solution {
     public ListNode reverseBetween(ListNode head, int m, int n) {
-        ArrayList<Integer> arr = new ArrayList<>();
-        ListNode curr = head;
-        while (curr != null) {
-            arr.add(curr.val);
+        if (head == null || m == n || m > n) {
+            return head;
+        }
+        
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode pre = dummy;
+        ListNode curr = dummy.next;
+        
+        for (int i = 1; i < m; i++) {
+            pre = curr;
             curr = curr.next;
         }
         
-        curr = head;
-        int i=1;
-        int j=n-1;
-        while(curr != null) {
-            if (i>=m && i<=n) {
-                curr.val = arr.get(j);
-                j--;
-            }
-            curr = curr.next;
-            i++;
+        ListNode node = pre;
+        
+        for (int i = m; i <= n; i++) {
+            ListNode tmp = curr.next;
+            curr.next = pre;
+            pre = curr;
+            curr = tmp;
         }
-        return head;
+        
+        node.next.next = curr;
+        node.next = pre;
+        
+        return dummy.next;
     }
 }
