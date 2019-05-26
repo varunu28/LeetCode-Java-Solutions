@@ -1,27 +1,38 @@
 class Solution {
-    public static List<List<Integer>> combinationSum(int[] candidates, int target) {
+    Set<List<Integer>> set;
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        set = new HashSet<>();
         Arrays.sort(candidates);
-        List<List<Integer>> perms = new ArrayList<>();
-        List<Integer> temp = new ArrayList<>();
-
-        combinationSumHelper(candidates, target, perms, temp, 0);
-
-        return perms;
+        combinationSumHelper(candidates, 0, target, new ArrayList<>());
+        
+        return new ArrayList<>(set);
     }
-
-    private static void combinationSumHelper(int[] candidates, int target, List<List<Integer>> perms, List<Integer> temp, int start) {
-        if (target < 0) {
+    
+    private void combinationSumHelper(int[] candidates, int currVal, int target, List<Integer> list) {
+        if (currVal == target) {
+            set.add(new ArrayList<>(list));
             return;
         }
-        if (target == 0) {
-            perms.add(new ArrayList<>(temp));
+        
+        if (currVal > target) {
+            return;
         }
-        else {
-            for (int i=start; i<candidates.length; i++) {
-                temp.add(candidates[i]);
-                combinationSumHelper(candidates, target-candidates[i], perms, temp, i);
-                temp.remove(temp.size()-1);
+        
+        for (int i = 0; i < candidates.length; i++) {
+            if (list.size() > 0 && list.get(list.size() - 1) > candidates[i]) {
+                continue;
             }
+ 
+            // Choose
+            currVal += candidates[i];
+            list.add(candidates[i]);
+            
+            // Explore
+            combinationSumHelper(candidates, currVal, target, list);
+            
+            // Unchoose
+            list.remove(list.size() - 1);
+            currVal -= candidates[i];
         }
-    }
+    } 
 }
