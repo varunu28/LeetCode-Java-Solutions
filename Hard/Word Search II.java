@@ -1,51 +1,66 @@
 class Solution {
     public List<String> findWords(char[][] board, String[] words) {
-        int[][] dirs = {{0, 1}, {1, 0}, {-1, 0}, {0, -1}};
-        int row = board.length;
-        int col = board[0].length;
+        List<String> result = new ArrayList<>();
+        TrieNode root = buildTrie(words);
 
-        Set<String> set = new HashSet<>();
-        
-        for (String word : words) {
-            boolean[][] visited = new boolean[row][col];
-            for (int i=0; i<row; i++) {
-                for (int j=0; j<col; j++) {
-                    if (dfs(board, i, j, word, 0, row, col, visited, dirs)) {
-                        set.add(word);
-                    }
-                }
-            }   
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                helper(board, i, j, root, result);
+            }
         }
-        
-        return new ArrayList<>(set);
+
+        return result;
     }
-    
-    private boolean dfs(char[][] board, int i, int j, String word, int start, int row, int col, boolean[][] visited, int[][] dirs) {
-        if (board[i][j] != word.charAt(start)) {
-            return false;
+
+    private void helper(char[][] board, int i, int j, TrieNode root, List<String> result) {
+        if (i < 0 || i >= board.length || j >= board[i].length || j < 0) {
+            return;
         }
 
-        if (start + 1 == word.length()) {
-            return true;
+        char c = board[i][j];
+        if (c == '@' || root.next[c - 'a'] == null) {
+            return;
         }
 
-        visited[i][j] = true;
-        
-        for (int[] dir : dirs) {
-            int x = i + dir[0];
-            int y = j + dir[1];
+        root = root.next[c - 'a'];
+        if (root.word != null) {
+            result.add(root.word);
+            root.word = null;
+        }
 
-            if (x < 0 || y < 0 || x >= row || y >= col || visited[x][y]) {
-                continue;
+        // Choose
+        board[i][j] = '@';
+
+        // Explore
+        helper(board, i + 1, j, root, result);
+        helper(board, i, j + 1, root, result);
+        helper(board, i, j - 1, root, result);
+        helper(board, i - 1, j, root, result);
+
+        // Un-choose
+        board[i][j] = c;
+    }
+
+    private TrieNode buildTrie(String[] words) {
+        TrieNode root = new TrieNode();
+        for (String word : words) {
+            TrieNode temp =root;
+            for (char c : word.toCharArray()) {
+                if (temp.next[c - 'a'] == null) {
+                    temp.next[c - 'a'] = new TrieNode();
+                }
+
+                temp = temp.next[c - 'a'];
             }
 
-            if (dfs(board, x, y, word, start + 1, row, col, visited, dirs)) {
-                return true;
-            }
+            temp.word = word;
         }
 
-        visited[i][j] = false;
+        return root;
+    }
 
-        return false;
+    class TrieNode {
+        TrieNode[] next = new TrieNode[26];
+        String word;
     }
 }
