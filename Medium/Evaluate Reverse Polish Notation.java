@@ -1,38 +1,31 @@
 class Solution {
     public int evalRPN(String[] tokens) {
         Stack<Integer> stack = new Stack<>();
-        
-        String signs = "+-*/";
-        
+        Set<String> operations = new HashSet<>(Arrays.asList("-", "+", "*", "/"));
         for (String token : tokens) {
-            if (signs.indexOf(token) != -1) {
+            if (operations.contains(token)) {
                 int num1 = stack.pop();
                 int num2 = stack.pop();
-                
-                int temp = performOperation(num2, num1, token);
-                
-                stack.push(temp);
+                stack.push(performOperation(num2, num1, token));
             }
             else {
                 stack.push(Integer.parseInt(token));
             }
         }
         
-        return stack.peek();
+        return stack.pop();
     }
     
-    private int performOperation(int n1, int n2, String oper) {
-        if (oper.equals("+")) {
-            return n1 + n2;
-        }
-        else if (oper.equals("-")) {
-            return n1 - n2;
-        }
-        else if (oper.equals("*")) {
-            return n1 * n2;
-        }
-        else {
-            return n1 / n2;
+    private int performOperation(int a, int b, String operation) {
+        switch(operation) {
+            case "+":
+                return a + b;
+            case "-":
+                return a - b;
+            case "*":
+                return a * b;
+            default:
+                return a / b;
         }
     }
 }

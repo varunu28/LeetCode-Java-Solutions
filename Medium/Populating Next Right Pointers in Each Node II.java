@@ -1,32 +1,48 @@
-/**
- * Definition for binary tree with next pointer.
- * public class TreeLinkNode {
- *     int val;
- *     TreeLinkNode left, right, next;
- *     TreeLinkNode(int x) { val = x; }
- * }
- */
-public class Solution {
-    public void connect(TreeLinkNode root) {
-        while (root != null) {
-            TreeLinkNode tempHead = new TreeLinkNode(0);
-            TreeLinkNode curr = tempHead;   
+/*
+// Definition for a Node.
+class Node {
+    public int val;
+    public Node left;
+    public Node right;
+    public Node next;
+
+    public Node() {}
+
+    public Node(int _val,Node _left,Node _right,Node _next) {
+        val = _val;
+        left = _left;
+        right = _right;
+        next = _next;
+    }
+};
+*/
+class Solution {
+    public Node connect(Node root) {
+        Queue<Node> queue = new LinkedList<>();
+        
+        queue.add(root);
+        queue.add(null);
+        
+        while (queue.peek() != null) {
+            int size = queue.size() - 1;
             
-            while (root != null) {
-                if (root.left != null) {
-                    curr.next = root.left;
-                    curr = curr.next;
+            while (size-- > 0) {
+                Node removed = queue.remove();
+                removed.next = queue.peek();
+                
+                if (removed.left != null) {
+                    queue.add(removed.left);
                 }
                 
-                if (root.right != null) {
-                    curr.next = root.right;
-                    curr = curr.next;
+                if (removed.right != null) {
+                    queue.add(removed.right);
                 }
-                
-                root = root.next;
             }
             
-            root = tempHead.next;
+            queue.remove();
+            queue.add(null);
         }
+        
+        return root;
     }
 }

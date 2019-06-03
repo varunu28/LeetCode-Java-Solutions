@@ -2,26 +2,26 @@ class MovingAverage {
 
     /** Initialize your data structure here. */
     Queue<Integer> queue;
-    int capacity;
-    int sum = 0;
+    int size;
+    double total;
     public MovingAverage(int size) {
-        capacity = size;
         queue = new LinkedList<>();
+        this.size = size;
+        this.total = 0.0;
     }
-
+    
     public double next(int val) {
-        if (queue.size() == capacity) {
-            sum -= queue.remove();
-        }
-
         queue.add(val);
-        sum += val;
-
-        double avg = (double) sum / queue.size();
-
-        return avg;
+        this.total += val;
+        
+        if (queue.size() > this.size) {
+            total -= queue.remove();
+        }
+        
+        return total / queue.size();
     }
 }
+
 /**
  * Your MovingAverage object will be instantiated and called as such:
  * MovingAverage obj = new MovingAverage(size);
