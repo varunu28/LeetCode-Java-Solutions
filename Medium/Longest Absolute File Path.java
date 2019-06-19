@@ -1,40 +1,52 @@
 class Solution {
-    public int lengthLongestPath(String s) {
-        int max = 0, count = 0, level = 1;
+    public int lengthLongestPath(String input) {
+        int maxLen = 0;
+        
+        // Variables for each iteration
+        int currLevel = 1;
         boolean isFile = false;
+        int currLen = 0;
+        
+        // HashMap to store length for each level
         Map<Integer, Integer> map = new HashMap<>();
-
-        int length = s.length();
-        int i = 0;
-        while (i < length) {
-            while (s.charAt(i) == '\t') {
-                ++level;
-                ++i;
+        
+        // Base entry for 0th level
+        map.put(0, 0);
+        
+        int idx = 0;
+        int n = input.length();
+        while (idx < n) {
+            // Keep increasing the level until we find a tab
+            while (idx < n && input.charAt(idx) == '\t') {
+                idx++;
+                currLevel++;
             }
-
-            while (i < length && s.charAt(i) != '\n') {
-                if (s.charAt(i) == '.') {
+            
+            // Keep increasing currLen for the characters in the name
+            while (idx < n && input.charAt(idx) != '\n') {
+                if (input.charAt(idx) == '.') {
                     isFile = true;
                 }
-
-                ++count;
-                ++i;
+                
+                currLen++;
+                idx++;
             }
-
+            
+            // If isFile then update maxLen else update the value of level in map
             if (isFile) {
-                max = Math.max(max, map.getOrDefault(level-1, 0) + count);
+                maxLen = Math.max(maxLen, map.get(currLevel - 1) + currLen);
             }
             else {
-                map.put(level, map.getOrDefault(level-1, 0) + count + 1);
+                map.put(currLevel, map.get(currLevel - 1) + 1 + currLen);
             }
-
-            count = 0;
-            level = 1;
+            
+            // Reset variables
+            currLen = 0;
+            currLevel = 1;
             isFile = false;
-
-            ++i;
+            idx++;
         }
-
-        return max;
+        
+        return maxLen;
     }
 }

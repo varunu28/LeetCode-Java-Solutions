@@ -1,71 +1,74 @@
 class Solution {
+    Set<Character> hexCharSet = new HashSet<>(Arrays.asList('a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F'));
+    
     public String validIPAddress(String IP) {
-        if (isIPv4(IP)) {
-            return "IPv4";
+        if (IP.indexOf('.') != -1) {
+            return isValidIPv4(IP) ? "IPv4" : "Neither";
         }
-        else if (isIPv6(IP)) {
-            return "IPv6";
+        else if (IP.indexOf(':') != -1) {
+            return isValidIPv6(IP) ? "IPv6" : "Neither";
         }
-        else {
-            return "Neither";
-        }
-    }
-
-    private boolean isIPv6(String ip) {
-        if (ip.indexOf(':') == -1 || ip.charAt(0) == ':' || ip.charAt(ip.length()-1) == ':') {
-            return false;
-        }
-
-        String[] strs = ip.split(":");
-        if (strs.length != 8) {
-            return false;
-        }
-
-        String pattern = "^*[[0-9][ABCDEF][abcdef]]*$";
         
-        for (String str : strs) {
-            if (str.length() == 0 || str.length() > 4) {
-                return false;
-            }
-            if (!str.matches(pattern)) {
+        return "Neither";
+    }
+    
+    private boolean isValidIPv4(String ip) {
+        if (ip.startsWith(".") || ip.endsWith(".")) {
+            return false;
+        }
+        String[] components = ip.split("\\.");
+        if (components.length != 4) {
+            return false;
+        }
+        
+        for (String component : components) {
+            try {
+                int value = Integer.parseInt(component);
+                if (value < 0 || value > 255) {
+                    return false;
+                }
+                
+                if (value > 0 && component.startsWith("0")) {
+                    return false;
+                }
+                
+                if (value == 0 && component.length() > 1) {
+                    return false;
+                }
+            } catch(Exception e) {
                 return false;
             }
         }
-
+        
         return true;
     }
-
-    private boolean isIPv4(String ip) {
-        if (ip.indexOf('.') == -1 || ip.charAt(0) == '.' || ip.charAt(ip.length()-1) == '.') {
+    
+    private boolean isValidIPv6(String ip) {
+        if (ip.startsWith(":") || ip.endsWith(":")) {
             return false;
         }
-
-        String[] strs = ip.split("\\.");
-        if (strs.length != 4) {
+        
+        String[] components = ip.split(":");
+        if (components.length != 8) {
             return false;
         }
-
-        for (String str : strs) {
-            if (!str.chars().allMatch(Character::isDigit)) {
+        
+        for (String component : components) {
+            if (component.length() > 4 || component.length() == 0) {
                 return false;
             }
-
-            int num;
-            try {
-                num = Integer.parseInt(str);
-            } catch (NumberFormatException e) {
-                return false;
-            }
-
-            if (num < 0 || num > 255) {
-                return false;
-            }
-
-            if (str.startsWith("0") && str.length() > 1) {
-                return false;
+            for (char c : component.toCharArray()) {
+                if (Character.isLetter(c) && hexCharSet.contains(c)) {
+                    continue;
+                }
+                else if (Character.isDigit(c)) {
+                    continue;
+                }
+                else {
+                    return false;
+                }
             }
         }
-
         return true;
     }
 }
