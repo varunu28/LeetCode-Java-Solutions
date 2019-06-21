@@ -1,39 +1,42 @@
 class Solution {
     public int romanToInt(String s) {
-        String symbol = "IVXLCDM";
-        int[] val = {1, 5, 10, 50, 100, 500, 1000};
-        
-        char[] s_char = s.toCharArray();
-        
-        int[] s_val = new int[s_char.length];
-        
-        for (int i=0;i<s_char.length;i++) {
-            s_val[i] = val[symbol.indexOf(s_char[i])];
+        int nums[] = new int[s.length()];
+        for(int i = 0; i < s.length(); i++) {
+            switch (s.charAt(i)){
+                case 'M':
+                    nums[i]=1000;
+                    break;
+                case 'D':
+                    nums[i]=500;
+                    break;
+                case 'C':
+                    nums[i]=100;
+                    break;
+                case 'L':
+                    nums[i]=50;
+                    break;
+                case 'X' :
+                    nums[i]=10;
+                    break;
+                case 'V':
+                    nums[i]=5;
+                    break;
+                case 'I':
+                    nums[i]=1;
+                    break;
+            }
         }
         
-        int total = 0;
-        int k = 0;
-        
-        while (k < s_val.length) {
-            int s1  = s_val[k];
-            if (k+1 < s_val.length) {
-                int s2 = s_val[k+1];
-                
-                if (s1 >= s2) {
-                    total += s1;
-                    k++;
-                }
-                else{
-                    total += s2-s1;
-                    k += 2;
-                }
-            }
+        int sum = 0;
+        for(int i = 0; i < nums.length - 1; i++){
+            if(nums[i] < nums[i + 1]) {
+                sum -= nums[i];
+            }   
             else {
-                total += s1;
-                k++;
+                sum += nums[i];
             }
         }
         
-        return total;
+        return sum + nums[nums.length - 1];
     }
 }
