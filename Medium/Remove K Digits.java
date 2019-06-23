@@ -3,20 +3,16 @@ class Solution {
         Stack<Integer> stack = new Stack<>();
         int idx = 0;
         int n = num.length();
-        
         while (idx < n) {
             while (k > 0 && !stack.isEmpty()) {
-                if (stack.peek() > Character.getNumericValue(num.charAt(idx))) {
-                    stack.pop();
-                    k--;
-                }
-                else {
+                if (stack.peek() <= Character.getNumericValue(num.charAt(idx))) {
                     break;
                 }
+                stack.pop();
+                k--;
             }
             
-            stack.push(Character.getNumericValue(num.charAt(idx)));
-            idx++;
+            stack.push(Character.getNumericValue(num.charAt(idx++)));
         }
         
         while (k-- > 0) {
@@ -28,18 +24,12 @@ class Solution {
             sb.append(stack.pop());
         }
         
-        int zeroIndex = -1;
-        for (int i = sb.length() - 1; i>=0; i--) {
-            if (sb.charAt(i) == '0') {
-                zeroIndex++;
-            }
-            else {
-                break;
-            }
+        String ans = sb.reverse().toString();
+        idx = -1;
+        while (idx + 1 < ans.length() && ans.charAt(idx + 1) == '0') {
+            idx++;
         }
         
-        String ans = sb.reverse().toString().substring(zeroIndex + 1);
-        
-        return ans.length() == 0 ? "0" : ans;
-    }                    
+        return ans.substring(idx + 1).length() == 0 ? "0" : ans.substring(idx + 1);
+    }
 }
