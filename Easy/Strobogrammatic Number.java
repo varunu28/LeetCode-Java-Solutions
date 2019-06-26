@@ -1,26 +1,18 @@
 class Solution {
     public boolean isStrobogrammatic(String num) {
-        Set<String> set = new HashSet<>();
-        set.add("0");
-        set.add("1");
-        set.add("8");
-        set.add("00");
-        set.add("11");
-        set.add("88");
-        set.add("69");
-        set.add("96");
-                
-        int start = 0;
-        int end = num.length()-1;
-        
-        while (start <= end) {
-            if (!set.contains(num.charAt(start) + "" + num.charAt(end))) {
+        StringBuilder sb = new StringBuilder();
+        for (char c : num.toCharArray()) {
+            if (c == '0' || c == '1' || c == '8') {
+                sb.append(c);
+            }
+            else if (c == '6' || c == '9') {
+                sb.append(c == '6' ? '9' : '6');
+            }
+            else {
                 return false;
             }
-            start++;
-            end--;
         }
         
-        return true;
+        return sb.reverse().toString().equals(num);
     }
 }
