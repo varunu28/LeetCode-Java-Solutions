@@ -1,48 +1,37 @@
-/**
- * Definition for an interval.
- * public class Interval {
- *     int start;
- *     int end;
- *     Interval() { start = 0; end = 0; }
- *     Interval(int s, int e) { start = s; end = e; }
- * }
- */
 class Solution {
-    public Interval[] intervalIntersection(Interval[] A, Interval[] B) {
-        int startA = 0;
-        int startB = 0;
-        int endA = A.length;
-        int endB = B.length;
-        
-        List<Interval> intervals = new ArrayList<>();
-        
-        while (startA < endA && startB < endB) {
-            if (A[startA].end < B[startB].start) {
-                startA++;
+    public int[][] intervalIntersection(int[][] A, int[][] B) {
+        List<int[]> intersections = new ArrayList<>();
+        int idx1 = 0;
+        int idx2 = 0;
+    
+        while (idx1 < A.length && idx2 < B.length) {
+            if (A[idx1][0] > B[idx2][1]) {
+                idx2++;
                 continue;
             }
             
-            if (A[startA].start > B[startB].end) {
-                startB++;
+            if (A[idx1][1] < B[idx2][0]) {
+                idx1++;
                 continue;
             }
             
-            int intervalStart = Math.max(A[startA].start, B[startB].start);
-            int intervalEnd = Math.min(A[startA].end, B[startB].end);
+            int maxStart = Math.max(A[idx1][0], B[idx2][0]);
+            int minEnd = Math.min(A[idx1][1], B[idx2][1]);
             
-            intervals.add(new Interval(intervalStart, intervalEnd));
+            int[] interval = {maxStart, minEnd};
+            intersections.add(interval);
             
-            if (A[startA].end < B[startB].end) {
-                startA++;
+            if (A[idx1][1] > B[idx2][1]) {
+                idx2++;
             }
             else {
-                startB++;
+                idx1++;
             }
         }
         
-        Interval[] ans = new Interval[intervals.size()];
-        for (int i=0; i<ans.length; i++) {
-            ans[i] = intervals.get(i);
+        int[][] ans = new int[intersections.size()][2];
+        for (int i = 0; i < intersections.size(); i++) {
+            ans[i] = intersections.get(i);
         }
         
         return ans;
