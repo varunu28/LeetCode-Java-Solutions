@@ -1,67 +1,43 @@
 class Solution {
-    public char[][] updateBoard(char[][] board, int[] click) {
-        int row = click[0];
-        int col = click[1];
-        
-        updateBoard(board, row, col);
-        
+    int[][] dirs = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}, {1, -1}, {-1, 1}, {1, 1}, {-1, -1}};
+    public char[][] updateBoard(char[][] board, int[] click) {    
+        dfs(board, click[0], click[1]);
         return board;
     }
     
-    private void updateBoard(char[][] board, int row, int col) {
-        if (row < 0 || col < 0 || row >= board.length || col >= board[0].length) {
+    private void dfs(char[][] board, int x, int y) {
+        if (!isCoordinateValid(x, y, board)) {
             return;
         }
         
-        if (board[row][col] == 'M') {
-            board[row][col] = 'X';
+        if (board[x][y] == 'M') {
+            board[x][y] = 'X';
         }
         
-        if (board[row][col] == 'E') {
-            int mineCount = getMineCount(board, row, col);
+        if (board[x][y] == 'E') {
+            int mineCount = getAdjacentMineCount(board, x, y);
             if (mineCount == 0) {
-                board[row][col] = 'B';
-                updateBoard(board, row + 1, col);
-                updateBoard(board, row, col + 1);
-                updateBoard(board, row, col - 1);
-                updateBoard(board, row - 1, col);
-                updateBoard(board, row - 1, col - 1);
-                updateBoard(board, row + 1, col + 1);
-                updateBoard(board, row - 1, col + 1);
-                updateBoard(board, row + 1, col - 1);
+                board[x][y] = 'B';
+                for (int[] dir : dirs) {
+                    dfs(board, x + dir[0], y + dir[1]);
+                }
             }
             else {
-                board[row][col] = (char) (mineCount + '0');
+                board[x][y] = (char) (mineCount + '0');
             }
-        }
+        }    
     }
     
-    private int getMineCount(char[][] board, int row, int col) {
+    private boolean isCoordinateValid(int x, int y, char[][] board) {
+        return !(x < 0 || x >= board.length || y < 0 || y >= board[0].length);
+    }
+    
+    private int getAdjacentMineCount(char[][] board, int x, int y) {
         int count = 0;
-        
-        if (row + 1 < board.length && board[row + 1][col] == 'M') {
-            count++;
-        } 
-        if (row - 1 >= 0 && board[row - 1][col] == 'M') {
-            count++;
-        }
-        if (col + 1 < board[0].length && board[row][col + 1] == 'M') {
-            count++;
-        }
-        if (col - 1 >= 0 && board[row][col - 1] == 'M') {
-            count++;
-        }
-        if (row + 1 < board.length && col + 1 < board[0].length && board[row + 1][col + 1] == 'M') {
-            count++;
-        }
-        if (row + 1 < board.length && col - 1 >= 0 && board[row + 1][col - 1] == 'M') {
-            count++;
-        }
-        if (row - 1 >= 0 && col + 1 < board[0].length && board[row - 1][col + 1] == 'M') {
-            count++;
-        }
-        if (row - 1 >= 0 && col - 1 >= 0 && board[row - 1][col - 1] == 'M') {
-            count++;
+        for (int[] dir : dirs) {
+            if (isCoordinateValid(x + dir[0], y + dir[1], board) && board[x + dir[0]][y + dir[1]] == 'M') {
+                count++;
+            }
         }
         
         return count;
