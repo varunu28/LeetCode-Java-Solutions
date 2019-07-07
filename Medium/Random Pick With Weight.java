@@ -1,33 +1,37 @@
 class Solution {
 
-    List<Integer> prefixSum;
-    int total;
-    Random rand;
+    int[] accumulatedSum;
+    Random random;
     public Solution(int[] w) {
-        prefixSum = new ArrayList<>();
-        total = 0;
-        for (int i=0; i<w.length; i++) {
-            total += w[i];
-            prefixSum.add(total);
+        random = new Random();
+        accumulatedSum = new int[w.length];
+        int currSum = 0;
+        for (int i = 0; i < w.length; i++) {
+            currSum += w[i];
+            accumulatedSum[i] = currSum;
         }
-        rand = new Random();
     }
     
     public int pickIndex() {
-        int target = rand.nextInt(total);
-        int i = 0;
-        int j = prefixSum.size() - 1;
-        while (i != j) {
-            int mid = (i+j)/2;
-            if (target >= prefixSum.get(mid)) {
-                i = mid + 1;
+        int target = random.nextInt(accumulatedSum[accumulatedSum.length - 1]) + 1;
+        return binarySearch(accumulatedSum, 0, accumulatedSum.length - 1, target);
+    }
+    
+    private int binarySearch(int[] arr, int left, int right, int target) {
+        while (left <= right) {
+            int mid = (left + right) / 2;
+            if (arr[mid] == target) {
+                return mid;
+            }
+            else if (arr[mid] > target) {
+                right = mid - 1;
             }
             else {
-                j = mid;
+                left = mid + 1;
             }
         }
         
-        return j;
+        return left;
     }
 }
 
