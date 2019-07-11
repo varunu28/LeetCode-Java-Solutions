@@ -1,29 +1,41 @@
 class Solution {
+    int[][] dirs = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
     public int numIslands(char[][] grid) {
-        int count = 0;
+        if (grid.length == 0 || grid[0].length == 0) {
+            return 0;
+        }
         
-        for (int i=0; i<grid.length; i++) {
-            for (int j=0; j<grid[i].length; j++) {
-                if (grid[i][j] == '1') {
-                    count++;
-                    
-                    markArea(grid, i, j);
+        int countOfIslands = 0;
+        boolean[][] visited = new boolean[grid.length][grid[0].length];
+        int numOfRows = grid.length;
+        int numOfCols = grid[0].length;
+        
+        for (int i = 0; i < numOfRows; i++) {
+            for (int j = 0; j < numOfCols; j++) {
+                if (visited[i][j] || grid[i][j] == '0') {
+                    continue;
                 }
+                
+                dfs(grid, i, j, numOfRows, numOfCols, visited);
+                countOfIslands++;
             }
         }
         
-        return count;
+        return countOfIslands;
     }
     
-    private void markArea(char[][] grid, int i, int j) {
-        if (i < 0 || j < 0 || i >= grid.length || j >= grid[i].length || grid[i][j] == '0') {
+    private void dfs(char[][] grid, int x, int y, int numOfRows, int numOfCols, boolean[][] visited) {
+        if (x < 0 || x >= numOfRows || y < 0 || y >= numOfCols || visited[x][y]) {
             return;
         }
         
-        grid[i][j] = '0';
-        markArea(grid, i-1, j);
-        markArea(grid, i, j-1);
-        markArea(grid, i, j+1);
-        markArea(grid, i+1, j);
+        visited[x][y] = true;
+        if (grid[x][y] == '0') {
+            return;
+        }
+        
+        for (int[] dir : dirs) {
+            dfs(grid, x + dir[0], y + dir[1], numOfRows, numOfCols, visited);
+        }
     }
 }
