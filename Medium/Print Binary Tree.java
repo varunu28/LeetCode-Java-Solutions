@@ -8,45 +8,43 @@
  * }
  */
 class Solution {
-
-    List<List<String>> ans = new ArrayList<>();
-        
     public List<List<String>> printTree(TreeNode root) {
-        int row = height(root);
-        int col = (int)(Math.pow(2, row) - 1);
-        
-        List<String> oneRow = new ArrayList<>();
-        
-        for (int i=0;i<col;i++) {
-            oneRow.add("");
+        int height = getHeight(root);
+        int numOfNodes = (int) Math.pow(2, height) - 1;
+
+        List<List<String>> ans = new ArrayList<>();
+
+        for (int i = 0; i < height; i++) {
+            List<String> temp = new ArrayList<>();
+            for (int j = 0; j < numOfNodes; j++) {
+                temp.add("");
+            }
+
+            ans.add(temp);
         }
-        
-        for (int i=0;i<row;i++) {
-            ans.add(new ArrayList<>(oneRow));
-        }
-        
-        helper(0, 0, col, root);
-        
+
+        updateList(ans, root, 0, 0, numOfNodes);
+
         return ans;
     }
-    
-    public void helper(int rowNum, int start, int end, TreeNode root) {
-    
-        if (root == null) return;
-        
-        int mid = (start + end)/2;
-        
-        List<String> temp = ans.get(rowNum);
-        temp.set(mid, String.valueOf(root.val));
-        
-        ans.set(rowNum, temp);
-        
-        helper(rowNum+1, start, mid-1, root.left);
-        helper(rowNum+1, mid+1, end, root.right);
+
+    private void updateList (List<List<String>> ans, TreeNode root, int idx, int start, int end) {
+        if (root == null) {
+            return;
+        }
+
+        int mid = (start + end) / 2;
+
+        ans.get(idx).set(mid, String.valueOf(root.val));
+        updateList(ans, root.left, idx + 1, start, mid - 1);
+        updateList(ans, root.right, idx + 1, mid + 1, end);
     }
-    
-    public int height(TreeNode root) {
-        if (root == null) return 0;
-        return 1 + Math.max(height(root.left), height(root.right));
+
+    private int getHeight (TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+
+        return 1 + Math.max(getHeight(root.left), getHeight(root.right));
     }
 }
