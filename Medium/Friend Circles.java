@@ -1,41 +1,44 @@
 class Solution {
     public int findCircleNum(int[][] M) {
-        Map<Integer, List<Integer>> map = new HashMap<>();
-        for (int i=0; i<M.length; i++) {
-            for (int j=0; j<M[i].length; j++) {
+        Map<Integer, Set<Integer>> map = new HashMap<>();
+        for (int i = 0; i < M.length; i++) {
+            for (int j = 0; j < M.length; j++) {
                 if (M[i][j] == 1) {
-                    map.computeIfAbsent(i, k -> new ArrayList<>()).add(j);
-                    map.computeIfAbsent(j, k -> new ArrayList<>()).add(i);
+                    map.computeIfAbsent(i, k -> new HashSet<>()).add(j);
                 }
             }
         }
-
-        Set<Integer> set = new HashSet<>();
+        
+        return dfs(map, M.length);
+    }
+    
+    private int dfs(Map<Integer, Set<Integer>> map, int n) {
         int count = 0;
-        Queue<Integer> queue = new LinkedList<>();
-
-        for (Map.Entry<Integer, List<Integer>> entry : map.entrySet()) {
-            if (set.contains(entry.getKey())) {
-                continue;
+        Set<Integer> seen = new HashSet<>();
+        
+        for (int i = 0; i < n; i++) {
+            if (!seen.contains(i)) {
+                dfsHelper(i, seen, map);
+                count++;
             }
-
-            queue.add(entry.getKey());
-
-            while (!queue.isEmpty()) {
-                int popped = queue.remove();
-                set.add(popped);
-                List<Integer> list = map.get(popped);
-
-                for (Integer integer : list) {
-                    if (!set.contains(integer)) {
-                        queue.add(integer);
-                    }
+        }
+        
+        return count;
+    }
+    
+    private void dfsHelper(int idx, Set<Integer> seen, Map<Integer, Set<Integer>> map) {
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(idx);
+        
+        while (!queue.isEmpty()) {
+            int removed = queue.remove();
+            seen.add(removed);
+            
+            for (int friend : map.getOrDefault(removed, new HashSet<>())) {
+                if (!seen.contains(friend)) {
+                    queue.add(friend);
                 }
             }
-
-            count++;
         }
-
-        return count;
     }
 }
