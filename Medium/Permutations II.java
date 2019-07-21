@@ -1,32 +1,28 @@
 class Solution {
-    public static List<List<Integer>> permuteUnique(int[] nums) {
-        List<List<Integer>> ans = new ArrayList<>();
-        Arrays.sort(nums);
-        permuteHelper(nums, new ArrayList<>(), ans, new boolean[nums.length]);
-        return new ArrayList<>(ans);
+  public List<List<Integer>> permuteUnique(int[] nums) {
+    Set<List<Integer>> ans = new HashSet <>();
+    Map <Integer, Integer> map = new HashMap <>();
+    for (int num : nums) {
+      map.put(num, map.getOrDefault(num, 0) + 1);
+    }
+    permuteHelper(nums, nums.length, ans, map, new ArrayList<>());
+    return new ArrayList <>(ans);
+  }
+
+  private void permuteHelper(int[] nums, int length, Set<List<Integer>> ans, Map<Integer, Integer> used, ArrayList<Integer> curr) {
+    if (curr.size() == length) {
+      ans.add(new ArrayList <>(curr));
+      return;
     }
 
-    private static void permuteHelper(int[] nums, List<Integer> list, List<List<Integer>> ans, boolean[] used) {
-        if (list.size() == nums.length) {
-            ans.add(new ArrayList<>(list));
-        }
-        else {
-            for (int i=0; i<nums.length; i++) {
-                // Choose
-                if (used[i] || (i > 0 && nums[i] == nums[i-1] && !used[i-1])) {
-                    continue;
-                }
-
-                used[i] = true;
-                list.add(nums[i]);
-
-                // Explore
-                permuteHelper(nums, list, ans, used);
-
-                // Un-choose
-                used[i] = false;
-                list.remove(list.size()-1);
-            }
-        }
+    for (int i = 0; i < length; i++) {
+      if (used.get(nums[i]) != 0) {
+        used.put(nums[i], used.get(nums[i]) - 1);
+        curr.add(nums[i]);
+        permuteHelper(nums, length, ans, used, curr);
+        used.put(nums[i], used.get(nums[i]) + 1);
+        curr.remove(curr.size() - 1);
+      }
     }
+  }
 }
