@@ -1,13 +1,18 @@
 class TicTacToe {
 
     /** Initialize your data structure here. */
-    int[][] board;
-    int n;
-    boolean win;
+    private int[] rows;
+    private int[] cols;
+    private int leftDiagCount;
+    private int rightDiagCount;
+    private int n;
 
     public TicTacToe(int n) {
         this.n = n;
-        board = new int[n][n];
+        this.rows = new int[n];
+        this.cols = new int[n];
+        leftDiagCount = 0;
+        rightDiagCount = 0;
     }
 
     /** Player {player} makes a move at ({row}, {col}).
@@ -19,104 +24,29 @@ class TicTacToe {
      1: Player 1 wins.
      2: Player 2 wins. */
     public int move(int row, int col, int player) {
-        if (win) {
-            return 0;
+        int moveValue = player == 1 ? 1 : -1;
+        rows[row] += moveValue;
+        cols[col] += moveValue;
+        if (row == col) {
+            leftDiagCount += moveValue;
         }
-
-        board[row][col] = player;
-
-        boolean cCheck = columnCheck(col, n, player);
-        boolean rCheck = rowCheck(row, n, player);
-        boolean diagCheck = diagonalCheck(row, col, n, player);
-
-        if (cCheck || rCheck  || diagCheck) {
-            win = true;
+        if (col == n - row - 1) {
+            rightDiagCount += moveValue;
+        }
+        if (
+            Math.abs(rows[row]) == n ||
+            Math.abs(cols[col]) == n ||
+            Math.abs(leftDiagCount) == n || 
+            Math.abs(rightDiagCount) == n
+        ) {
             return player;
         }
-
         return 0;
     }
-
-    private boolean diagonalCheck(int row, int col, int n, int player) {
-        int count = 0;
-
-        int rowNum = row;
-        int colNum = col;
-
-        while (rowNum < n && colNum < n) {
-            if (board[rowNum][colNum] == player) {
-                count++;
-            }
-
-            rowNum++;
-            colNum++;
-        }
-
-        rowNum = row-1;
-        colNum = col-1;
-
-        while (rowNum >= 0 && colNum >= 0) {
-            if (board[rowNum][colNum] == player) {
-                count++;
-            }
-
-            rowNum--;
-            colNum--;
-        }
-
-        if (count == n) {
-            return true;
-        }
-
-        count = 0;
-        rowNum = row;
-        colNum = col;
-
-        while (rowNum >= 0 && colNum < n) {
-            if (board[rowNum][colNum] == player) {
-                count++;
-            }
-
-            rowNum--;
-            colNum++;
-        }
-
-        rowNum = row;
-        colNum = col;
-
-        while (rowNum < n && colNum >= 0) {
-            if (board[rowNum][colNum] == player) {
-                count++;
-            }
-
-            rowNum++;
-            colNum--;
-        }
-
-        if (count == n+1) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private boolean rowCheck(int row, int n, int player) {
-        for (int i=0; i<n;i++) {
-            if (board[row][i] != player) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private boolean columnCheck(int col, int n, int player) {
-        for (int i=0; i<n; i++) {
-            if (board[i][col] != player) {
-                return false;
-            }
-        }
-
-        return true;
-    }
 }
+
+/**
+ * Your TicTacToe object will be instantiated and called as such:
+ * TicTacToe obj = new TicTacToe(n);
+ * int param_1 = obj.move(row,col,player);
+ */
