@@ -8,6 +8,7 @@ class Solution {
         odd[A.length - 1] = even[A.length - 1] = true;
         TreeMap<Integer, Integer> treeMap = new TreeMap<>();
         treeMap.put(A[A.length - 1], A.length - 1);
+        int count = 0;
         for (int i = A.length - 2; i >= 0; i--) {
             int val = A[i];
             if (treeMap.containsKey(val)) {
@@ -25,13 +26,8 @@ class Solution {
                 }
             }
             treeMap.put(val, i);
+            count += odd[i] ? 1 : 0;
         }
-        int count = 0;
-        for (boolean b : odd) {
-            if (b) {
-                count++;
-            }
-        }
-        return count;
+        return count + 1;
     }
 }
