@@ -3,8 +3,6 @@
 ## Solutions to Leetcode problems in Java
 Category | Count
 --- | ---
-Easy | 282
-Medium | 331
-Hard | 54
-
-
+[Easy](https://github.com/varunu28/LeetCode-Java-Solutions/tree/master/Easy) | 282
+[Medium](https://github.com/varunu28/LeetCode-Java-Solutions/tree/master/Medium) | 331
+[Hard](https://github.com/varunu28/LeetCode-Java-Solutions/tree/master/Hard) | 54
