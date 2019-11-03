@@ -26,7 +26,7 @@ for level in levels:
     for file_name in onlyfiles:
         only_name = file_name[:file_name.find('.')]
         updated_file_name = file_name.replace(' ', '%20')
-        f.write(str(count) + "|" + '[{}]({})\n'.format(only_name, (tree_path + level + updated_file_name)))
+        f.write(str(count) + "|" + '[{}]({})\n'.format(only_name, (tree_path + level + "/" + updated_file_name)))
         count = count + 1
     print(level + ": " + str(count))
     f.close()
