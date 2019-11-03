@@ -1,7 +1,7 @@
 # Easy LeetCode-Java-Solutions 
 S.no | Coding Problem 
 --- | --- 
-1|[Pascal's Triangle](https://github.com/varunu28/LeetCode-Java-Solutions/tree/master/EasyPascal's Triangle.java)
+1|(Pascal's Triangle)[https://github.com/varunu28/LeetCode-Java-Solutions/tree/master/EasyPascal's Triangle.java]
 2|[Meeting Rooms](https://github.com/varunu28/LeetCode-Java-Solutions/tree/master/EasyMeeting Rooms.java)
 3|[Reverse Bits](https://github.com/varunu28/LeetCode-Java-Solutions/tree/master/EasyReverse Bits.java)
 4|[Cousins in Binary Tree](https://github.com/varunu28/LeetCode-Java-Solutions/tree/master/EasyCousins in Binary Tree.java)
