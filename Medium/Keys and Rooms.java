@@ -1,26 +1,19 @@
 class Solution {
-    int[] keys;
     public boolean canVisitAllRooms(List<List<Integer>> rooms) {
-        keys = new int[rooms.size()];
-        keys[0] = 1;
-        
-        dfs(rooms, 0);
-        
-        for (int key : keys) {
-            if (key == 0) {
-                return false;
+        Stack<Integer> stack = new Stack<>();
+        Set<Integer> set = new HashSet<>();
+        set.add(0);
+        stack.add(0);
+        while (!stack.isEmpty()) {
+            int keyPopped = stack.pop();
+            List<Integer> keys = rooms.get(keyPopped);
+            for (Integer key : keys) {
+                if (!set.contains(key)) {
+                    stack.push(key);
+                    set.add(key);
+                }
             }
         }
-        
-        return true;
-    }
-    
-    private void dfs(List<List<Integer>> rooms, int k) {
-        for (int key : rooms.get(k)) {
-            if (keys[key] == 0) {
-                keys[key]++;
-                dfs(rooms, key);
-            }
-        }
+        return set.size() == rooms.size();
     }
 }
