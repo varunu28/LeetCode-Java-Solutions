@@ -333,3 +333,5 @@ S.no | Coding Problem
 330|[One Edit Distance](https://github.com/varunu28/LeetCode-Java-Solutions/tree/master/Medium/One%20Edit%20Distance.java)
 331|[Add Bold Tag in String](https://github.com/varunu28/LeetCode-Java-Solutions/tree/master/Medium/Add%20Bold%20Tag%20in%20String.java)
 332|[Open The Lock](https://github.com/varunu28/LeetCode-Java-Solutions/blob/master/Medium/Open%20The%20Lock.java)
+333|[Target Sum](https://github.com/varunu28/LeetCode-Java-Solutions/blob/master/Medium/Target%20Sum.java)
+
