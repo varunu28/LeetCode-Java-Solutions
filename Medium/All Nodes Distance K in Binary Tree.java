@@ -8,58 +8,61 @@
  * }
  */
 class Solution {
-    
-    public Map<TreeNode, TreeNode> parentMap;
-    public List<Integer> distanceK(TreeNode root, TreeNode target, int K) {
-        parentMap = new HashMap<>();
-        addParentHelper(root, null);
-        
-        Set<TreeNode> visited = new HashSet<>();
-        Queue<TreeNode> queue = new LinkedList<>();
-        int currLevel = 0;
-        
-        queue.add(target);
-        
-        while (!queue.isEmpty() && currLevel != K) {
-            int size = queue.size();
-            
-            while (size-- > 0) {
-                TreeNode removed = queue.remove();
-                visited.add(removed);
-                TreeNode parent = parentMap.get(removed);
-                
-                if (removed.left != null && !visited.contains(removed.left)) {
-                    queue.add(removed.left);
-                }
-                
-                if (removed.right != null && !visited.contains(removed.right)) {
-                    queue.add(removed.right);
-                }
-                
-                if (parent != null && !visited.contains(parent)) {
-                    queue.add(parent);
-                }
-            }
-            
-            currLevel++;
-        }
-        
-        List<Integer> list = new ArrayList<>();
-        while (!queue.isEmpty()) {
-            list.add(queue.remove().val);
-        }
-        
-        return list;
+  List<Integer> list;
+  TreeNode target;
+  int K;
+  public List<Integer> distanceK(TreeNode root, TreeNode target, int K) {
+    list = new ArrayList<>();
+    this.target = target;
+    this.K = K;
+    dfs(root);
+    return list;
+  }
+
+  private int dfs(TreeNode node) {
+    if (node == null) {
+      return -1;
     }
-    
-    private void addParentHelper(TreeNode node, TreeNode parent) {
-        if (node == null) {
-            return;
-        }
-        
-        parentMap.put(node, parent);
-        
-        addParentHelper(node.left, node);
-        addParentHelper(node.right, node);
+    else if (node == target) {
+      subtreeDfs(node, 0);
+      return 1;
     }
+    else {
+      int L = dfs(node.left);
+      int R = -1;
+      if (L != -1) {
+        if (L == K) {
+          list.add(node.val);
+        }
+        subtreeDfs(node.right, L + 1);
+        return L + 1;
+      }
+      else if ((R = dfs(node.right)) != -1) {
+        if (R == K) {
+          list.add(node.val);
+        }
+        subtreeDfs(node.left, R + 1);
+        return R + 1;
+      }
+      else {
+        return -1;
+      }
+    }
+  }
+  
+  private void subtreeDfs(TreeNode node, int dist) {
+    if (node == null) {
+      return;
+    }
+    if (dist == K) {
+      list.add(node.val);
+    }
+    else if (dist > K) {
+      return;
+    }
+    else {
+      subtreeDfs(node.left, dist + 1);
+      subtreeDfs(node.right, dist + 1);
+    }
+  }
 }
