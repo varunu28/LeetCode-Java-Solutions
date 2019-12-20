@@ -8,19 +8,28 @@
  * }
  */
 class Solution {
-    public TreeNode bstToGst(TreeNode root) {
-        inorderReverse(root, new int[]{0});
-        return root;
+  public TreeNode bstToGst(TreeNode root) {
+    if (root == null) {
+      return null;
     }
-    
-    private void inorderReverse(TreeNode root, int[] currVal) {
-        if (root == null) {
-            return;
-        }
-        
-        inorderReverse(root.right, currVal);
-        currVal[0] += root.val;
-        root.val = currVal[0];
-        inorderReverse(root.left, currVal);
+    TreeNode curr = root;
+    Stack<TreeNode> stack = new Stack<>();
+    int sum = 0;
+    pushRight(stack, curr);
+    while (!stack.isEmpty()) {
+      TreeNode removed = stack.pop();
+      sum += removed.val;
+      removed.val = sum;
+      TreeNode leftNode = removed.left;
+      pushRight(stack, leftNode);
     }
+    return root;
+  }
+  
+  private void pushRight(Stack<TreeNode> stack, TreeNode curr) {
+    while (curr != null) {
+      stack.push(curr);
+      curr = curr.right;
+    }
+  }
 }

@@ -1,36 +1,21 @@
 class Solution {
     public int maxIncreaseKeepingSkyline(int[][] grid) {
-        int[] top = new int[grid.length];
-        int[] left = new int[grid.length];
-        int j = 0;
-
-        for (int[] g : grid) {
-            int max = Integer.MIN_VALUE;
-            for (int i=0; i<g.length; i++) {
-                max = Math.max(max, g[i]);
-            }
-
-            left[j++] = max;
+      int numRows = grid.length;
+      int numCols = grid[0].length;
+      int[] rowMax = new int[numRows];
+      int[] colMax = new int[numCols];
+      for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j < numCols; j++) {
+          rowMax[i] = Math.max(rowMax[i], grid[i][j]);
+          colMax[j] = Math.max(colMax[j], grid[i][j]);
         }
-
-        j = 0;
-        for (int i=0; i<grid.length; i++) {
-            int max = Integer.MIN_VALUE;
-            for (int k=0; k<grid.length; k++) {
-                max = Math.max(grid[k][i], max);
-            }
-
-            top[j++] = max;
+      }    
+      int totalIncrease = 0;
+      for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j < numCols; j++) {
+          totalIncrease += Math.min(rowMax[i], colMax[j]) - grid[i][j];
         }
-        
-        int increase = 0;
-
-        for (int i=0; i<grid.length; i++) {
-            for (int k=0; k<grid[0].length; k++) {
-                increase += Math.min(left[i], top[k]) - grid[i][k];
-            }
-        }
-        
-        return increase;
+      }
+      return totalIncrease;
     }
 }
