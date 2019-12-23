@@ -1,48 +1,39 @@
 class Solution {
-    int[][] dirs = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
-    public int orangesRotting(int[][] grid) {
-        Queue<Integer> queue = new LinkedList<>();
-        Map<Integer, Integer> map = new HashMap<>();
-        int numRows = grid.length;
-        int numCols = grid[0].length;
-
-        for (int i = 0; i < numRows; i++) {
-            for (int j = 0; j < numCols; j++) {
-                if (grid[i][j] == 2) {
-                    int key = numCols * i + j;
-                    queue.add(key);
-                    map.put(key, 0);
-                }
-            }
+  int[][] dirs = {{0, 1}, {1, 0}, {-1, 0}, {0, -1}};
+  public final int VISITED = -1;
+  public int orangesRotting(int[][] grid) {
+    int minutes = 0;
+    Queue<int[]> queue = new LinkedList<>();
+    for (int i = 0; i < grid.length; i++) {
+      for (int j = 0; j < grid[i].length; j++) {
+        if (grid[i][j] == 2) {
+          queue.add(new int[]{i, j});
         }
-
-        int ans = 0;
-        while (!queue.isEmpty()) {
-            int key = queue.remove();
-            int x = key / numCols;
-            int y = key % numCols;
-            for (int[] dir : dirs) {
-                int newX = x + dir[0];
-                int newY = y + dir[1];
-                if (newX < 0 || newX >= numRows || newY < 0 || newY >= numCols || grid[newX][newY] != 1) {
-                    continue;
-                }
-                grid[newX][newY] = 2;
-                int newKey = newX * numCols + newY;
-                queue.add(newKey);
-                map.put(newKey, map.get(key) + 1);
-                ans = map.get(newKey);
-            }
-        }
-
-        for (int i = 0; i < numRows; i++) {
-            for (int j = 0; j < numCols; j++) {
-                if (grid[i][j] == 1) {
-                    return -1;
-                }
-            }
-        }
-
-        return ans;
+      }
     }
+    while (!queue.isEmpty()) {
+      int size = queue.size();
+      while (size-- > 0) {
+        int[] removed = queue.remove();
+        for (int[] dir : dirs) {
+          int newX = removed[0] + dir[0];
+          int newY = removed[1] + dir[1];
+          if (newX >= 0 && newX < grid.length && newY >= 0 && newY < grid[0].length && grid[newX][newY] == 1) {
+            grid[newX][newY] = 2;
+            queue.add(new int[]{newX, newY});
+          }
+        }
+        grid[removed[0]][removed[1]] = VISITED;
+      }
+      minutes++;
+    }
+    for (int i = 0; i < grid.length; i++) {
+      for (int j = 0; j < grid[i].length; j++) {
+        if (grid[i][j] == 1) {
+          return -1;
+        }
+      }
+    }
+    return minutes > 0 ? minutes - 1 : 0;
+  }
 }
