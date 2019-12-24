@@ -7,48 +7,22 @@
  * }
  */
 class Solution {
-    public ListNode plusOne(ListNode head) {
-        ListNode rev = reverse(head);
-        ListNode prev = null;
-        int carry = 1;
-        ListNode curr = rev;
-        while (curr != null) {
-            int temp = curr.val + carry;
-            if (temp > 9) {
-                carry = 1;
-                temp = temp - 10;
-            }
-            else {
-                carry = 0;
-            }
-            
-            prev = curr;
-            
-            curr.val = temp;
-            curr = curr.next;
-        }
-        
-        if (carry != 0) {
-            prev.next = new ListNode(carry);
-        }
-        
-        ListNode ans = reverse(rev);
-        
-        return ans;
+  public ListNode plusOne(ListNode head) {
+    ListNode dummy = new ListNode(0);
+    dummy.next = head;
+    ListNode notNine = dummy;
+    while (head != null) {
+      if (head.val != 9) {
+        notNine = head;
+      }
+      head = head.next;
     }
-    
-    private ListNode reverse(ListNode node) {
-        ListNode curr = node;
-        ListNode prev = null;
-        ListNode next = null;
-        
-        while (curr != null) {
-            next = curr.next;
-            curr.next = prev;
-            prev = curr;
-            curr = next;
-        }
-        
-        return prev;
+    notNine.val++;
+    notNine = notNine.next;
+    while (notNine != null) {
+      notNine.val = 0;
+      notNine = notNine.next;
     }
+    return dummy.val != 0 ? dummy : dummy.next;
+  } 
 }
