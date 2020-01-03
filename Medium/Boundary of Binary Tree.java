@@ -8,58 +8,50 @@
  * }
  */
 class Solution {
-    List<Integer> list;
-    int backIdx;
-    public List<Integer> boundaryOfBinaryTree(TreeNode root) {
-        list = new ArrayList<>();
-        backIdx = 0;
-        
-        if (root == null) {
-            return list;
-        }
-        
-        list.add(root.val);
-        
-        addLeft(root.left);
-        addLeaves(root.left);
-        addLeaves(root.right);
-        addRight(root.right);
-        
-        return list;
+  public List<Integer> boundaryOfBinaryTree(TreeNode root) {
+    List<Integer> list = new ArrayList<>();
+    List<Integer> right = new ArrayList<>();
+    if (root == null) {
+      return list;
     }
-    
-    private void addLeft(TreeNode node) {
-        if (node == null || (node.left == null && node.right == null)) {
-            return;
-        }
-        
-        list.add(node.val);
-        
-        addLeft(node.left == null ? node.right : node.left);
+    list.add(root.val);
+    addLeft(root.left, list);
+    addLeaves(root.left, list);
+    addLeaves(root.right, list);
+    addRight(root.right, right);
+    for (int i = right.size() - 1; i >= 0; i--) {
+      list.add(right.get(i));
     }
-    
-    private void addRight(TreeNode node) {
-        if (node == null || (node.right == null && node.left == null)) {
-            return;
-        }
-        
-        list.add(list.size() - backIdx, node.val);
-        backIdx++;
-        
-        addRight(node.right == null ? node.left : node.right);
+    return list;
+  }
+  
+  private void addLeft(TreeNode root, List<Integer> list) {
+    if (root == null || (root.left == null && root.right == null)) {
+      return;
     }
-    
-    private void addLeaves(TreeNode node) {
-        if (node == null) {
-            return;
-        }
-        
-        if (node.left == null && node.right == null) {
-            list.add(node.val);    
-            return;
-        } 
-        
-        addLeaves(node.left);
-        addLeaves(node.right);
+    list.add(root.val);
+    addLeft(root.left == null ? root.right : root.left, list);
+  }
+  
+  private void addRight(TreeNode root, List<Integer> list) {
+    if (root == null || (root.left == null && root.right == null)) {
+      return;
     }
+    list.add(root.val);
+    TreeNode next = root.right == null ? root.left : root.right;
+    addRight(root.right == null ? root.left : root.right, list);
+  }
+  
+  private void addLeaves(TreeNode root, List<Integer> list) {
+    if (root == null) {
+      return;
+    }
+    if (root.left == null && root.right == null) {
+      list.add(root.val);
+    }
+    else {
+      addLeaves(root.left, list);
+      addLeaves(root.right, list);
+    }
+  }
 }
