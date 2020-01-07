@@ -1,39 +1,25 @@
 class Solution {
-    public static int findPeakElement(int[] nums) {
-        if (nums.length == 1) {
-            return 0;
-        }
-        
-        return findPeakElementImpl(nums, 0, nums.length-1);
+  public int findPeakElement(int[] nums) {
+    int[] index = {-1};
+    helper(nums, 0, nums.length - 1, index);
+    return index[0];
+  }
+  
+  private void helper(int[] nums, int start, int end, int[] index) {
+    if (start <= end && index[0] == -1) {
+      int mid = (start + end) / 2;
+      boolean found = (
+          (mid + 1 < nums.length ? nums[mid] > nums[mid + 1] : true) &&
+          (mid - 1 >= 0 ? nums[mid] > nums[mid - 1] : true)
+        );
+      if (found) {
+        index[0] = mid;
+        return;
+      }
+      else {
+        helper(nums, start, mid - 1, index);
+        helper(nums, mid + 1, end, index);
+      }
     }
-
-    private static int findPeakElementImpl(int[] nums, int start, int end) {
-        if (start > end) {
-            return -1;
-        }
-
-        int mid = (start + end)/2;
-
-        if (mid == 0 && nums.length > 1) {
-            if (nums[mid] > nums[mid+1]) {
-                return mid;
-            }
-        }
-        else if (mid == nums.length-1 && nums.length > 1) {
-            if (nums[mid] > nums[mid-1]) {
-                return mid;
-            }
-        }
-        else {
-            if (nums.length > 1) {
-                if (nums[mid] > nums[mid-1] && nums[mid] > nums[mid+1]) {
-                    return mid;
-                }
-            }
-        }
-
-        int left = findPeakElementImpl(nums, start, mid-1);
-
-        return left == -1 ? findPeakElementImpl(nums, mid+1, end) : left;
-    }
+  }
 }
