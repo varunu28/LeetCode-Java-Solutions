@@ -1,56 +1,46 @@
 class Solution {
-    public List<Integer> majorityElement(int[] nums) {
-        if (nums.length == 0) {
-            return new ArrayList<>();
-        }
-        
-        int num1 = nums[0];
-        int num2 = nums[0];
-        int count1 = 0;
-        int count2 = 0;
-        
-        for (int i = 0; i < nums.length; i++) {
-            if (nums[i] == num1) {
-                count1++;
-            }
-            else if (nums[i] == num2) {
-                count2++;
-            }
-            else if (count1 == 0) {
-                num1 = nums[i];
-                count1 = 1;
-            }
-            else if (count2 == 0) {
-                num2 = nums[i];
-                count2 = 1;
-            }
-            else {
-                count1--;
-                count2--;
-            }
-        }
-        
-        count1 = 0;
-        count2 = 0;
-        
-        for (int i = 0; i< nums.length; i++) {
-            if (nums[i] == num1) {
-                count1++;
-            }
-            else if (nums[i] == num2) {
-                count2++;
-            }
-        }
-        
-        List<Integer> ans = new ArrayList<>();
-        if (count1 > nums.length / 3) {
-            ans.add(num1);
-        }
-        
-        if (count2 > nums.length / 3) {
-            ans.add(num2);
-        }
-        
-        return ans;
+  public List<Integer> majorityElement(int[] nums) {
+    int count1 = 0;
+    int count2 = 0;
+    Integer candidate1 = null;
+    Integer candidate2 = null;
+    for (int num : nums) {
+      if (candidate1 != null && candidate1 == num) {
+        count1++; 
+      }
+      else if (candidate2 != null && candidate2 == num) {
+        count2++;
+      }
+      else if (count1 == 0) {
+        candidate1 = num;
+        count1 = 1;
+      }
+      else if (count2 == 0) {
+        candidate2 = num;
+        count2 = 1;
+      }
+      else {
+        count1--;
+        count2--;
+      }
     }
+    List<Integer> ans = new ArrayList<>();
+    count1 = 0;
+    count2 = 0;
+    for (int num : nums) {
+      if (candidate1 != null && candidate1 == num) {
+        count1++;
+      }
+      else if (candidate2 != null && candidate2 == num) {
+        count2++;
+      }
+    }
+    if (count1 > nums.length / 3) {
+      ans.add(candidate1);
+    }
+    if (count2 > nums.length / 3) {
+      ans.add(candidate2);
+    }
+    return ans;
+  }
 }

@@ -1,9 +1,5 @@
 class Solution {
-    public boolean rotateString(String A, String B) {
-        if (A.length() != B.length()) {
-            return false;
-        }
-        
-        return (A + A).contains(B);
-    }
+  public boolean rotateString(String A, String B) {
+    return A.length() == B.length() && (A + A).indexOf(B) != -1;
+  }
 }
