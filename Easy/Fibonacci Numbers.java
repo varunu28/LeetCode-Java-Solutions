@@ -1,26 +1,20 @@
 class Solution {
-    int[] arr;
-    public int fib(int N) {
-        arr = new int[N + 1];
-        return fibHelper(N);
+  public int fib(int N) {
+    Integer[] memo = new Integer[N + 1];
+    return getFib(memo, N);
+  }
+  
+  private int getFib(Integer[] memo, int N) {
+    if (memo[N] != null) {
+      return memo[N];
     }
-    
-    private int fibHelper(int N) {
-        if (N == 0) {
-            return 0;
-        }
-        
-        if (N == 1) {
-            arr[1] = 1;
-            return 1;
-        }
-        
-        if (arr[N] != 0) {
-            return arr[N];
-        }
-        
-        arr[N] = fibHelper(N - 1) + fibHelper(N - 2);
-        
-        return arr[N];
+    else if (N == 0) {
+      return 0;
     }
+    else if (N == 1) {
+      return 1;
+    }
+    memo[N] = getFib(memo, N - 1) + getFib(memo, N - 2);
+    return memo[N];
+  }
 }

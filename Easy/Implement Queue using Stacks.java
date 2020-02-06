@@ -1,37 +1,46 @@
 class MyQueue {
 
-    /** Initialize your data structure here. */
-    Stack<Integer> oldStack = new Stack<>();
-    Stack<Integer> newStack = new Stack<>();
-    
-    /** Push element x to the back of queue. */
-    public void push(int x) {
-        while (!newStack.isEmpty()) {
-            oldStack.push(newStack.pop());
-        }
-        oldStack.push(x);
+  /** Initialize your data structure here. */
+  Stack<Integer> stack;
+  Stack<Integer> revStack;
+  public MyQueue() {
+    stack = new Stack<>();
+    revStack = new Stack<>();
+  }
+
+  /** Push element x to the back of queue. */
+  public void push(int x) {
+    stack.push(x);
+  }
+
+  /** Removes the element from in front of queue and returns that element. */
+  public int pop() {
+    while (!stack.isEmpty()) {
+      revStack.push(stack.pop());
     }
-    
-    /** Removes the element from in front of queue and returns that element. */
-    public int pop() {
-        while (!oldStack.isEmpty()) {
-            newStack.push(oldStack.pop());
-        }
-        return newStack.pop();
+    int num = revStack.pop();
+    while (!revStack.isEmpty()) {
+      stack.push(revStack.pop());
     }
-    
-    /** Get the front element. */
-    public int peek() {
-        while (!oldStack.isEmpty()) {
-            newStack.push(oldStack.pop());
-        }
-        return newStack.peek();
+    return num;
+  }
+
+  /** Get the front element. */
+  public int peek() {
+    while (!stack.isEmpty()) {
+      revStack.push(stack.pop());
     }
-    
-    /** Returns whether the queue is empty. */
-    public boolean empty() {
-        return oldStack.isEmpty() && newStack.isEmpty();
+    int num = revStack.peek();
+    while (!revStack.isEmpty()) {
+      stack.push(revStack.pop());
     }
+    return num;
+  }
+
+  /** Returns whether the queue is empty. */
+  public boolean empty() {
+    return stack.isEmpty();
+  }
 }
 
 /**
