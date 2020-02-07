@@ -1,33 +1,29 @@
 class Solution {
-    public int countCharacters(String[] words, String chars) {
-        int goodWordsLength = 0;
-        Map<Character, Integer> charsMap = getMap(chars);
-
-        for (String word : words) {
-            Map<Character, Integer> wordMap = getMap(word);
-            boolean allFound = true;
-            for (Character character : wordMap.keySet()) {
-                if (charsMap.getOrDefault(character, 0) < wordMap.get(character)) {
-                    allFound = false;
-                    break;
-                }
-            }
-
-            if (allFound) {
-                goodWordsLength +=word.length();
-            }
-        }
-
-
-        return goodWordsLength;
+  public int countCharacters(String[] words, String chars) {
+    Map<Character, Integer> charFreq = getMap(chars);
+    int length = 0;
+    for (String word : words) {
+      if (canBeFormed(charFreq, getMap(word))) {
+        length += word.length();
+      }
     }
-
-    private Map<Character, Integer> getMap(String s) {
-        Map<Character, Integer> map = new HashMap<>();
-        for (char c : s.toCharArray()) {
-            map.put(c, map.getOrDefault(c, 0) + 1);
-        }
-
-        return map;
+    return length;
+  }
+  
+  private Map<Character, Integer> getMap(String s) {
+    Map<Character, Integer> map = new HashMap<>();
+    for (char c : s.toCharArray()) {
+      map.put(c, map.getOrDefault(c, 0) + 1);
     }
+    return map;
+  }
+  
+  private boolean canBeFormed(Map<Character, Integer> main, Map<Character, Integer> toBeChecked) {
+    for (Character key : toBeChecked.keySet()) {
+      if (main.getOrDefault(key, 0) < toBeChecked.get(key)) {
+        return false;
+      }
+    }
+    return true;
+  }
 }
