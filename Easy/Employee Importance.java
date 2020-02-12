@@ -11,25 +11,20 @@ class Employee {
 };
 */
 class Solution {
-    
-    public int getImportance(List<Employee> employees, int id) {
-        Map<Integer, Employee> map = new HashMap<>();
-        
-        for (int i=0;i<employees.size(); i++) {
-            map.put(employees.get(i).id, employees.get(i));
-        }
-        
-        return solver(map, id);
+  public int getImportance(List<Employee> employees, int id) {
+    Map<Integer, Employee> map = new HashMap<>();
+    for (Employee employee : employees) {
+      map.put(employee.id, employee);
     }
-    
-    public int solver(Map<Integer, Employee> map, int id) {
-        Employee main = map.get(id);
-        int total = main.importance;
-        
-        for(int s : main.subordinates) {
-            total += solver(map, s);
-        }
-        
-        return total;
+    return dfs(map, id);
+  }
+  
+  private int dfs(Map<Integer, Employee> map, int id) {
+    Employee employee = map.get(id);
+    int importance = employee.importance;
+    for (Integer sub : employee.subordinates) {
+      importance += dfs(map, sub);
     }
+    return importance;
+  }
 }
