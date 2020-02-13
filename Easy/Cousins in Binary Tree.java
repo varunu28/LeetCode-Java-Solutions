@@ -8,49 +8,38 @@
  * }
  */
 class Solution {
-    public boolean isCousins(TreeNode root, int x, int y) {
-        if (root == null) {
-            return false;
-        }
-        
-        DetailedNode nodeX = helper(root, null, x, 0);
-        DetailedNode nodeY = helper(root, null, y, 0);
-        
-        if (nodeX == null || nodeY == null) {
-            return false;
-        }
-        
-        return nodeX.depth == nodeY.depth && nodeX.parent != nodeY.parent;
+  public boolean isCousins(TreeNode root, int x, int y) {
+    if (root == null || x == y) {
+      return true;
     }
-    
-    private DetailedNode helper(TreeNode root, TreeNode parent, int num, int depth) {
-        if (root == null) {
-            return null;
-        }
-        
-        if (root.val == num) {
-            return new DetailedNode(root, parent, depth - 1);
-        }
-        
-        DetailedNode left = helper(root.left, root, num, depth + 1);
-        DetailedNode right = helper(root.right, root, num, depth + 1);
-        
-        if (left == null) {
-            return right;
-        }
-        
-        return left;
+    ParentData p1 = new ParentData();
+    ParentData p2 = new ParentData();
+    helper(root, x, 0, null, p1);
+    helper(root, y, 0, null, p2);
+    return p1.depth == p2.depth && p1.parent != p2.parent;
+  }
+  
+  private void helper(TreeNode root, int x, int currDepth, TreeNode parent, ParentData p) {
+    if (root == null) {
+      return;
     }
-    
-    class DetailedNode {
-        public TreeNode node;
-        public TreeNode parent;
-        public int depth;
-        
-        public DetailedNode(TreeNode node, TreeNode parent, int depth) {
-            this.node = node;
-            this.parent = parent;
-            this.depth = depth;
-        }
+    if (root.val == x) {
+      p.depth = currDepth;
+      p.parent = parent;
     }
+    else {
+      helper(root.left, x, currDepth + 1, root, p);
+      helper(root.right, x, currDepth + 1, root, p);
+    }
+  }
+}
+
+class ParentData {
+  int depth;
+  TreeNode parent;
+  
+  public ParentData() {
+    this.depth = 0;
+    this.parent = null;
+  }
 }

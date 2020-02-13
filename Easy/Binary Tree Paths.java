@@ -8,26 +8,28 @@
  * }
  */
 class Solution {
-    public List<String> binaryTreePaths(TreeNode root) {
-        List<String> list = new ArrayList<>();
-        if (root != null) {
-            getString(root, "", list);
-        }
-        
-        return list;
+  List<String> list;
+  public List<String> binaryTreePaths(TreeNode root) {
+    list = new ArrayList<>();
+    if (root == null) {
+      return list;
     }
-    
-    public void getString(TreeNode root, String s, List<String> list) {
-        if (root.left == null && root.right == null) {
-            list.add(s + root.val);
-        }
-        
-        if (root.left != null) {
-            getString(root.left, s + root.val + "->", list);
-        }
-        
-        if (root.right != null) {
-            getString(root.right, s + root.val + "->", list);
-        }
+    helper(root, new StringBuilder());
+    return list;
+  }
+  
+  private void helper(TreeNode root, StringBuilder sb) {
+    if (root == null) {
+      return;
     }
+    if (root.left == null && root.right == null) {
+      sb.append(root.val);
+      list.add(sb.toString());
+    }
+    else {
+      sb.append(root.val).append("->");
+      helper(root.left, new StringBuilder(sb.toString()));
+      helper(root.right, new StringBuilder(sb.toString()));
+    }
+  }
 }
