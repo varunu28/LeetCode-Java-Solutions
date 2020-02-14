@@ -8,18 +8,19 @@
  * }
  */
 class Solution {
-    
-    int sum = 0;
-    public TreeNode convertBST(TreeNode root) {
-        convert(root);
-        return root;
+  int updatedVal = 0;
+  public TreeNode convertBST(TreeNode root) {
+    helper(root);
+    return root;
+  }
+  
+  private void helper(TreeNode root) {
+    if (root == null) {
+      return;
     }
-    
-    public void convert(TreeNode cur) {
-        if (cur == null) return;
-        convert(cur.right);
-        cur.val += sum;
-        sum = cur.val;
-        convert(cur.left);
-    }
+    helper(root.right);
+    updatedVal += root.val;
+    root.val = updatedVal;
+    helper(root.left);
+  }
 }
