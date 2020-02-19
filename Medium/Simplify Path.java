@@ -1,46 +1,35 @@
 class Solution {
-    public String simplifyPath(String path) {
-        Stack<String> stack = new Stack<>();
-        StringBuilder sb = new StringBuilder();
-        int idx = 0;
-        int n = path.length();
-
-        while (idx < n) {
-            if (path.charAt(idx) != '/') {
-                sb.append(path.charAt(idx));
-                while (idx + 1 < n && path.charAt(idx + 1) != '/') {
-                    sb.append(path.charAt(idx + 1));
-                    idx++;
-                }
-
-                if (sb.toString().equals("..")) {
-                    if (!stack.isEmpty()) {
-                        stack.pop();
-                    }
-                }
-                else if (!sb.toString().equals(".")) {
-                    stack.push(sb.toString());
-                }
-
-                sb.setLength(0);
-            }
-
-            idx++;
+  public String simplifyPath(String path) {
+    Stack<String> stack = new Stack<>();
+    StringBuilder sb = new StringBuilder();
+    int idx = 0;
+    int n = path.length();
+    while (idx < n) {
+      if (path.charAt(idx) == '/') {
+        idx++;
+        while (idx < n && path.charAt(idx) != '/') {
+          sb.append(path.charAt(idx++));
         }
-
-        List<String> list = new ArrayList<>();
-        while (!stack.isEmpty()) {
-            list.add(stack.pop());
+        String dir = sb.toString();
+        sb.setLength(0);
+        if (dir.equals("..")) {
+          if (!stack.isEmpty()) {
+            stack.pop(); 
+          }
         }
-
-        sb.append("/");
-        for (int i = list.size() - 1; i >= 0; i--) {
-            sb.append(list.get(i));
-            if (i != 0) {
-                sb.append("/");
-            }
+        else if (dir.equals(".") || dir.length() == 0) {
+          continue;
         }
-
-        return sb.toString();
+        else {
+          stack.push(dir);
+        }
+      }
     }
+    sb = new StringBuilder();
+    while (!stack.isEmpty()) {
+      sb.insert(0, stack.pop());
+      sb.insert(0, "/");
+    }
+    return sb.length() > 0 ? sb.toString() : "/";
+  }
 }
