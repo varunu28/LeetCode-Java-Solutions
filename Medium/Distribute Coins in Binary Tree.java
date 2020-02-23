@@ -8,30 +8,20 @@
  * }
  */
 class Solution {
-    int numOfSteps;
-    public int distributeCoins(TreeNode root) {
-        numOfSteps = 0;
-        postorder(root);
-        
-        return numOfSteps;
+  int ans;
+  public int distributeCoins(TreeNode root) {
+    ans = 0;
+    dfs(root);
+    return ans;
+  }
+  
+  private int dfs(TreeNode root) {
+    if (root == null) {
+      return 0;
     }
-    
-    private int postorder(TreeNode root) {
-        if (root == null) {
-            return 0;
-        }
-        
-        int coin = postorder(root.left) + postorder(root.right);
-        
-        if (root.val == 0) {
-            coin += -1;
-        }
-        else {
-            coin += root.val - 1;
-        }
-        
-        numOfSteps += Math.abs(coin);
-        
-        return coin;
-    }
+    int l = dfs(root.left);
+    int r = dfs(root.right);
+    ans += Math.abs(l) + Math.abs(r);
+    return root.val + l + r - 1;
+  }
 }

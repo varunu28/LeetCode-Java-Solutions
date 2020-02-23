@@ -1,69 +1,73 @@
 class Trie {
 
-    Node trie;
-    /** Initialize your data structure here. */
-    public Trie() {
-        trie = new Node("");
+  /** Initialize your data structure here. */
+  Node root;
+  public Trie() {
+    root = new Node('-');
+  }
+
+  /** Inserts a word into the trie. */
+  public void insert(String word) {
+    insertHelper(word, 0, root);
+  }
+  
+  private void insertHelper(String word, int idx, Node root) {
+    if (idx >= word.length()) {
+      root.isWord = true;
+      return;
     }
-
-    /** Inserts a word into the trie. */
-    public void insert(String word) {
-        Node curr = trie;
-        for(int i=0; i<word.length(); i++) {
-            if (!curr.childrens.containsKey(word.charAt(i))) {
-                curr.childrens.put(word.charAt(i), new Node(word.substring(0, i+1)));
-            }
-
-            curr = curr.childrens.get(word.charAt(i));
-
-            if (i == word.length() - 1) {
-                curr.isWord = true;
-            }
-        }
+    if (!root.children.containsKey(word.charAt(idx))) {
+      root.children.put(word.charAt(idx), new Node(word.charAt(idx)));
     }
+    root = root.children.get(word.charAt(idx));
+    insertHelper(word, idx + 1, root);
+  }
 
-    /** Returns if the word is in the trie. */
-    public boolean search(String word) {
-        Node curr = trie;
-        for (int i=0; i<word.length(); i++) {
-            if (curr.childrens.containsKey(word.charAt(i))) {
-                curr = curr.childrens.get(word.charAt(i));
-            }
-            else {
-                return false;
-            }
-        }
-
-        return curr.isWord;
+  /** Returns if the word is in the trie. */
+  public boolean search(String word) {
+    return searchHelper(word, 0, root);
+  }
+  
+  private boolean searchHelper(String word, int idx, Node root) {
+    if (idx == word.length()) {
+      return root.isWord;
     }
-
-    /** Returns if there is any word in the trie that starts with the given prefix. */
-    public boolean startsWith(String prefix) {
-        Node curr = trie;
-
-        for (int i=0; i<prefix.length(); i++) {
-            if (curr.childrens.containsKey(prefix.charAt(i))) {
-                curr = curr.childrens.get(prefix.charAt(i));
-            }
-            else {
-                return false;
-            }
-        }
-
-        return true;
+    if (!root.children.containsKey(word.charAt(idx))) {
+      return false;
     }
+    root = root.children.get(word.charAt(idx));
+    return searchHelper(word, idx + 1, root);
+  }
 
-    private static final class Node {
-        String prefix;
-        Map<Character, Node> childrens;
-        boolean isWord;
-
-        public Node(String prefix) {
-            this.prefix = prefix;
-            this.childrens = new HashMap<>();
-        }
+  /** Returns if there is any word in the trie that starts with the given prefix. */
+  public boolean startsWith(String prefix) {
+    return startsWithHelper(prefix, 0, root);
+  }
+  
+  private boolean startsWithHelper(String word, int idx, Node root) {
+    if (idx == word.length()) {
+      return true;
     }
+    if (!root.children.containsKey(word.charAt(idx))) {
+      return false;
+    }
+    root = root.children.get(word.charAt(idx));
+    return startsWithHelper(word, idx + 1, root);
+  }
 }
+
+class Node {
+  char val;
+  Map<Character, Node> children;
+  boolean isWord;
+  
+  public Node(char val) {
+    this.val = val;
+    children = new HashMap<>();
+    isWord = false;
+  }
+}
+
 /**
  * Your Trie object will be instantiated and called as such:
  * Trie obj = new Trie();

@@ -8,26 +8,20 @@
  * }
  */
 class Solution {
-    public TreeNode sortedArrayToBST(int[] nums) {
-        if (nums.length == 0) {
-            return null;
-        }
-        
-        TreeNode root = convertToBST(nums, 0, nums.length-1);
-        return root;
+  public TreeNode sortedArrayToBST(int[] nums) {
+    int left = 0;
+    int right = nums.length - 1;
+    return helper(nums, left, right);
+  }
+  
+  private TreeNode helper(int[] nums, int left, int right) {
+    if (left > right) {
+      return null;
     }
-    
-    public TreeNode convertToBST(int[] nums, int low, int high) {
-        if (low > high) {
-            return null;
-        }
-        
-        int mid = (low + high)/2;
-        TreeNode root = new TreeNode(nums[mid]);
-        
-        root.left = convertToBST(nums,low,mid-1);
-        root.right = convertToBST(nums,mid+1,high);
-        
-        return root;
-    }
+    int mid = (left + right) / 2;
+    TreeNode root = new TreeNode(nums[mid]);
+    root.left = helper(nums, left, mid - 1);
+    root.right = helper(nums, mid + 1, right);
+    return root;
+  }
 }
