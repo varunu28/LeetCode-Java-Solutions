@@ -7,27 +7,23 @@
  * }
  */
 class Solution {
-    public ListNode swapPairs(ListNode head) {
-        if(head == null || head.next == null) return head;
-        
-        ListNode temp = head.next;
-        ListNode prev = null;
-        
-        while(head != null && head.next != null) {
-            
-            if(prev != null) {
-                prev.next = head.next;
-            }
-            
-            ListNode temp1 = head.next;
-            ListNode temp2 = head;
-            head.next = head.next.next;
-            head = temp1;
-            head.next = temp2;
-            prev = head.next;
-            head = head.next.next;
-        }
-        
-        return temp;
+  public ListNode swapPairs(ListNode head) {
+    if (head == null || head.next == null) {
+      return head;
     }
+    ListNode next = head.next;
+    head.next = swapPairs(head.next.next);
+    next.next = head;
+    return next;
+  }
+  
+  private ListNode reverseHeadPair(ListNode head) {
+    if (head == null || head.next == null) {
+      return head;
+    }
+    ListNode next = head.next;
+    head.next = reverseHeadPair(head.next.next);
+    next.next = head;
+    return next;
+  }
 }

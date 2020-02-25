@@ -8,22 +8,21 @@
  * }
  */
 class Solution {
+  int sum;
   public int sumEvenGrandparent(TreeNode root) {
-    int[] ans = {0};
-    helper(root, -1, -1, ans);
-    return ans[0];
+    sum = 0;
+    helper(root, null, null);
+    return sum;
   }
   
-  private void helper(TreeNode root, int parent, int grandparent, int[] ans) {
+  private void helper(TreeNode root, TreeNode parent, TreeNode grandparent) {
     if (root == null) {
       return;
     }
-    if (grandparent > 0 && grandparent % 2 == 0) {
-      ans[0] += root.val;
+    if (grandparent != null && grandparent.val % 2 == 0) {
+      sum += root.val;
     }
-    grandparent = parent;
-    parent = root.val;
-    helper(root.left, parent, grandparent, ans);
-    helper(root.right, parent, grandparent, ans);
+    helper(root.left, root, parent);
+    helper(root.right, root, parent);
   }
 }
