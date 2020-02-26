@@ -8,43 +8,42 @@
  * }
  */
 class Solution {
-    List<TreeNode> forest;
-    public List<TreeNode> delNodes(TreeNode root, int[] to_delete) {
-        forest = new ArrayList<>();
-        Set<Integer> toDelete = new HashSet<>();
-        for (int val : to_delete) {
-            toDelete.add(val);
-        }
-        
-        helper(root, toDelete);
-        
-        if (!toDelete.contains(root.val)) {
-            forest.add(root);
-        }
-        
-        return forest;
+  public List<TreeNode> delNodes(TreeNode root, int[] to_delete) {
+    List<TreeNode> forest = new ArrayList<>();
+    Set<Integer> set = new HashSet<>();
+    for (int num : to_delete) {
+      set.add(num);
     }
-    
-    private TreeNode helper(TreeNode root, Set<Integer> toDelete) {
-        if (root == null) {
-            return null;
-        }
-        
-        root.left = helper(root.left, toDelete);
-        root.right = helper(root.right, toDelete);
-        
-        if (toDelete.contains(root.val)) {
-            if (root.left != null) {
-                forest.add(root.left);
-            }
-            
-            if (root.right != null) {
-                forest.add(root.right);
-            }
-            
-            return null;
-        }
-        
-        return root;
+    helper(root, set, forest, null, 0);
+    return forest;
+  }
+  
+  private void helper(TreeNode root, Set<Integer> set, List<TreeNode> forest, TreeNode parent, int side) {
+    if (root == null) {
+      return;
     }
+    // Deletion 
+    if (set.contains(root.val)) {
+      if (parent != null) { 
+        // Decide which node we want to make null based on side
+        if (side == -1) {
+          parent.left = null;
+        }
+        else {
+          parent.right = null;
+        }
+      } 
+      // Call the recursive function for left & right with parent as null as we deleted the node
+      helper(root.left, set, forest, null, 0);
+      helper(root.right, set, forest, null, 0);
+    }
+    // No Deletion
+    else {
+      if (parent == null) { // Don't add if we have already added the parent and this is a child node
+        forest.add(root);
+      }  
+      helper(root.left, set, forest, root, -1);
+      helper(root.right, set, forest, root, 1);
+    }
+  }
 }
