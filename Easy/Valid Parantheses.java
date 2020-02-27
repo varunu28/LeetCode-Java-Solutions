@@ -1,28 +1,26 @@
 class Solution {
-    public Map<Character, Character> map = new HashMap<Character, Character>(){{
-        put('{', '}');
-        put('[', ']');
-        put('(', ')');
-    }};
-
-    public boolean isValid(String s) {
-        Stack<Character> stack = new Stack<>();
-        for (char c : s.toCharArray()) {
-            if (map.containsKey(c)) {
-                stack.push(c);
-            }
-            else {
-                if (stack.isEmpty()) {
-                    return false;
-                }
-
-                char removed = stack.pop();
-                if (map.get(removed) != c) {
-                    return false;
-                }
-            }
+  public boolean isValid(String s) {
+    Stack<Character> stack = new Stack<>();
+    String closing = ")}]";
+    String opening = "({[";
+    
+    for (char c : s.toCharArray()) {
+      if (closing.indexOf(c) == -1) {
+        stack.push(c);
+      }
+      else {
+        if (stack.isEmpty()) {
+          System.out.println("HERE");
+          return false;
         }
-
-        return stack.isEmpty();
+        char temp = stack.pop();
+        if (opening.indexOf(temp) != closing.indexOf(c)) {
+          System.out.println(opening.indexOf(temp) + " " + closing.indexOf(c));
+          return false;
+        }
+      }
     }
+    System.out.println(stack);
+    return stack.isEmpty();
+  }
 }
