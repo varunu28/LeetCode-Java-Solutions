@@ -1,17 +1,23 @@
-public class Solution {
-    public int thirdMax(int[] nums) {
-        Arrays.sort(nums);
-        ArrayList<Integer> arr = new ArrayList();
-        for (int i=0;i<nums.length;i++) {
-            if (arr.indexOf(nums[i]) == -1) {
-                arr.add(nums[i]);
-            }
-        }
-        if (arr.size() >= 3) {
-            return arr.get(arr.size()-3);
-        }
-        else {
-            return arr.get(arr.size()-1);
-        }
+class Solution {  
+  public int thirdMax(int[] nums) {
+    final double BASE_VALUE = ((double) Integer.MIN_VALUE) - 1;
+    double firstMax = BASE_VALUE;
+    double secMax = BASE_VALUE;
+    double thirdMax = BASE_VALUE;
+    for (int num : nums) {
+      if (num > firstMax) {
+        thirdMax = secMax;
+        secMax = firstMax;
+        firstMax = num;
+      }
+      else if (num > secMax && num < firstMax) {
+        thirdMax = secMax;
+        secMax = num;
+      }
+      else if (num > thirdMax && num < firstMax && num < secMax) {
+        thirdMax = num;
+      }
     }
+    return thirdMax == BASE_VALUE ? (int) firstMax : (int) thirdMax;
+  }
 }
