@@ -1,25 +1,20 @@
 class Solution {
-    public boolean confusingNumber(int N) {
-        if (N == 0) {
-            return false;
-        }
-        int copy = N;
-        StringBuilder sb = new StringBuilder();
-        while (N > 0) {
-            int temp = N % 10;
-            if (temp == 6 || temp == 9) {
-                sb.append(temp == 6 ? 9 : 6); 
-            }
-            else if (temp == 0 || temp == 1 || temp == 8) {
-                sb.append(temp);
-            }
-            else {
-                return false;
-            }
-            
-            N /= 10;
-        }
-        
-        return Integer.parseInt(sb.toString()) != copy;
+  public boolean confusingNumber(int N) {
+    int newNum = 0;
+    int copy = N;
+    while (N > 0) {
+      int rem = N % 10;
+      N /= 10;
+      if (rem == 0 || rem == 1 || rem == 8) {
+        newNum = newNum * 10 + rem;
+      }
+      else if (rem == 6 || rem == 9) {
+        newNum = newNum * 10 + (rem == 6 ? 9 : 6);
+      }
+      else {
+        return false;
+      }
     }
+    return newNum != copy;
+  }
 }
