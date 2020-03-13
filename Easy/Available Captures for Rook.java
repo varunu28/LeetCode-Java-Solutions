@@ -1,86 +1,33 @@
 class Solution {
-    public int numRookCaptures(char[][] board) {
-        int numOfPawns = 0;
-        
-        int[] rookPos = getRookPos(board);
-        int row = rookPos[0];
-        int col = rookPos[1];
-        
-        for (int i = col + 1; i < board[0].length; i++) {
-            if (board[row][i] == '.') {
-                continue;
-            }
-            
-            if (board[row][i] == 'B') {
-                break;
-            }
-            
-            if (board[row][i] == 'p') {
-                numOfPawns++;
-                break;
-            }
+  int[][] dirs = {{0, 1}, {1, 0}, {-1, 0}, {0, -1}};
+  public int numRookCaptures(char[][] board) {
+    for (int i = 0; i < board.length; i++) {
+      for (int j = 0; j < board[i].length; j++) {
+        if (board[i][j] == 'R') {
+          return getPawnCount(board, i, j);
         }
-        
-        for (int i = col - 1; i >= 0; i--) {
-            if (board[row][i] == '.') {
-                continue;
-            }
-            
-            if (board[row][i] == 'B') {
-                break;
-            }
-            
-            if (board[row][i] == 'p') {
-                numOfPawns++;
-                break;
-            }
-        }
-        
-        for (int i = row + 1; i < board.length; i++) {
-            if (board[i][col] == '.') {
-                continue;
-            }
-            
-            if (board[i][col] == 'B') {
-                break;
-            }
-            
-            if (board[i][col] == 'p') {
-                numOfPawns++;
-                break;
-            }
-        }
-        
-        for (int i = row - 1; i >= 0; i--) {
-            if (board[i][col] == '.') {
-                continue;
-            }
-            
-            if (board[i][col] == 'B') {
-                break;
-            }
-            
-            if (board[i][col] == 'p') {
-                numOfPawns++;
-                break;
-            }
-        }
-        
-        return numOfPawns;
+      }
     }
-    
-    private int[] getRookPos(char[][] board) {
-        int[] pos = new int[2];
-        
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                if (board[i][j] == 'R') {
-                    pos[0] = i;
-                    pos[1] = j;
-                }
-            }
+    return 0;
+  }
+  
+  private int getPawnCount(char[][] board, int i, int j) {
+    int count = 0;
+    for (int[] dir : dirs) {
+      int newX = i + dir[0];
+      int newY = j + dir[1];
+      while (newX >= 0 && newX < board.length && newY >= 0 && newY < board[0].length) {
+        if (board[newX][newY] == 'p') {
+          count++;
+          break;
         }
-        
-        return pos;
+        else if (board[newX][newY] == 'B') {
+          break;
+        }
+        newX = newX + dir[0];
+        newY = newY + dir[1];
+      }
     }
+    return count;
+  }
 }
