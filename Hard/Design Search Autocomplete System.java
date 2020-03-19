@@ -1,107 +1,87 @@
 class AutocompleteSystem {
-
-    Node root;
-    Map<String, Integer> wordWeight;
-    int i;
-    StringBuilder sb;
-
-    public AutocompleteSystem(String[] sentences, int[] times) {
-        root = new Node("");
-        wordWeight = new HashMap<>();
-        i = 0;
-        sb = new StringBuilder();
-
-        for (String sentence : sentences) {
-            insertWord(sentence);
-            wordWeight.put(sentence, times[i++]);
-        }
+  Map<String, Integer> map;
+  Node root;
+  Node currNode;
+  StringBuilder sb;
+  boolean invalidQuery;
+  public AutocompleteSystem(String[] sentences, int[] times) {
+    map = new HashMap<>();
+    root = new Node('-');
+    for (int i = 0; i < sentences.length; i++) {
+      addSentence(sentences[i], 0, root);
+      map.put(sentences[i], map.getOrDefault(sentences[i], 0) + times[i]);
     }
-
-    private void insertWord(String sentence) {
-        Node curr = root;
-        for (int i=0; i<sentence.length(); i++) {
-            if (!curr.childrens.containsKey(sentence.charAt(i))) {
-                curr.childrens.put(sentence.charAt(i), new Node(sentence.substring(0, i+1)));
-            }
-
-            curr = curr.childrens.get(sentence.charAt(i));
-
-            if (i == sentence.length()-1) {
-                curr.isWord = true;
-            }
-        }
+    currNode = root;
+    invalidQuery = false;
+    sb = new StringBuilder();
+  }
+  
+  private void addSentence(String s, int idx, Node root) {
+    if (idx == s.length()) {
+      return;
     }
-
-    public List<String> input(char c) {
-        if (c == '#') {
-            wordWeight.put(sb.toString(), wordWeight.getOrDefault(sb.toString(), 0) + 1);
-            insertWord(sb.toString());
-            sb = new StringBuilder();
-            return new ArrayList<>();
-        }
-
-        sb.append(c);
-
-        PriorityQueue<String> pq = new PriorityQueue<>(new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                if (wordWeight.get(o1) - wordWeight.get(o2) == 0) {
-                    return o2.compareTo(o1);
-                }
-                else {
-                    return wordWeight.get(o1) - wordWeight.get(o2);
-                }
-            }
-        });
-
-        String prefix = sb.toString();
-        Node curr = root;
-
-        for (char ch : prefix.toCharArray()) {
-            if (curr.childrens.containsKey(ch)) {
-                curr = curr.childrens.get(ch);
-            }
-            else {
-                return new ArrayList<>();
-            }
-        }
-
-        findAllChildWorlds(curr, pq);
-
-        List<String> ans = new ArrayList<>();
-        while (!pq.isEmpty()) {
-            ans.add(pq.poll());
-        }
-
-        Collections.reverse(ans);
-
-        return ans;
+    char c = s.charAt(idx);
+    if (!root.children.containsKey(c)) {
+      root.children.put(c, new Node(c));
     }
+    Node node = root.children.get(c);
+    node.possibleSentences.add(s);
+    addSentence(s, idx + 1, node);
+  }
 
-    private void findAllChildWorlds(Node curr, PriorityQueue<String> pq) {
-        if (curr.isWord) {
-            pq.add(curr.prefix);
-            if (pq.size() > 3) {
-                pq.poll();
-            }
-        }
-
-        for (char c : curr.childrens.keySet()) {
-            findAllChildWorlds(curr.childrens.get(c), pq);
-        }
+  public List<String> input(char c) {
+    if (c == '#') {
+      String s = sb.toString();
+      map.put(s, map.getOrDefault(s, 0) + 1);
+      addSentence(s, 0, root);
+      sb.setLength(0);
+      currNode = root;
+      invalidQuery = false;
+      return new ArrayList<>();
     }
+    sb.append(c);
+    if (!currNode.children.containsKey(c) || invalidQuery) {
+      invalidQuery = true;
+      return new ArrayList<>();
+    }
+    else {
+      List<String> possibleSentences = new ArrayList<>();
+      currNode = currNode.children.get(c);
+      possibleSentences.addAll(currNode.possibleSentences);
+      return getTopThree(possibleSentences);
+    }
+  }
+  
+  private List<String> getTopThree(List<String> list) {
+    Collections.sort(list, new Comparator<String>(){
+      public int compare(String s1, String s2) {
+        int c = map.get(s2) - map.get(s1);
+        if (c != 0) {
+          return c;
+        }
+        return s1.compareTo(s2);
+      }
+    });
+    List<String> ans = new ArrayList<>();
+    for (int i = 0; i < list.size() && ans.size() < 3; i++) {
+      ans.add(list.get(i));
+    }
+    return ans;
+  }
 }
 
 class Node {
-    String prefix;
-    Map<Character, Node> childrens;
-    boolean isWord;
-
-    public Node(String prefix) {
-        this.prefix = prefix;
-        this.childrens = new HashMap<>();
-    }
+  char c;
+  Map<Character, Node> children;
+  Set<String> possibleSentences;
+  
+  public Node(char c) {
+    this.c = c;
+    children = new HashMap<>();
+    possibleSentences = new HashSet<>();
+  }
 }
+
 /**
  * Your AutocompleteSystem object will be instantiated and called as such:
  * AutocompleteSystem obj = new AutocompleteSystem(sentences, times);
