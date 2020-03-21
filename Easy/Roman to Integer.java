@@ -1,42 +1,25 @@
 class Solution {
-    public int romanToInt(String s) {
-        int nums[] = new int[s.length()];
-        for(int i = 0; i < s.length(); i++) {
-            switch (s.charAt(i)){
-                case 'M':
-                    nums[i]=1000;
-                    break;
-                case 'D':
-                    nums[i]=500;
-                    break;
-                case 'C':
-                    nums[i]=100;
-                    break;
-                case 'L':
-                    nums[i]=50;
-                    break;
-                case 'X' :
-                    nums[i]=10;
-                    break;
-                case 'V':
-                    nums[i]=5;
-                    break;
-                case 'I':
-                    nums[i]=1;
-                    break;
-            }
-        }
-        
-        int sum = 0;
-        for(int i = 0; i < nums.length - 1; i++){
-            if(nums[i] < nums[i + 1]) {
-                sum -= nums[i];
-            }   
-            else {
-                sum += nums[i];
-            }
-        }
-        
-        return sum + nums[nums.length - 1];
+  public int romanToInt(String s) {
+    String[] keys = {"I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M"};
+    int[] values = {1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000};
+    Map<String, Integer> map = new HashMap<>();
+    for (int i = 0; i < keys.length; i++) {
+      map.put(keys[i], values[i]);
     }
+    int val = 0;
+    int idx = 0;
+    int n = s.length();
+    while (idx < n) {
+      char c = s.charAt(idx);
+      if (idx + 1 < n && map.containsKey(s.substring(idx, idx + 2))) {
+        val += map.get(s.substring(idx, idx + 2));
+        idx += 2;
+      }
+      else {
+        val += map.get(String.valueOf(c));
+        idx++;
+      }
+    }
+    return val;
+  }
 }
