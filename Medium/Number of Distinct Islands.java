@@ -1,32 +1,38 @@
 class Solution {
-    public int numDistinctIslands(int[][] grid) {
-        Set<String> numOfIslands = new HashSet<>();
-        
-        for (int i=0; i<grid.length; i++) {
-            for (int j=0; j<grid[i].length; j++) {
-                if (grid[i][j] == 1) {
-                    StringBuilder sb = new StringBuilder("f");
-                    String island = dfsHelper(grid, i, j, sb);
-                    numOfIslands.add(island);
-                }
-            }
-        }
-        
-        return numOfIslands.size();
+  Set<String> set;
+  int[][] dirs = {{-1, 0}, {0, -1}, {1, 0}, {0, 1}};
+  public int numDistinctIslands(int[][] grid) {
+    if (grid.length == 0 || grid[0].length == 0) {
+      return 0;
     }
-    
-    private String dfsHelper(int[][] grid, int row, int col, StringBuilder sb) {
-        if (row == grid.length || row < 0 || col == grid[row].length || col < 0 || grid[row][col] == 0) {
-            return sb.toString();
+    set = new HashSet<>();
+    boolean[][] visited = new boolean[grid.length][grid[0].length];
+    for (int i = 0; i < grid.length; i++) {
+      for (int j = 0; j < grid[i].length; j++) {
+        if (!visited[i][j]) {
+          StringBuilder sb = new StringBuilder();
+          dfs(grid, i, j, visited, sb, 0);
+          if (sb.length() > 0) {
+            set.add(sb.toString());
+          }
         }
-        
-        grid[row][col] = 0;
-        
-        sb.append(dfsHelper(grid, row - 1, col, new StringBuilder("u")));
-        sb.append(dfsHelper(grid, row, col + 1, new StringBuilder("r")));
-        sb.append(dfsHelper(grid, row + 1, col, new StringBuilder("d")));
-        sb.append(dfsHelper(grid, row, col - 1, new StringBuilder("l")));
-        
-        return sb.toString();
+      }
     }
+    return set.size();
+  }
+  
+  private void dfs(int[][] grid, int x, int y, boolean[][] visited, StringBuilder sb, int currDir) {
+    if (x < 0 || x >= grid.length || y < 0 || y >= grid[0].length || grid[x][y] != 1 || visited[x][y]) {
+      return;
+    }
+    sb.append(currDir);
+    visited[x][y] = true;
+    int curr = 1;
+    for (int[] dir : dirs) {
+      int newX = x + dir[0];
+      int newY = y + dir[1];
+      dfs(grid, newX, newY, visited, sb, curr++);
+    }
+    sb.append(0);
+  }
 }
