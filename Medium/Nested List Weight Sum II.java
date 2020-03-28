@@ -27,36 +27,31 @@
  * }
  */
 class Solution {
-    int maxDepth;
-    int sum;
-    public int depthSumInverse(List<NestedInteger> nestedList) {
-        maxDepth = 0;
-        maxDepthHelper(nestedList, 1);
-        
-        sum = 0;
-        helper(nestedList, maxDepth);
-        
-        return sum;
+  public int depthSumInverse(List<NestedInteger> nestedList) {
+    Queue<NestedInteger> queue = new LinkedList<>();
+    int prevSum = 0;
+    int currSum = 0;
+    for (NestedInteger nestedInteger : nestedList) {
+      queue.add(nestedInteger);
     }
-    
-    private void helper(List<NestedInteger> nestedList, int level) {
-        for (NestedInteger nested : nestedList) {
-            if (nested.isInteger()) {
-                sum += nested.getInteger() * level;
-            }
-            else {
-                helper(nested.getList(), level - 1);
-            }
+    while (!queue.isEmpty()) {
+      int size = queue.size();
+      int levelSum = 0;
+      while (size-- > 0) {
+        NestedInteger removed = queue.remove();
+        if (removed.isInteger()) {
+          levelSum += removed.getInteger();
         }
-    }
-    
-    private void maxDepthHelper(List<NestedInteger> nestedList, int currLevel) {
-        maxDepth = Math.max(maxDepth, currLevel);
-        
-        for (NestedInteger nestedInteger : nestedList) {
-            if (!nestedInteger.isInteger()) {
-                maxDepthHelper(nestedInteger.getList(), currLevel + 1);
-            }
+        else {
+          List<NestedInteger> nList = removed.getList();
+          for (NestedInteger nInteger : nList) {
+            queue.add(nInteger);
+          }
         }
+      }
+      prevSum += levelSum;
+      currSum += prevSum;
     }
+    return currSum;
+  }
 }
