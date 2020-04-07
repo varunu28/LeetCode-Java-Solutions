@@ -1,92 +1,61 @@
 class MyCircularQueue {
 
-    /** Initialize your data structure here. Set the size of the queue to be k. */
-    Node head;
-    Node curr;
-    int capacity;
-    int count = 0;
+  /** Initialize your data structure here. Set the size of the queue to be k. */
+  int[] queue;
+  int start;
+  int end;
+  int k;
+  public MyCircularQueue(int k) {
+    this.k = k;
+    queue = new int[k];
+    start = 0;
+    end = 0;
+    Arrays.fill(queue, -1);
+  }
 
-    public MyCircularQueue(int k) {
-        head = new Node(-1);
-        curr = head;
-        capacity = k;
+  /** Insert an element into the circular queue. Return true if the operation is successful. */
+  public boolean enQueue(int value) {
+    if (end == start && queue[end] != -1) {
+      return false;
     }
-
-    /** Insert an element into the circular queue. Return true if the operation is successful. */
-    public boolean enQueue(int value) {
-        if (count == capacity) {
-            return false;
-        }
-
-        curr.next = new Node(value);
-        curr = curr.next;
-        count++;
-
-        return true;
+    queue[end++] = value;
+    if (end == k) {
+      end = 0;
     }
+    return true;
+  }
 
-    /** Delete an element from the circular queue. Return true if the operation is successful. */
-    public boolean deQueue() {
-        if (count <= 0) {
-            return false;
-        }
-
-        if (head.next == curr) {
-            curr = head;
-            head.next = null;
-        }
-        else {
-            head.next = head.next.next;
-        }
-
-        count--;
-
-        return true;
+  /** Delete an element from the circular queue. Return true if the operation is successful. */
+  public boolean deQueue() {
+    if (queue[start] == -1) {
+      return false;
     }
-
-    /** Get the front item from the queue. */
-    public int Front() {
-        if (count == 0) {
-            return -1;
-        }
-
-        return head.next.value;
+    queue[start++] = -1;
+    if (start == k) {
+      start = 0;
     }
+    return true;
+  }
 
-    /** Get the last item from the queue. */
-    public int Rear() {
-        if (count == 0) {
-            return -1;
-        }
+  /** Get the front item from the queue. */
+  public int Front() {
+    return queue[start];
+  }
 
-        return curr.value;
-    }
+  /** Get the last item from the queue. */
+  public int Rear() {
+    return end == 0 ? queue[k - 1] : queue[end - 1];
+  }
 
-    /** Checks whether the circular queue is empty or not. */
-    public boolean isEmpty() {
-        return count == 0;
-    }
+  /** Checks whether the circular queue is empty or not. */
+  public boolean isEmpty() {
+    return start == end && queue[end] == -1;
+  }
 
-    /** Checks whether the circular queue is full or not. */
-    public boolean isFull() {
-        return count == capacity;
-    }
-
-    private void printList(Node node) {
-        while (node != null) {
-            System.out.print(node.value + " ");
-        }
-
-        System.out.println();
-    }
-
-    class Node {
-        int value;
-        Node next;
-        Node(int value) {
-            this.value = value;
-        }
-    }
+  /** Checks whether the circular queue is full or not. */
+  public boolean isFull() {
+    return start == end && queue[end] != -1;
+  }
 }
 
 /**
