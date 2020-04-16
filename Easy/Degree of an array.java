@@ -1,42 +1,24 @@
 class Solution {
-    public int findShortestSubArray(int[] nums) {
-        Map<Integer, Entry> map = new HashMap<>();
-        
-        for (int i = 0; i < nums.length; i++) {
-            if (map.containsKey(nums[i])) {
-                map.get(nums[i]).degree++;
-                map.get(nums[i]).endIdx = i;
-            }
-            else {
-                map.put(nums[i], new Entry(1, i, i));
-            }
-        }
-        
-        int res = Integer.MAX_VALUE;
-        int degree = Integer.MIN_VALUE;
-        
-        for (Entry entry : map.values()) {
-            if (degree < entry.degree) {
-                degree = entry.degree;
-                res = entry.endIdx - entry.startIdx + 1;
-            }    
-            else if (degree == entry.degree) {
-                res = Math.min(entry.endIdx - entry.startIdx + 1, res);
-            }
-        }
-        
-        return res;
+  public int findShortestSubArray(int[] nums) {
+    Map<Integer, Integer> count = new HashMap<>();
+    Map<Integer, Integer> left = new HashMap<>();
+    Map<Integer, Integer> right = new HashMap<>();
+    int degree = 0;
+    for (int i = 0; i < nums.length; i++) {
+      int num = nums[i];
+      if (!left.containsKey(num)) {
+        left.put(num, i);
+      }
+      right.put(num, i);
+      count.put(num, count.getOrDefault(num, 0) + 1);
+      degree = Math.max(degree, count.get(num));
     }
-
-    class Entry {
-        int degree;
-        int startIdx;
-        int endIdx;
-        
-        public Entry(int degree, int startIdx, int endIdx) {
-            this.degree = degree;
-            this.startIdx = startIdx;
-            this.endIdx = endIdx;
-        }
+    int ans = nums.length;
+    for (int key : count.keySet()) {
+      if (count.get(key) == degree) {
+        ans = Math.min(ans, right.get(key) - left.get(key) + 1);
+      }
     }
+    return ans;
+  }
 }
