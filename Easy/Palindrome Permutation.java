@@ -1,24 +1,18 @@
 class Solution {
-    public static boolean canPermutePalindrome(String s) {
-        Map<Character, Integer> map = new HashMap<>();
-        char[] chars = s.toCharArray();
-        
-        for (char c : chars) {
-            map.put(c, map.getOrDefault(c, 0) + 1);
-        }
-        
-        int oddVal = 0;
-        
-        for (Map.Entry<Character, Integer> entry : map.entrySet()) {
-            if (entry.getValue()%2 != 0) {
-                oddVal++;
-            }
-            
-            if (oddVal == 2) {
-                return false;
-            }
-        }
-        
-        return true;
+  public boolean canPermutePalindrome(String s) {
+    Map<Character, Integer> map = new HashMap<>();
+    for (char c : s.toCharArray()) {
+      map.put(c, map.getOrDefault(c, 0) + 1);
     }
+    boolean oddFound = false;
+    for (Character key : map.keySet()) {
+      if (map.get(key) % 2 != 0) {
+        if (oddFound) {
+          return false;
+        }
+        oddFound = true;
+      }
+    }
+    return true;
+  }
 }
