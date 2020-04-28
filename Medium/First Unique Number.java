@@ -1,38 +1,56 @@
 class FirstUnique {
-  Map<Integer, Integer> valToCount;
-  Map<Integer, Integer> countToVal;
-  int count;
-  int lowest;
+  Node head;
+  Node tail;
+  Map<Integer, Node> map;
+  int MX_VAL = Integer.MAX_VALUE;
+  int MN_VAL = Integer.MIN_VALUE;
   public FirstUnique(int[] nums) {
-    valToCount = new HashMap<>();
-    countToVal = new HashMap<>();
-    count = 0;
-    lowest = 0;
+    map = new HashMap<>();
+    head = new Node(MN_VAL);
+    tail = new Node(MX_VAL);
+    head.next = tail;
+    tail.prev = head;
     for (int num : nums) {
       add(num);
     }
   }
 
   public int showFirstUnique() {
-    while (lowest < count && countToVal.get(lowest) == -1) {
-      lowest++;
-    }
-    if (lowest == count) {
-      lowest--;
-      return -1;
-    }
-    return countToVal.get(lowest);
+    return head.next.val == MX_VAL ? -1 : head.next.val;
   }
 
   public void add(int value) {
-    if (valToCount.containsKey(value)) {
-      int idx = valToCount.get(value);
-      countToVal.put(idx, -1);
+    if (map.containsKey(value)) {
+      if (map.get(value) != null) {
+        remove(map.get(value));
+        map.put(value, null);
+      }
     }
     else {
-      valToCount.put(value, count++);
-      countToVal.put(valToCount.get(value), value);
+      Node newNode = new Node(value);
+      map.put(value, newNode);
+      newNode.prev = tail.prev;
+      tail.prev.next = newNode;
+      newNode.next = tail;
+      tail.prev = newNode;
     }
+  }
+  
+  private void remove(Node node) {
+    Node prev = node.prev;
+    Node next = node.next;
+    prev.next = next;
+    next.prev = prev;
+  }
+}
+
+class Node {
+  int val;
+  Node next;
+  Node prev;
+  
+  public Node(int val) {
+    this.val = val;
   }
 }
 
