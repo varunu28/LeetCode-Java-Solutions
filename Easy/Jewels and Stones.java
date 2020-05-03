@@ -1,23 +1,19 @@
 class Solution {
-    public int numJewelsInStones(String J, String S) {
-        boolean[] isSet = new boolean[52];
-        for (char c : J.toCharArray()) {
-            isSet[getIdx(c)] = true;
-        }
-        
-        int count = 0;
-        for (char c : S.toCharArray()) {
-            count += isSet[getIdx(c)] ? 1 : 0;    
-        }
-        
-        return count;
+  public int numJewelsInStones(String J, String S) {
+    Map<Character, Integer> mapJ = getMap(J);
+    Map<Character, Integer> mapS = getMap(S);
+    int count = 0;
+    for (Character key : mapJ.keySet()) {
+      count += mapS.getOrDefault(key, 0);
     }
-    
-    private int getIdx(char c) {
-        if (Character.isUpperCase(c)) {
-            return 26 + c - 'A';
-        }
-        
-        return c - 'a';
+    return count;
+  }
+  
+  private Map<Character, Integer> getMap(String s) {
+    Map<Character, Integer> map = new HashMap<>();
+    for (char c : s.toCharArray()) {
+      map.put(c, map.getOrDefault(c, 0) + 1);
     }
+    return map;
+  }
 }
