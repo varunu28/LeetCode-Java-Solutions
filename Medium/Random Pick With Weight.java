@@ -1,38 +1,25 @@
 class Solution {
+  int[] arr;
+  int counter = 0;
+  Random r = new Random();
+  public Solution(int[] w) {
+    arr = new int[w.length];
+    counter += w[0];
+    arr[0] = w[0];
+    for (int i = 1; i < w.length; i++) {
+      arr[i] = arr[i - 1] + w[i];
+      counter += w[i];
+    }
+  }
 
-    int[] accumulatedSum;
-    Random random;
-    public Solution(int[] w) {
-        random = new Random();
-        accumulatedSum = new int[w.length];
-        int currSum = 0;
-        for (int i = 0; i < w.length; i++) {
-            currSum += w[i];
-            accumulatedSum[i] = currSum;
-        }
+  public int pickIndex() {
+    int idx = r.nextInt(counter) + 1;
+    int ret = Arrays.binarySearch(arr, idx); 
+    if(ret < 0) {
+      ret = -ret - 1;
     }
-    
-    public int pickIndex() {
-        int target = random.nextInt(accumulatedSum[accumulatedSum.length - 1]) + 1;
-        return binarySearch(accumulatedSum, 0, accumulatedSum.length - 1, target);
-    }
-    
-    private int binarySearch(int[] arr, int left, int right, int target) {
-        while (left <= right) {
-            int mid = (left + right) / 2;
-            if (arr[mid] == target) {
-                return mid;
-            }
-            else if (arr[mid] > target) {
-                right = mid - 1;
-            }
-            else {
-                left = mid + 1;
-            }
-        }
-        
-        return left;
-    }
+    return ret;
+  }
 }
 
 /**
