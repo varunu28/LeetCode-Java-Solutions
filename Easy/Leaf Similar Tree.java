@@ -4,19 +4,27 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
   public boolean leafSimilar(TreeNode root1, TreeNode root2) {
-    List<Integer> leaf1 = new ArrayList<>();
-    List<Integer> leaf2 = new ArrayList<>();
-    populateLeaves(root1, leaf1);
-    populateLeaves(root2, leaf2);
-    return leaf1.equals(leaf2);
+    return getLeafSequence(root1).equals(getLeafSequence(root2));
   }
   
-  private void populateLeaves(TreeNode root, List<Integer> list) {
+  private String getLeafSequence(TreeNode root) {
+    List<Integer> list = new ArrayList<>();
+    helper(root, list);
+    return list.toString();
+  }
+  
+  private void helper(TreeNode root, List<Integer> list) {
     if (root == null) {
       return;
     }
@@ -24,8 +32,8 @@ class Solution {
       list.add(root.val);
     }
     else {
-      populateLeaves(root.left, list);
-      populateLeaves(root.right, list);
+      helper(root.left, list);
+      helper(root.right, list);
     }
   }
 }
