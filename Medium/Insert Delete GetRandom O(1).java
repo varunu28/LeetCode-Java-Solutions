@@ -1,55 +1,42 @@
 class RandomizedSet {
 
-    /** Initialize your data structure here. */
-    Map<Integer, Integer> map;
-    List<Integer> list;
-    int lastIndex;
-    public RandomizedSet() {
-        map = new HashMap<>();
-        list = new ArrayList<>();
-        lastIndex = 0;
+  /** Initialize your data structure here. */
+  Map<Integer, Integer> map;
+  List<Integer> list;
+  public RandomizedSet() {
+    map = new HashMap<>();
+    list = new ArrayList<>();
+  }
+
+  /** Inserts a value to the set. Returns true if the set did not already contain the specified element. */
+  public boolean insert(int val) {
+    if (map.containsKey(val)) {
+      return false;
     }
+    list.add(val);
+    map.put(val, list.size() - 1);
+    return true;
+  }
 
-    /** Inserts a value to the set. Returns true if the set did not already contain the specified element. */
-    public boolean insert(int val) {
-        if (map.containsKey(val)) {
-            return false;
-        }
-
-        list.add(val);
-        map.put(val, lastIndex);
-        lastIndex++;
-
-        return true;
+  /** Removes a value from the set. Returns true if the set contained the specified element. */
+  public boolean remove(int val) {
+    if (!map.containsKey(val)) {
+      return false;
     }
+    int idx = map.get(val);
+    int lastIdx = list.size() - 1;
+    list.set(idx, list.get(lastIdx));
+    map.put(list.get(lastIdx), idx);
+    map.remove(val);
+    list.remove(lastIdx);
+    return true;
+  }
 
-    /** Removes a value from the set. Returns true if the set contained the specified element. */
-    public boolean remove(int val) {
-        if (!map.containsKey(val)) {
-            return false;
-        }
-
-        map.put(list.get(lastIndex-1), map.get(val));
-        swap(map.get(val), lastIndex-1);
-        list.remove(lastIndex-1);
-        map.remove(val);
-        lastIndex--;
-
-        return true;
-    }
-
-    private void swap(int id1, int id2) {
-        int temp = list.get(id1);
-        list.set(id1, list.get(id2));
-        list.set(id2, temp);
-    }
-
-    /** Get a random element from the set. */
-    public int getRandom() {
-        Random rand = new Random();
-        int idx = rand.nextInt(((lastIndex-1) - 0) + 1) + 0;
-        return list.get(idx);
-    }
+  /** Get a random element from the set. */
+  public int getRandom() {
+    int idx = new Random().nextInt(list.size());
+    return list.get(idx);
+  }
 }
 
 /**

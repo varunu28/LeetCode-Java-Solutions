@@ -1,13 +1,20 @@
 class Solution {
-    public boolean checkPossibility(int[] a) {
-        int c = 0;
-        for (int i = 1; i < a.length; i++) {
-            if (a[i] < a[i - 1]) {
-                if (c++ > 0) return false;
-                if (i - 2 < 0 || a[i - 2] <= a[i]) a[i - 1] = a[i];  
-                else a[i] = a[i - 1];  
-            }
+  public boolean checkPossibility(int[] nums) {
+    Integer probIdx = null;
+    for (int i = 0; i < nums.length - 1; i++) {
+      if (nums[i] > nums[i + 1]) {
+        if (probIdx != null) {
+          return false;
         }
-        return true;
+        probIdx = i;
+      }
     }
+    return (
+      probIdx == null || 
+      probIdx == 0 || 
+      probIdx == (nums.length - 2) || 
+      nums[probIdx - 1] <= nums[probIdx + 1] ||
+      nums[probIdx] <= nums[probIdx + 2]
+    );
+  }
 }
