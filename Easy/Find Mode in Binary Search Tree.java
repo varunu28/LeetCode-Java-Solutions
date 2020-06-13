@@ -4,46 +4,54 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-    public int[] findMode(TreeNode root) {
-        Map<Integer, Integer> map = new HashMap<>();
-        inorderTraversal(root, map);
-        
-        int maxVal = 0;
-        int count = 0;
-        
-        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
-            if (entry.getValue() > maxVal) {
-                maxVal = entry.getValue();
-                count = 1;
-            }    
-            else if (entry.getValue() == maxVal) {
-                count++;
-            }    
-        }
-        
-        int[] ans = new int[count];
-        int i = 0;
-        
-        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
-            if (entry.getValue() == maxVal) {
-                ans[i++] = entry.getKey();
-            }
-        }
-        
-        return ans;
-        
+  Integer prev = null;
+  int count = 1;
+  int max = 0;
+  public int[] findMode(TreeNode root) {
+    if (root == null) {
+      return new int[0];
     }
-    
-    public void inorderTraversal(TreeNode root, Map<Integer, Integer> map) {
-        
-        if (root == null) return;
-        
-        inorderTraversal(root.left, map);
-        map.put(root.val, map.getOrDefault(root.val, 0) + 1);
-        inorderTraversal(root.right, map);
+    List<Integer> list = new ArrayList<>();
+    traverse(root, list);
+    int[] ans = new int[list.size()];
+    for (int i = 0; i < list.size(); i++) {
+      ans[i] = list.get(i);
     }
+    return ans;
+  }
+  
+  private void traverse(TreeNode root, List<Integer> list) {
+    if (root == null) {
+      return;
+    }
+    traverse(root.left, list);
+    if (prev != null) {
+      if (root.val == prev) {
+        count++;
+      }
+      else {
+        count = 1;
+      }
+    }
+    if (count > max) {
+      max = count;
+      list.clear();
+      list.add(root.val);
+    }
+    else if (count == max) {
+      list.add(root.val);
+    }
+    prev = root.val;
+    traverse(root.right, list);
+  }
 }
