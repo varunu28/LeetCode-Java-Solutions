@@ -16,48 +16,33 @@
  * }
  */
 class Solution {
-    public void cleanRoom(Robot robot) {
-        Set<String> visited = new HashSet<>();
-        backtrack(robot, visited, 0, 0, 0);
+  int[][] dirs = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+  public void cleanRoom(Robot robot) {
+    Set<String> set = new HashSet<>();
+    int currX = 0;
+    int currY = 0;
+    helper(robot, currX, currY, 0, set);
+  }
+  
+  private void helper(Robot robot, int x, int y, int dir, Set<String> set) {
+    if (set.contains(x + "|" + y)) {
+      return;
     }
-    
-    private void backtrack(Robot robot, Set<String> visited, int x, int y, int dir) {
-        String key = x + "|" + y;
-        if (visited.contains(key)) {
-            return;
-        }
-        
-        visited.add(key);
-        robot.clean();
-        
-        for (int k = 0; k < 4; k++) {
-            int i = x;
-            int j = y;
-            if (robot.move()) {
-                if (dir == 0) {
-                    i = x - 1;
-                }
-                else if (dir == 1) {
-                    j = y + 1;
-                }
-                else if (dir == 2) {
-                    i = x + 1;
-                }
-                else {
-                    j = y - 1;
-                }
-                
-                backtrack(robot, visited, i, j, dir);
-                robot.turnLeft();
-                robot.turnLeft();
-                robot.move();
-                robot.turnRight();
-                robot.turnRight();
-            }
-            
-            robot.turnRight();
-            dir += 1;
-            dir %= 4;
-        }
+    set.add(x + "|" + y);
+    robot.clean();
+    for (int i = 0; i < 4; i++) {
+      if (robot.move()) {
+        int newX = x + dirs[dir][0];
+        int newY = y + dirs[dir][1];
+        helper(robot, newX, newY, dir, set);
+        robot.turnLeft();
+        robot.turnLeft();
+        robot.move();
+        robot.turnRight();
+        robot.turnRight();
+      }
+      robot.turnRight();
+      dir = (dir + 1) % 4;
     }
+  }
 }
