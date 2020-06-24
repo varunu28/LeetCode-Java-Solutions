@@ -1,21 +1,21 @@
 class NumArray {
-  int[] rangeSum;
+  int[] cumulativeSum;
+  int n;
   public NumArray(int[] nums) {
-    rangeSum = new int[nums.length];
-    int sum = 0;
-    for (int i = 0; i < nums.length; i++) {
-      sum += nums[i];
-      rangeSum[i] = sum;
+    n = nums.length;
+    cumulativeSum = new int[n];
+    int currSum = 0;
+    for (int i = 0; i < n; i++) {
+      currSum += nums[i];
+      cumulativeSum[i] = currSum;
     }
   }
 
   public int sumRange(int i, int j) {
-    int currSum = rangeSum[j];
-    int endIdx = i - 1;
-    if (endIdx >= 0) {
-      currSum -= rangeSum[endIdx];
+    if (i == 0) {
+      return cumulativeSum[j];
     }
-    return currSum;
+    return cumulativeSum[j] - cumulativeSum[i - 1];
   }
 }
 
