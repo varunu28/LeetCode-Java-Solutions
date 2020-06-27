@@ -1,27 +1,22 @@
 class Solution {
-    public int totalFruit(int[] tree) {
-        Map<Integer, Integer> map = new HashMap<>();
-        int maxSize = 0;
-        int start = 0;
-        int count = 0;
-        
-        for (int i = 0; i < tree.length; i++) {
-            map.put(tree[i], map.getOrDefault(tree[i], 0) + 1);
-            count++;
-            
-            while (map.size() > 2) {
-                map.put(tree[start], map.getOrDefault(tree[start], 0) - 1);
-                if (map.get(tree[start]) == 0) {
-                    map.remove(tree[start]);
-                }
-                
-                count--;
-                start++;
-            }
-            
-            maxSize = Math.max(maxSize, count);
+  public int totalFruit(int[] tree) {
+    Map<Integer, Integer> map = new HashMap<>();
+    int maxCount = 0;
+    int start = 0;
+    int end = 0;
+    int n = tree.length;
+    while (end < n) {
+      map.put(tree[end], map.getOrDefault(tree[end], 0) + 1);
+      while (map.size() > 2) {
+        map.put(tree[start], map.get(tree[start]) - 1);
+        if (map.get(tree[start]) == 0) {
+          map.remove(tree[start]);
         }
-        
-        return maxSize;
+        start++;
+      }
+      end++;
+      maxCount = Math.max(maxCount, end - start);
     }
+    return maxCount;
+  }
 }

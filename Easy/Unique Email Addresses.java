@@ -1,30 +1,37 @@
 class Solution {
-    public int numUniqueEmails(String[] emails) {
-        return Arrays.stream(emails)
-                    .map(e -> getFormattedEmail(e))
-                    .collect(Collectors.toSet())
-                    .size();
+  public int numUniqueEmails(String[] emails) {
+    Set<String> set = new HashSet<>();
+    for (String email : emails) {
+      set.add(formattedEmail(email));
     }
-    
-    private String getFormattedEmail(String email) {
-        StringBuilder sb = new StringBuilder();
-        int idx = 0;
-        
-        while (idx < email.length()) {
-            if (email.charAt(idx) == '@' || email.charAt(idx) == '+') {
-                break;
-            }
-            if (email.charAt(idx) != '.') {
-                sb.append(email.charAt(idx));
-            }
-            
-            idx++;
-        }
-        
-        while (email.charAt(idx) != '@') {
-            idx++;
-        }
-        
-        return sb.append('@').append(email.substring(idx + 1)).toString();
+    return set.size();
+  }
+  
+  private String formattedEmail(String s) {
+    StringBuilder sb = new StringBuilder();
+    int i = 0;
+    int n = s.length();
+    boolean plusFound = false;
+    while (i < n) {
+      char c = s.charAt(i);
+      if (c == '@') {
+        break;
+      }
+      if (plusFound) {
+        i++;
+        continue;
+      }
+      else if (c == '+') {
+        plusFound = true;
+      }
+      else if (c != '.') {
+        sb.append(c);
+      }
+      i++;
     }
+    while (i < n) {
+      sb.append(s.charAt(i++));
+    }
+    return sb.toString();
+  }
 }
