@@ -1,42 +1,37 @@
 class Solution {
-    public int[][] candyCrush(int[][] board) {
-        int rows = board.length;
-        int cols = board[0].length;
-        boolean flag = false;
-        
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j + 2 < cols; j++) {
-                int val = Math.abs(board[i][j]);
-                if (val != 0 && val == Math.abs(board[i][j + 1]) && val == Math.abs(board[i][j + 2])) {
-                    board[i][j] = board[i][j + 1] = board[i][j + 2] = -val;
-                    flag = true;
-                }
-            }
+  public int[][] candyCrush(int[][] board) {
+    int rows = board.length;
+    int cols = board[0].length;
+    boolean flag = false;
+    for (int r = 0; r < rows; r++) {
+      for (int c = 0; c + 2 < cols; c++) {
+        int val = Math.abs(board[r][c]);
+        if (val != 0 && val == Math.abs(board[r][c + 1]) && val == Math.abs(board[r][c + 2])) {
+          board[r][c] = board[r][c + 1] = board[r][c + 2] = -val;
+          flag = true;
         }
-        
-        for (int i = 0; i + 2 < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                int val = Math.abs(board[i][j]);
-                if (val != 0 && val == Math.abs(board[i + 1][j]) && val == Math.abs(board[i + 2][j])) {
-                    board[i][j] = board[i + 1][j] = board[i + 2][j] = -val;
-                    flag = true;
-                }
-            }
-        }
-        
-        for (int i = 0; i < cols; ++i) {
-            int rightRow = rows - 1;
-            for (int j = rows - 1; j >= 0; --j) {
-                if (board[j][i] > 0) {
-                    board[rightRow--][i] = board[j][i];
-                }
-            }
-            
-            while (rightRow >= 0) {
-                board[rightRow--][i] = 0;
-            }
-        }
-        
-        return flag ? candyCrush(board) : board;
+      }
     }
+    for (int r = 0; r + 2 < rows; r++) {
+      for (int c = 0; c < cols; c++) {
+        int val = Math.abs(board[r][c]);
+        if (val != 0 && val == Math.abs(board[r + 1][c]) && val == Math.abs(board[r + 2][c])) {
+          board[r][c] = board[r + 1][c] = board[r + 2][c] = -val;
+          flag = true;
+        }
+      }
+    }
+    for (int c = 0; c < cols; c++) {
+      int currRow = rows - 1;
+      for (int r = rows - 1; r >= 0; r--) {
+        if (board[r][c] > 0) {
+          board[currRow--][c] = board[r][c];
+        }
+      }
+      while (currRow >= 0) {
+        board[currRow--][c] = 0;
+      }
+    }
+    return flag ? candyCrush(board) : board;
+  }
 }
