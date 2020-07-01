@@ -1,41 +1,34 @@
 class Solution {
-    public List<String> removeComments(String[] source) {
-        List<String> ans = new ArrayList<>();
-        int i = 0;
-        int n = source.length;
-        boolean blockComment = false;
-        StringBuilder sb = new StringBuilder();
-
-        for (i = 0; i < n; i++) {
-            String line = source[i];
-
-            for (int j = 0; j < line.length(); j++) {
-                if (!blockComment) {
-                    if (j + 1 < line.length() && line.charAt(j) == '/' && line.charAt(j + 1) == '/') {
-                        break;
-                    }
-                    else if (j + 1 < line.length() && line.charAt(j) == '/' && line.charAt(j+1) == '*') {
-                        blockComment = true;
-                        j++;
-                    }
-                    else {
-                        sb.append(line.charAt(j));
-                    }
-                }
-                else {
-                    if (j + 1 < line.length() && line.charAt(j) == '*' && line.charAt(j + 1) == '/') {
-                        blockComment = false;
-                        j++;
-                    }
-                }
-            }
-
-            if (sb.length() > 0 && !blockComment) {
-                ans.add(sb.toString());
-                sb = new StringBuilder();
-            }
+  public List<String> removeComments(String[] source) {
+    StringBuilder sb = new StringBuilder();
+    List<String> list = new ArrayList<>();
+    boolean blockComment = false;
+    for (String word : source) {
+      for (int i = 0; i < word.length(); i++) {
+        if (!blockComment) {
+          if ((i + 1) < word.length() && word.charAt(i) == '/' && word.charAt(i + 1) == '/') {
+            break;
+          }
+          else if ((i + 1) < word.length() && word.charAt(i) == '/' && word.charAt(i + 1) == '*') {
+            blockComment = true;
+            i++;
+          }
+          else {
+            sb.append(word.charAt(i));
+          }
         }
-
-        return ans;
+        else {
+          if ((i + 1) < word.length() && word.charAt(i) == '*' && word.charAt(i + 1) == '/') {
+            blockComment = false;
+            i++;
+          }
+        }
+      }
+      if (!blockComment && sb.length() > 0) {
+        list.add(sb.toString());
+        sb.setLength(0);
+      }
     }
+    return list;
+  }
 }
