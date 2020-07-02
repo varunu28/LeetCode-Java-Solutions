@@ -4,24 +4,31 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-    int ans = 0;
-    int height = 0;
-    
-    public int findBottomLeftValue(TreeNode root) {
-        findBottomLeftValue(root, 1);
-        return ans;
+  public int findBottomLeftValue(TreeNode root) {
+    int[] ans = {0, 0};
+    helper(root, 1, ans);
+    return ans[1];
+  }
+  
+  private void helper(TreeNode root, int currLevel, int[] ans) {
+    if (root == null) {
+      return;
     }
-    
-    public void findBottomLeftValue(TreeNode root, int depth) {
-        if (height < depth) {
-            ans = root.val;
-            height = depth;
-        }
-        if (root.left!=null) findBottomLeftValue(root.left, depth+1);
-        if (root.right!=null) findBottomLeftValue(root.right, depth+1);
+    if (currLevel > ans[0]) {
+      ans[0] = currLevel;
+      ans[1] = root.val;
     }
+    helper(root.left, currLevel + 1, ans);
+    helper(root.right, currLevel + 1, ans);
+  }
 }
