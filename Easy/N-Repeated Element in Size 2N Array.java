@@ -1,12 +1,11 @@
 class Solution {
   public int repeatedNTimes(int[] A) {
-    Map<Integer, Integer> map = new HashMap<>();
-    int n = A.length / 2;
+    int[] arr = new int[10001];
     for (int num : A) {
-      map.put(num, map.getOrDefault(num, 0) + 1);
-      if (map.get(num) == n) {
+      if (arr[num] == 1) {
         return num;
       }
+      arr[num]++;
     }
     return -1;
   }

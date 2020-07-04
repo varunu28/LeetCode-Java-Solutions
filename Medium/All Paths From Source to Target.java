@@ -1,51 +1,24 @@
 class Solution {
-    public List<List<Integer>> allPathsSourceTarget(int[][] graph) {
-        int[][] newPath = getPath(graph);
-
-        int start = 0;
-        int destination = newPath.length-1;
-
-        List<List<Integer>> ans = printPossiblePaths(newPath, start, destination);
-        
-        return ans;
+  public List<List<Integer>> allPathsSourceTarget(int[][] graph) {
+    List<List<Integer>> list = new ArrayList<>();
+    int target = graph.length - 1;
+    List<Integer> temp = new ArrayList<>();
+    temp.add(0);
+    helper(list, temp, 0, graph, target);
+    return list;
+  }
+  
+  private void helper(List<List<Integer>> list, List<Integer> temp, int curr, int[][] graph, int target) {
+    if (curr == target) {
+      list.add(new ArrayList<>(temp));
     }
-    
-    private static int[][] getPath(int[][] graph) {
-        int[][] path = new int[graph.length][graph.length];
-
-        for (int i=0; i<graph.length; i++) {
-            for (int j=0; j<graph[i].length; j++) {
-                path[i][graph[i][j]] = 1;
-            }
-        }
-
-        return path;
+    else {
+      int[] connections = graph[curr];
+      for (int connection : connections) {
+        temp.add(connection);
+        helper(list, temp, connection, graph, target);
+        temp.remove(temp.size() - 1);
+      }
     }
-    
-    public List<List<Integer>> printPossiblePaths(int[][] paths, int start, int destination) {
-        List<List<Integer>> ans = new ArrayList<>();
-        printPossiblePathsHelper(paths, start, destination, new StringBuilder().append(start).append("-"), ans);
-
-        return ans;
-    }
-
-    private void printPossiblePathsHelper(int[][] paths, int start, int destination, StringBuilder sb, List<List<Integer>> ans) {
-        int[] possiblePaths = paths[start];
-        if (start == destination) {
-            List<Integer> list = Arrays.
-                                    stream(sb.toString().split("-")).
-                                    mapToInt(Integer::parseInt).
-                                    boxed().
-                                    collect(Collectors.toList());
-            
-            ans.add(list);
-            return;
-        }
-
-        for (int i=0; i<possiblePaths.length; i++) {
-            if (possiblePaths[i] == 1 && sb.indexOf(String.valueOf(i)) == -1) {
-                printPossiblePathsHelper(paths, i, destination, new StringBuilder().append(sb.toString()).append(i).append("-"), ans);
-            }
-        }
-    }
+  }
 }
