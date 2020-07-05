@@ -4,33 +4,34 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-    public void flatten(TreeNode root) {
-        if (root == null) {
-            return;
-        }
-        
-        // Store left and right of root
-        TreeNode left = root.left;
-        TreeNode right = root.right;
-        
-        root.left = null;
-        
-        flatten(left);
-        flatten(right);
-        
-        // Make root.right to null and traverse to last node of right
-        root.right = left;
-        TreeNode curr = root;
-        
-        while (curr.right != null) {
-            curr = curr.right;
-        }
-        
-        // Make last node's right equal to stored right
-        curr.right = right;
+  public void flatten(TreeNode root) {
+    if (root == null) {
+      return;
     }
+    Stack<TreeNode> stack = new Stack<>();
+    stack.push(root);
+    while (!stack.isEmpty()) {
+      TreeNode curr = stack.pop();
+      if (curr.right != null) {
+        stack.push(curr.right);
+      }
+      if (curr.left != null) {
+        stack.push(curr.left);
+      }
+      if (!stack.isEmpty()) {
+        curr.right = stack.peek();
+      }
+      curr.left = null;
+    }
+  }
 }
