@@ -1,55 +1,44 @@
-/**
- * Definition for an interval.
- * public class Interval {
- *     int start;
- *     int end;
- *     Interval() { start = 0; end = 0; }
- *     Interval(int s, int e) { start = s; end = e; }
- * }
- */
 class Solution {
-    public static List<Interval> merge(List<Interval> intervals) {
-
-        if (intervals.size() == 1) {
-            return intervals;
+  public int[][] merge(int[][] intervals) {
+    Arrays.sort(intervals, new Comparator<int[]>(){
+      public int compare(int[] o1, int[] o2) {
+        int c = o1[0] - o2[0];
+        if (c != 0) {
+          return c;
         }
-
-        List<Interval> ans = new ArrayList<>();
-        if (intervals.size() == 0) {
-            return ans;
+        return o1[1] - o2[1];
+      }
+    });
+    List<int[]> intervalList = new ArrayList<>();
+    int end = 0;
+    int n = intervals.length;
+    int currStart = -1;
+    int currEnd = -1;
+    while (end < n) {
+      if (currStart == -1 && currEnd == -1) {
+        currStart = intervals[end][0];
+        currEnd = intervals[end][1];
+        end++;
+      }
+      if (end < n) {
+        if (currEnd >= intervals[end][0]) {
+          currEnd = Math.max(intervals[end][1], currEnd);
+          end++;
         }
-
-        Collections.sort(intervals, new Comparator<Interval>() {
-            @Override
-            public int compare(Interval o1, Interval o2) {
-                return o1.start - o2.start;
-            }
-        });
-
-        int i = 0;
-        Interval prevInterval = null;
-
-        List<Interval> temp = new ArrayList<>(intervals);
-
-        for (Interval interval : temp) {
-            if (i == 0) {
-                prevInterval = interval;
-                i++;
-                continue;
-            }
-
-            if (interval.start <= prevInterval.end) {
-                if (interval.end >= prevInterval.end) {
-                    prevInterval.end = interval.end;
-                }
-
-                intervals.remove(interval);
-            }
-            else {
-                prevInterval = interval;
-            }
+        else {
+          intervalList.add(new int[]{currStart, currEnd});
+          currStart = -1;
+          currEnd = -1;
         }
-
-        return intervals;
+      }
+      if (end == n && currStart != -1 && currEnd != -1) {
+        intervalList.add(new int[]{currStart, currEnd});
+      }
     }
+    int[][] ans = new int[intervalList.size()][2];
+    for (int i = 0; i < intervalList.size(); i++) {
+      ans[i] = intervalList.get(i);
+    }
+    return ans;
+  }
 }
