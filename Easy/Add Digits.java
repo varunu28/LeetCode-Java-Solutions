@@ -1,29 +1,17 @@
 class Solution {
   public int addDigits(int num) {
-    while (isDigitCountGreaterThanOne(num)) {
+    while (String.valueOf(num).length() > 1) {
       num = getDigitSum(num);
     }
     return num;
   }
   
-  private int getDigitSum(int num) {
-    int sum = 0;
-    while (num > 0) {
-      sum += num % 10;
-      num /= 10;
+  private int getDigitSum(int n) {
+    int newNum = 0;
+    while (n > 0) {
+      newNum += n % 10;
+      n /= 10;
     }
-    return sum;
-  }
-  
-  private boolean isDigitCountGreaterThanOne(int num) {
-    int count = 0;
-    while (num > 0) {
-      num /= 10;
-      count++;
-      if (count > 1) {
-        return true;
-      }
-    }
-    return false;
+    return newNum;
   }
 }
