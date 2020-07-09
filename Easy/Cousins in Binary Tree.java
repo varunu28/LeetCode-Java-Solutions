@@ -4,42 +4,38 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
   public boolean isCousins(TreeNode root, int x, int y) {
-    if (root == null || x == y) {
-      return true;
-    }
-    ParentData p1 = new ParentData();
-    ParentData p2 = new ParentData();
-    helper(root, x, 0, null, p1);
-    helper(root, y, 0, null, p2);
-    return p1.depth == p2.depth && p1.parent != p2.parent;
+    int[] depthAndParentX = {0, 0};
+    int[] depthAndParentY = {0, 0};
+    helper(root, x, 0, null, depthAndParentX);
+    helper(root, y, 0, null, depthAndParentY);
+    return depthAndParentX[0] == depthAndParentY[0] && depthAndParentX[1] != depthAndParentY[1];
   }
   
-  private void helper(TreeNode root, int x, int currDepth, TreeNode parent, ParentData p) {
+  private void helper(
+    TreeNode root, int num, int currDepth, TreeNode currParent, int[] depthAndParent
+  ) {
     if (root == null) {
       return;
     }
-    if (root.val == x) {
-      p.depth = currDepth;
-      p.parent = parent;
+    if (root.val == num) {
+      System.out.println(root.val + " " + num + " " + (currParent == null ? -1 : currParent.val));
+      depthAndParent[0] = currDepth;
+      depthAndParent[1] = currParent == null ? -1 : currParent.val;
     }
     else {
-      helper(root.left, x, currDepth + 1, root, p);
-      helper(root.right, x, currDepth + 1, root, p);
+      helper(root.left, num, currDepth + 1, root, depthAndParent);
+      helper(root.right, num, currDepth + 1, root, depthAndParent);
     }
-  }
-}
-
-class ParentData {
-  int depth;
-  TreeNode parent;
-  
-  public ParentData() {
-    this.depth = 0;
-    this.parent = null;
   }
 }
