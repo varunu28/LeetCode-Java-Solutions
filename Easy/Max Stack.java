@@ -1,62 +1,45 @@
 class MaxStack {
 
-    /** initialize your data structure here. */
-    Stack<Integer> stack;
-    Stack<Integer> maxStack;
-    
-    public MaxStack() {
-        stack = new Stack<>();
-        maxStack = new Stack<>();
+  /** initialize your data structure here. */
+  Stack<Integer> stack;
+  Stack<Integer> max;
+  public MaxStack() {
+    stack = new Stack<>();
+    max = new Stack<>();
+  }
+
+  public void push(int x) {
+    stack.push(x);
+    max.push(max.isEmpty() ? x : Math.max(x, max.peek()));
+  }
+
+  public int pop() {
+    max.pop();
+    return stack.pop();
+  }
+
+  public int top() {
+    return stack.peek();
+  }
+
+  public int peekMax() {
+    return max.peek();
+  }
+
+  public int popMax() {
+    int num = max.peek();
+    Stack<Integer> temp = new Stack<>();
+    while (stack.peek() != num) {
+      temp.push(stack.pop());
+      max.pop();
     }
-    
-    public void push(int x) {
-        stack.push(x);
-        if (maxStack.isEmpty()) {
-            maxStack.push(x);
-        }
-        else {
-            maxStack.push(Math.max(maxStack.peek(), x));
-        }
+    max.pop();
+    stack.pop();
+    while (!temp.isEmpty()) {
+      push(temp.pop());
     }
-    
-    public int pop() {
-        int val = stack.pop();
-        maxStack.pop();
-        return val;
-    }
-    
-    public int top() {
-        return stack.peek();
-    }
-    
-    public int peekMax() {
-        return maxStack.peek();
-    }
-    
-    public int popMax() {
-        int maxOnTop = maxStack.peek();
-        Stack<Integer> temp = new Stack<>();
-        while (stack.peek() != maxOnTop) {
-            temp.add(stack.pop());
-            maxStack.pop();
-        }
-        
-        stack.pop();
-        maxStack.pop();
-        
-        while (!temp.isEmpty()) {
-            int popped = temp.pop();
-            stack.push(popped);
-            if (maxStack.isEmpty()) {
-                maxStack.push(popped);
-            }
-            else {
-                maxStack.push(Math.max(popped, maxStack.peek()));
-            }
-        }
-        
-        return maxOnTop;
-    }
+    return num;
+  } 
 }
 
 /**
