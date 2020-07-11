@@ -1,21 +1,16 @@
 class Solution {
-    public static List<List<Integer>> subsets(int[] nums) {
-
-        Arrays.sort(nums);
-        List<List<Integer>> perms = new ArrayList<>();
-        List<Integer> temp = new ArrayList<>();
-        subsetsHelper(nums, perms, temp, 0);
-
-        return perms;
+  public List<List<Integer>> subsets(int[] nums) {
+    Set<List<Integer>> set = new HashSet<>();
+    helper(nums, 0, new ArrayList<>(), set);
+    return new ArrayList<>(set);
+  }
+  
+  private void helper(int[] nums, int idx, List<Integer> temp, Set<List<Integer>> set) {
+    set.add(new ArrayList<>(temp));
+    for (int i = idx; i < nums.length; i++) {
+      temp.add(nums[i]);
+      helper(nums, i + 1, temp, set);
+      temp.remove(temp.size() - 1);
     }
-
-    private static void subsetsHelper(int[] nums, List<List<Integer>> perms, List<Integer> temp, int start) {
-        perms.add(new ArrayList<>(temp));
-
-        for (int i=start; i<nums.length; i++) {
-            temp.add(nums[i]);
-            subsetsHelper(nums, perms, temp, i+1);
-            temp.remove(temp.size()-1);
-        }
-    }
+  }
 }
