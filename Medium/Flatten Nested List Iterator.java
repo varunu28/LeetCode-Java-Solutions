@@ -16,36 +16,48 @@
  * }
  */
 public class NestedIterator implements Iterator<Integer> {
-    
-    Stack<NestedInteger> stack;
-    public NestedIterator(List<NestedInteger> nestedList) {
-        stack = new Stack<>();
-        for (int i = nestedList.size() - 1; i >= 0; i--) {
-            stack.push(nestedList.get(i));
-        }
-    }
+  List<NestedInteger> nestedList;
+  Queue<Integer> queue;
+  int idx;
+  public NestedIterator(List<NestedInteger> nestedList) {
+    this.nestedList = nestedList;
+    queue = new LinkedList<>();
+    idx = 0;
+    addToQueue();
+  }
 
-    @Override
-    public Integer next() {
-        return stack.pop().getInteger();
+  @Override
+  public Integer next() {
+    int val = queue.remove();
+    if (queue.isEmpty()) {
+      if (idx != nestedList.size()) {
+        addToQueue();
+      }
     }
+    return val;
+  }
+  
+  private void addToQueue() {
+    while (idx < nestedList.size() && queue.isEmpty()) {
+      addToQueueHelper(nestedList.get(idx++));
+    }
+  }
+  
+  private void addToQueueHelper(NestedInteger ns) {
+    if (ns.isInteger()) {
+      queue.add(ns.getInteger());
+    }
+    else {
+      for (NestedInteger ni : ns.getList()) {
+        addToQueueHelper(ni);
+      }
+    }
+  }
 
-    @Override
-    public boolean hasNext() {
-        while (!stack.isEmpty()) {
-            NestedInteger curr = stack.peek();
-            if (curr.isInteger()) {
-                return true;
-            }
-            
-            NestedInteger temp = stack.pop();
-            for (int i = temp.getList().size() - 1; i >= 0; i--) {
-                stack.push(temp.getList().get(i));
-            }
-        }
-        
-        return false;
-    }
+  @Override
+  public boolean hasNext() {
+    return !(queue.isEmpty() && idx == nestedList.size());
+  }
 }
 
 /**
