@@ -2,24 +2,24 @@ class Solution {
   List<String> result = null;
   public List<String> findItinerary(List<List<String>> tickets) {
     Map<String, List<String>> map = new HashMap<>();
-    Map<String, boolean[]> visitMap = new HashMap<>();
     int flights = tickets.size();
     for (List<String> ticket : tickets) {
       map.computeIfAbsent(ticket.get(0), k -> new ArrayList<>()).add(ticket.get(1));
     }
+    Map<String, boolean[]> visited = new HashMap<>();
     for (Map.Entry<String, List<String>> entry : map.entrySet()) {
       Collections.sort(entry.getValue());
-      visitMap.put(entry.getKey(), new boolean[entry.getValue().size()]);
+      visited.put(entry.getKey(), new boolean[entry.getValue().size()]);
     }
     LinkedList<String> route = new LinkedList<String>();
     route.add("JFK");
-    backtrack(map, visitMap, flights, route, "JFK");
+    backtrack(map, visited, flights, route, "JFK");
     return result;
   }
   
   private boolean backtrack(
     Map<String, List<String>> map,
-    Map<String, boolean[]> visitMap,
+    Map<String, boolean[]> visited,
     int flights,
     LinkedList<String> route,
     String origin
@@ -31,20 +31,18 @@ class Solution {
     if (!map.containsKey(origin)) {
       return false;
     }
-    int i = 0;
-    boolean[] visited = visitMap.get(origin);
-    for (String dest : map.get(origin)) {
-      if (!visited[i]) {
-        visited[i] = true;
-        route.add(dest);
-        boolean res = backtrack(map, visitMap, flights, route, dest);
+    boolean[] visit = visited.get(origin);
+    for (int i = 0; i < map.get(origin).size(); i++) {
+      if (!visit[i]) {
+        visit[i] = true;
+        route.add(map.get(origin).get(i));
+        boolean res = backtrack(map, visited, flights, route, map.get(origin).get(i));
         route.pollLast();
-        visited[i] = false;
-        if (res == true) {
-          return true;
+        visit[i] = false;
+        if (res) {
+          return res;
         }
       }
-      i++;
     }
     return false;
   }

@@ -4,29 +4,28 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-    public int kthSmallest(TreeNode root, int k) {
-        Stack<TreeNode> stack = new Stack<>();
-        
-        while (root != null || !stack.empty()) {
-            while (root != null) {
-                stack.push(root);
-                root = root.left;
-            }
-            
-            root = stack.peek();
-            stack.pop();
-            
-            if (--k == 0) {
-                return root.val;
-            }
-            
-            root = root.right;
-        }
-        
-        return -1;
+  public int kthSmallest(TreeNode root, int k) {
+    Stack<TreeNode> stack = new Stack<>();
+    while (true) {
+      while (root != null) {
+        stack.push(root);
+        root = root.left;
+      }
+      root = stack.pop();
+      if (--k == 0) {
+        return root.val;
+      }
+      root = root.right;
     }
+  }
 }
