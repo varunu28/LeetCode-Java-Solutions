@@ -1,19 +1,39 @@
 class Solution {
   public String toGoatLatin(String S) {
-    StringBuilder addAString = new StringBuilder("a");
     StringBuilder sb = new StringBuilder();
-    Set<Character> vowels = new HashSet<>(Arrays.asList('a', 'e', 'i', 'o', 'u'));
-    String[] strs = S.split("\\s+");
-    for (int i = 0; i < strs.length; i++) {
-      if (vowels.contains(Character.toLowerCase(strs[i].charAt(0)))) {
-        sb.append(strs[i]);
+    StringBuilder temp = new StringBuilder();
+    String vowels = "aeiouAEIOU";
+    StringBuilder aAppend = new StringBuilder("a");
+    int idx = 0;
+    int n = S.length();
+    Boolean startVowel = null;
+    while (idx < n) {
+      if (startVowel == null) {
+        startVowel = vowels.indexOf(S.charAt(idx)) != -1;
+      }
+      if (S.charAt(idx) == ' ' || idx == n - 1) {
+        if (S.charAt(idx) != ' ') {
+          temp.append(S.charAt(idx));
+        }
+        if (!startVowel) {
+          char c = temp.charAt(0);
+          temp.deleteCharAt(0);
+          temp.append(c);
+        }
+        temp.append("ma").append(aAppend.toString());
+        sb.append(temp.toString());
+        temp.setLength(0);
+        aAppend.append("a");
+        startVowel = null;
+        if (idx != n - 1) {
+          sb.append(" ");
+        }
       }
       else {
-        sb.append(strs[i].substring(1)).append(strs[i].charAt(0));
+        temp.append(S.charAt(idx));
       }
-      sb.append("ma").append(addAString.toString()).append(" ");
-      addAString.append("a");
+      idx++;
     }
-    return sb.toString().trim();
+    return sb.toString();
   }
 }
