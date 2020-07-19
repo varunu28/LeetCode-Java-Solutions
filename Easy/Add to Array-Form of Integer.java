@@ -1,58 +1,20 @@
 class Solution {
-    public List<Integer> addToArrayForm(int[] A, int K) {
-        int[] kArr = getArray(K);
-        int len1 = A.length - 1;
-        int len2 = kArr.length - 1;
-        int carry = 0;
-
-        List<Integer> list = new ArrayList<>();
-
-        while (len1 >= 0 || len2 >= 0) {
-            int temp = 0;
-
-            if (len1 >= 0 && len2 >= 0) {
-                temp = A[len1] + kArr[len2] + carry;
-                len1--;
-                len2--;
-            }
-            else if (len1 >= 0 && len2 < 0) {
-                temp = A[len1] + carry;
-                len1--;
-            }
-            else {
-                temp = kArr[len2] + carry;
-                len2--;
-            }
-
-            if (temp > 9) {
-                carry = temp / 10;
-                temp %= 10;
-            }
-            else {
-                carry = 0;
-            }
-
-            list.add(temp);
-        }
-
-        if (carry > 0) {
-            list.add(carry);
-        }
-
-        Collections.reverse(list);
-
-        return list;
+  public List<Integer> addToArrayForm(int[] A, int K) {
+    List<Integer> list = new ArrayList<>();
+    int idx = A.length - 1;
+    int carry = 0;
+    while (K > 0 || idx >= 0 || carry > 0) {
+      int temp = (
+        (K > 0 ? K % 10 : 0) +
+        (idx >= 0 ? A[idx--] : 0) + 
+        carry
+      );
+      K /= 10;
+      carry = temp > 9 ? temp / 10 : 0;
+      temp = temp > 9 ? temp % 10 : temp;
+      list.add(temp);
     }
-
-    private int[] getArray(int k) {
-        int len = String.valueOf(k).length();
-        int[] ans = new int[len];
-
-        for (int i=len-1; i>=0; i--) {
-            ans[i] = k % 10;
-            k /= 10;
-        }
-
-        return ans;
-    }
+    Collections.reverse(list);
+    return list;
+  }
 }
