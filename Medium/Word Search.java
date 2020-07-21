@@ -1,36 +1,33 @@
 class Solution {
-  int[][] dirs = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+  public int[][] dirs = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
   public boolean exist(char[][] board, String word) {
-    int rows = board.length;
-    int cols = board[0].length;
-    for (int i = 0; i < rows; i++) {
-      for (int j = 0; j < cols; j++) {
-        if (dfs(board, i, j, word, 0, new boolean[rows][cols], rows, cols)) {
+    if (board.length == 0 || board[0].length == 0) {
+      return false;
+    }
+    for (int i = 0; i < board.length; i++) {
+      for (int j = 0; j < board[0].length; j++) {
+        if (exists(board, i, j, word, 0, new boolean[board.length][board[0].length])) {
           return true;
         }
       }
     }
     return false;
-  }
+  } 
   
-  private boolean dfs(char[][] board, int x, int y, String s, int idx, 
-                      boolean[][] visited, int rows, int cols) {
-    if (idx == s.length()) {
+  private boolean exists(char[][] board, int i, int j, String word, int idx, boolean[][] visited) {
+    if (idx == word.length()) {
       return true;
     }
-    if (x < 0 || x >= rows || y < 0 || y >= cols || visited[x][y]) {
+    if (i < 0 || i >= board.length || j < 0 || j >= board[0].length || visited[i][j] || word.charAt(idx) != board[i][j]) {
       return false;
     }
-    if (s.charAt(idx) != board[x][y]) {
-      return false;
-    }
-    visited[x][y] = true;
+    visited[i][j] = true;
     for (int[] dir : dirs) {
-      if (dfs(board, x + dir[0], y + dir[1], s, idx + 1, visited, rows, cols)) {
+      if (exists(board, i + dir[0], j + dir[1], word, idx + 1, visited)) {
         return true;
       }
     }
-    visited[x][y] = false;
+    visited[i][j] = false;
     return false;
   }
 }
