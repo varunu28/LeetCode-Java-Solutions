@@ -1,39 +1,26 @@
 class SnapshotArray {
-
-    int[] arr;
-    Map<Integer, Map<Integer, Integer>> map;
-    int count;
-    Map<Integer, Integer> temp;
-    public SnapshotArray(int length) {
-        arr = new int[length];
-        map = new HashMap<>();
-        count = 0;
-        temp = new HashMap<>();
+  TreeMap<Integer, Integer>[] A;
+  int snapId;
+  public SnapshotArray(int length) {
+    A = new TreeMap[length];
+    snapId = 0;
+    for (int i = 0; i < length; i++) {
+      A[i] = new TreeMap<Integer, Integer>();
+      A[i].put(0, 0);
     }
+  }
 
-    public void set(int index, int val) {
-        arr[index] = val;
-        temp.put(index, val);
-    }
+  public void set(int index, int val) {
+    A[index].put(snapId, val);
+  }
 
-    public int snap() {
-        map.put(count, new HashMap<>(temp));
-        int snapCount = count++;
-        temp = new HashMap<>();
-        return snapCount;
-    }
+  public int snap() {
+    return snapId++;
+  }
 
-    public int get(int index, int snap_id) {
-        while (snap_id >= 0) {
-            if (map.get(snap_id).containsKey(index)) {
-                return map.get(snap_id).get(index);
-            }
-
-            snap_id--;
-        }
-
-        return 0;
-    }
+  public int get(int index, int snap_id) {
+    return A[index].floorEntry(snap_id).getValue();
+  }
 }
 
 /**
