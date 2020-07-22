@@ -1,31 +1,25 @@
 class Solution {
-    public boolean checkInclusion(String s1, String s2) {
-        int l1 = s1.length();
-        int l2 = s2.length();
-        if (l1 > l2) return false;
-        
-        int[] check = new int[26];
-        
-        for (int i=0;i<l1;i++) {
-            check[s1.charAt(i)-'a']++;
-            check[s2.charAt(i)-'a']--;
-        }
-        
-        if (zeroArr(check)) return true;
-        
-        for (int i = l1; i < l2; i++) {
-            check[s2.charAt(i) - 'a']--;
-            check[s2.charAt(i - l1) - 'a']++;
-            if (zeroArr(check)) return true;
-        }
-        
-        return false;
+  public boolean checkInclusion(String s1, String s2) {
+    if (s1.length() > s2.length()) {
+      return false;
     }
-    
-    boolean zeroArr(int[] arr) {
-        for (int i=0;i<26;i++) {
-            if (arr[i] != 0) return false;
-        }
+    int[] counter = new int[26];
+    for (char c : s1.toCharArray()) {
+      counter[c - 'a']++;
+    }
+    String targetStr = Arrays.toString(counter);
+    int[] targetCounter = new int[26];
+    for (int i = 0; i < s1.length() - 1; i++) {
+      targetCounter[s2.charAt(i) - 'a']++;
+    }
+    int start = 0;
+    for (int i = s1.length() - 1; i < s2.length(); i++) {
+      targetCounter[s2.charAt(i) - 'a']++;
+      if (Arrays.toString(targetCounter).equals(targetStr)) {
         return true;
+      }
+      targetCounter[s2.charAt(start++) - 'a']--;
     }
+    return false;
+  }
 }
