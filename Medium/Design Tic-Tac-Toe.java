@@ -1,48 +1,67 @@
 class TicTacToe {
 
-    /** Initialize your data structure here. */
-    private int[] rows;
-    private int[] cols;
-    private int leftDiagCount;
-    private int rightDiagCount;
-    private int n;
+  /** Initialize your data structure here. */
+  int[][] board;
+  Map<Integer, Map<Integer, Integer>> rowMap;
+  Map<Integer, Map<Integer, Integer>> colMap;
+  Map<Integer, Integer> leftDiagonalMap;
+  Map<Integer, Integer> rightDiagonalMap;
+  int n;
+  public TicTacToe(int n) {
+    board = new int[n][n];
+    rowMap = new HashMap<>();
+    colMap = new HashMap<>();
+    leftDiagonalMap = new HashMap<>();
+    rightDiagonalMap = new HashMap<>();
+    this.n = n;
+  }
 
-    public TicTacToe(int n) {
-        this.n = n;
-        this.rows = new int[n];
-        this.cols = new int[n];
-        leftDiagCount = 0;
-        rightDiagCount = 0;
+  /** Player {player} makes a move at ({row}, {col}).
+      @param row The row of the board.
+      @param col The column of the board.
+      @param player The player, can be either 1 or 2.
+      @return The current winning condition, can be either:
+              0: No one wins.
+              1: Player 1 wins.
+              2: Player 2 wins. */
+  public int move(int row, int col, int player) {
+    if (!rowMap.containsKey(row)) {
+      Map<Integer, Integer> map = new HashMap<>();
+      rowMap.put(row, map);
     }
-
-    /** Player {player} makes a move at ({row}, {col}).
-     @param row The row of the board.
-     @param col The column of the board.
-     @param player The player, can be either 1 or 2.
-     @return The current winning condition, can be either:
-     0: No one wins.
-     1: Player 1 wins.
-     2: Player 2 wins. */
-    public int move(int row, int col, int player) {
-        int moveValue = player == 1 ? 1 : -1;
-        rows[row] += moveValue;
-        cols[col] += moveValue;
-        if (row == col) {
-            leftDiagCount += moveValue;
-        }
-        if (col == n - row - 1) {
-            rightDiagCount += moveValue;
-        }
-        if (
-            Math.abs(rows[row]) == n ||
-            Math.abs(cols[col]) == n ||
-            Math.abs(leftDiagCount) == n || 
-            Math.abs(rightDiagCount) == n
-        ) {
-            return player;
-        }
-        return 0;
+    rowMap.get(row).put(player, rowMap.get(row).getOrDefault(player, 0) + 1);
+    if (ifWinner(rowMap.get(row), player)) {
+      return player;
     }
+    if (!colMap.containsKey(col)) {
+      Map<Integer, Integer> map = new HashMap<>();
+      colMap.put(col, map);
+    }
+    colMap.get(col).put(player, colMap.get(col).getOrDefault(player, 0) + 1);
+    if (ifWinner(colMap.get(col), player)) {
+      return player;
+    }
+    if (row == col) {
+      leftDiagonalMap.put(player, leftDiagonalMap.getOrDefault(player, 0) + 1);
+    }
+    if (ifWinner(leftDiagonalMap, player)) {
+      return player;
+    }
+    if (row + col == n - 1) {
+      rightDiagonalMap.put(player, rightDiagonalMap.getOrDefault(player, 0) + 1);
+    }
+    if (ifWinner(rightDiagonalMap, player)) {
+      return player;
+    }
+    return 0;
+  }
+  
+  private boolean ifWinner(Map<Integer, Integer> map, int player) {
+    if (map.size() > 1) {
+      return false;
+    }
+    return map.values().stream().reduce(0, Integer::sum) == n;
+  }
 }
 
 /**
