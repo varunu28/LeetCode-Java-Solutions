@@ -1,58 +1,62 @@
 class Solution {
   public List<String> mostVisitedPattern(String[] username, int[] timestamp, String[] website) {
-    List<List<String>> sessions = new ArrayList<>();
-    int n = timestamp.length;
-    // Form a session list -> user[i] at timestamp[i] visited website[i]
-    for (int i = 0; i < n; i++) {
-      sessions.add(new ArrayList<>());
-      sessions.get(i).add(username[i]);
-      sessions.get(i).add(String.valueOf(timestamp[i]));
-      sessions.get(i).add(website[i]);
+    Map<String, List<WebEntry>> map = new HashMap<>();
+    for (int i = 0; i < timestamp.length; i++) {
+      map.computeIfAbsent(username[i], k -> new ArrayList<>()).add(
+        new WebEntry(website[i], timestamp[i], username[i])
+      );
     }
-    // Sort by timestamp
-    sessions.sort((a, b) -> Integer.parseInt(a.get(1)) - Integer.parseInt(b.get(1)));
-    Map<String, List<String>> visited = new HashMap<>();
-    // Create a hashmap user -> list of websites visited
-    for (int i = 0; i < n; i++) {
-      visited.computeIfAbsent(sessions.get(i).get(0), k -> new ArrayList<>()).add(sessions.get(i).get(2));
-    }
-    Map<String, Integer> sequence = new HashMap<>();
-    int maxCount = 0;
-    String maxSeq = "";
-    for (String name : visited.keySet()) {
-      if (visited.get(name).size() >= 3) {
-        // Form all possible combination of websites visited of size 3
-        Set<String> subseqences = subseqence(visited.get(name));
-        for (String seq : subseqences){
-          sequence.put(seq, sequence.getOrDefault(seq, 0) + 1);
-          if(sequence.get(seq) > maxCount){
-            maxCount = sequence.get(seq);
-            maxSeq = seq;
-          }
-          else if (sequence.get(seq) == maxCount && seq.compareTo(maxSeq) < 0) {
-            maxSeq = seq;
+    Map<String, Set<String>> visitMap = new HashMap<>();
+    Set<String> threeSequenceSet = new HashSet<>(); 
+    for (String key : map.keySet()) {
+      List<WebEntry> webentries = map.get(key);
+      Collections.sort(webentries, new Comparator<WebEntry>(){
+        public int compare(WebEntry w1, WebEntry w2) {
+          return w1.timestamp - w2.timestamp;
+        }
+      });
+      for (int i = 0; i < webentries.size(); i++) {
+        for (int j = i + 1; j < webentries.size(); j++) {
+          for (int k = j + 1; k < webentries.size(); k++) {
+            String websiteKey = (
+              webentries.get(i).website + " " + 
+              webentries.get(j).website + " " + 
+              webentries.get(k).website
+            );
+            visitMap.computeIfAbsent(websiteKey, m -> new HashSet<>()).add(key);
+            threeSequenceSet.add(websiteKey);
           }
         }
       }
     }
-    String[] strs = maxSeq.split(",");
-    List<String> res = new ArrayList<>();
-    for (String s : strs) {
-      res.add(s);
+    List<String> threeSequenceList = new ArrayList<>(threeSequenceSet);
+    Collections.sort(threeSequenceList, new Comparator<String>(){
+      public int compare(String s1, String s2) {
+        int c = visitMap.get(s2).size() - visitMap.get(s1).size();
+        if (c != 0) {
+          return c;
+        }
+        return s1.compareTo(s2);
+      }
+    });
+    String[] ansArr = threeSequenceList.get(0).split("\\s+");
+    List<String> ans = new ArrayList<>();
+    for (int i = 0; i < ansArr.length; i++) {
+      ans.add(ansArr[i]);
     }
-    return res;
+    return ans;
   }
+}
+
+
+class WebEntry {
+  String website;
+  int timestamp;
+  String username;
   
-  private Set<String> subseqence(List<String> list) {
-    Set<String> set = new HashSet<>();
-    int n = list.size();
-    for (int i = 0; i < n - 2; i++) {
-      for (int j = i + 1; j < n - 1; j++) {
-        for (int k = j + 1; k < n; k++) {
-          set.add(list.get(i) + "," + list.get(j) + "," + list.get(k));
-        }
-      }
-    }
-    return set;
+  public WebEntry(String website, int timestamp, String username) {
+    this.website = website;
+    this.timestamp = timestamp;
+    this.username = username;
   }
 }

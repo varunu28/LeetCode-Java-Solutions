@@ -1,36 +1,59 @@
 class Solution {
   public List<List<String>> suggestedProducts(String[] products, String searchWord) {
-    List<List<String>> ans = new ArrayList<>();
-    List<String> prev = new ArrayList<>();
-    for (int i = 0; i < searchWord.length(); i++) {
-      List<String> curr = new ArrayList<>();
-      List<String> temp = new ArrayList<>();
-      PriorityQueue<String> pq = new PriorityQueue<>(Comparator.reverseOrder());
-      if (i == 0) {
-        helper(Arrays.asList(products), searchWord, i, curr, pq);
+    Node root = new Node('-');
+    for (String product : products) {
+      addProduct(product, root);
+    }
+    List<List<String>> list = new ArrayList<>();
+    Node curr = root;
+    boolean notFound = false;
+    for (char c : searchWord.toCharArray()) {
+      if (notFound) {
+        list.add(new ArrayList<>());
       }
       else {
-        helper(prev, searchWord, i, curr, pq);
-      }
-      while (!pq.isEmpty()) {
-        temp.add(pq.poll());
-      }
-      Collections.sort(temp);
-      ans.add(temp);
-      prev = curr;
-    }
-    return ans;
-  }
-
-  private void helper(List<String> products, String searchWord, int i, List<String> curr, PriorityQueue<String> pq) {
-    for (String word : products) {
-      if (i < word.length() && word.charAt(i) == searchWord.charAt(i)) {
-        curr.add(word);
-        pq.add(word);
-        if (pq.size() > 3) {
-          pq.poll();
+        if (!curr.children.containsKey(c)) {
+          notFound = true;
+          list.add(new ArrayList<>());
+          continue;
         }
+        curr = curr.children.get(c);
+        List<String> temp = new ArrayList<>();
+        PriorityQueue<String> words = new PriorityQueue<>(curr.possibleWords);
+        for (int i = 0; i < 3 && !words.isEmpty(); i++) {
+          temp.add(words.poll());
+        }
+        Collections.reverse(temp);
+        list.add(temp);
       }
     }
+    return list;
+  }
+  
+  private void addProduct(String product, Node root) {
+    Node curr = root;
+    for (int i = 0; i < product.length(); i++) {
+      if (!curr.children.containsKey(product.charAt(i))) {
+        curr.children.put(product.charAt(i), new Node(product.charAt(i)));
+      }
+      curr = curr.children.get(product.charAt(i));
+      curr.possibleWords.add(product);
+      if (curr.possibleWords.size() > 3) {
+        curr.possibleWords.poll();
+      }
+    }
+  }
+}
+
+
+class Node {
+  char c;
+  Map<Character, Node> children;
+  PriorityQueue<String> possibleWords;
+  
+  public Node(char c) {
+    this.c = c;
+    children = new HashMap<>();
+    possibleWords = new PriorityQueue<>(Comparator.reverseOrder());
   }
 }
