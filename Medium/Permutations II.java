@@ -1,28 +1,34 @@
 class Solution {
   public List<List<Integer>> permuteUnique(int[] nums) {
-    Set<List<Integer>> ans = new HashSet <>();
-    Map <Integer, Integer> map = new HashMap <>();
-    for (int num : nums) {
-      map.put(num, map.getOrDefault(num, 0) + 1);
+    List<List<Integer>> ans = new ArrayList<>();
+    if (nums.length == 0) {
+      return ans;
     }
-    permuteHelper(nums, nums.length, ans, map, new ArrayList<>());
-    return new ArrayList <>(ans);
+    List<Integer> curr = new ArrayList<>();
+    Arrays.sort(nums);
+    helper(nums, ans, curr, new boolean[nums.length]);
+    return ans;
   }
-
-  private void permuteHelper(int[] nums, int length, Set<List<Integer>> ans, Map<Integer, Integer> used, ArrayList<Integer> curr) {
-    if (curr.size() == length) {
-      ans.add(new ArrayList <>(curr));
-      return;
+  
+  private void helper(int[] nums, List<List<Integer>> ans, List<Integer> curr, boolean[] used) {
+    if (curr.size() == nums.length) {
+      ans.add(new ArrayList<>(curr));
     }
-
-    for (int i = 0; i < length; i++) {
-      if (used.get(nums[i]) != 0) {
-        used.put(nums[i], used.get(nums[i]) - 1);
+    else {
+      for (int i = 0; i < nums.length; i++) {
+        if (used[i]) {
+          continue;
+        }
+        if (i > 0 && nums[i - 1] == nums[i] && !used[i - 1]) {
+          continue;
+        }
+        used[i] = true;
         curr.add(nums[i]);
-        permuteHelper(nums, length, ans, used, curr);
-        used.put(nums[i], used.get(nums[i]) + 1);
+        helper(nums, ans, curr, used);
         curr.remove(curr.size() - 1);
+        used[i] = false;
       }
     }
   }
 }
+

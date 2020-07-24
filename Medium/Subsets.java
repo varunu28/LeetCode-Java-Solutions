@@ -1,16 +1,24 @@
 class Solution {
   public List<List<Integer>> subsets(int[] nums) {
-    Set<List<Integer>> set = new HashSet<>();
-    helper(nums, 0, new ArrayList<>(), set);
-    return new ArrayList<>(set);
-  }
+    List<List<Integer>> list = new ArrayList<>();
+    List<Integer> curr = new ArrayList<>();
+    helper(list, curr, nums, 0, nums.length, new boolean[nums.length]);
+    return list;
+  }   
   
-  private void helper(int[] nums, int idx, List<Integer> temp, Set<List<Integer>> set) {
-    set.add(new ArrayList<>(temp));
-    for (int i = idx; i < nums.length; i++) {
-      temp.add(nums[i]);
-      helper(nums, i + 1, temp, set);
-      temp.remove(temp.size() - 1);
+  private void helper(List<List<Integer>> list, List<Integer> curr, int[] nums, int idx, int n, boolean[] seen) {
+    list.add(new ArrayList<>(curr));
+    if (idx >= n) {
+      return;
+    }
+    for (int i = idx; i < n; i++) {
+      if (!seen[i]) {
+        seen[i] = true;
+        curr.add(nums[i]);
+        helper(list, curr, nums, i + 1, n, seen);
+        seen[i] = false;
+        curr.remove(curr.size() - 1);
+      }
     }
   }
 }
