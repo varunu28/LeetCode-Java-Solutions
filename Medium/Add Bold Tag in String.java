@@ -1,42 +1,30 @@
 class Solution {
-    public String addBoldTag(String s, String[] dict) {
-        boolean[] bold = new boolean[s.length()];
-        int end = 0;
-
-        for (int i=0; i<s.length(); i++) {
-            boolean found = false;
-            for (String word : dict) {
-                if (s.startsWith(word, i)) {
-                    found = true;
-                    end = Math.max(end, i + word.length());
-                }
-
-                int j = i;
-                if (found) {
-                    while (j < end) {
-                        bold[j] = found;
-                        j++;
-                    }
-                }
-            }
+  public String addBoldTag(String S, String[] dict) {
+    int N = S.length();
+    boolean[] mask = new boolean[N];
+    for (int i = 0; i < N; ++i) {
+      for (String word: dict) search: {
+        for (int k = 0; k < word.length(); ++k) {
+          if (k + i >= S.length() || S.charAt(k + i) != word.charAt(k)) {
+            break search;
+          }
         }
-
-
-        StringBuilder sb = new StringBuilder();
-        for (int i=0; i<s.length(); i++) {
-            if (!bold[i]) {
-                sb.append(s.charAt(i));
-                continue;
-            }
-
-            int j = i;
-            while (j < s.length() && bold[j]) {
-                j++;
-            }
-            sb.append("<b>").append(s.substring(i, j) + "</b>");
-            i = j-1;
+        for (int j = i; j < i + word.length(); ++j) {
+          mask[j] = true;
         }
-
-        return sb.toString();
+      }
     }
+    StringBuilder ans = new StringBuilder();
+    int anchor = 0;
+    for (int i = 0; i < N; ++i) {
+      if (mask[i] && (i == 0 || !mask[i - 1])) {
+        ans.append("<b>");
+      }
+      ans.append(S.charAt(i));
+      if (mask[i] && (i == N - 1 || !mask[i + 1])) {
+        ans.append("</b>");
+      }
+    }
+    return ans.toString();
+  }
 }
