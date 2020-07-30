@@ -1,24 +1,28 @@
 class Solution {
-    public int shortestWay(String source, String target) {
-        int idx = 0;
-        int count = 0;
-        int n = target.length();
-        while (idx < n) {
-            int slow = idx;
-            
-            for (char c : source.toCharArray()) {
-                if (idx < n && c == target.charAt(idx)) {
-                    idx++;
-                }
-            }
-            
-            if (slow == idx) {
-                return -1;
-            }
-            
-            count++;
+  public int shortestWay(String source, String target) {
+    int count = 1;
+    int idx = 0;
+    int n = target.length();
+    int sourceIdx = 0;
+    boolean match = false;
+    while (idx < n) {
+      if (source.charAt(sourceIdx) == target.charAt(idx)) {
+        idx++;
+        sourceIdx++;
+        match = true;
+      }
+      else {
+        sourceIdx++;
+      }
+      if (sourceIdx == source.length() && idx != n) {
+        if (!match) {
+          return -1;
         }
-        
-        return count;
+        count++;
+        sourceIdx = 0;
+        match = false;
+      }
     }
+    return count;
+  }
 }
