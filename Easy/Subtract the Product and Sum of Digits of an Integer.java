@@ -1,26 +1,17 @@
 class Solution {
-    public int subtractProductAndSum(int n) {
-        return getProduct(n) - getSum(n);
+  public int subtractProductAndSum(int n) {
+    int sum = 0;
+    int copy = n;
+    while (copy > 0) {
+      sum += copy % 10;
+      copy /= 10;
     }
-    
-    private int getProduct(int n) {
-        if (n == 0) {
-            return 0;
-        }
-        int fact = 1;
-        while (n > 0) {
-            fact *= n % 10;
-            n /= 10;
-        }
-        return fact;
+    int prod = 1;
+    copy = n;
+    while (copy > 0) {
+      prod *= copy % 10;
+      copy /= 10;
     }
-    
-    private int getSum(int n) {
-        int sum = 0;
-        while (n > 0) {
-            sum += n % 10;
-            n /= 10;
-        }
-        return sum;
-    }
+    return prod - sum;
+  }
 }
