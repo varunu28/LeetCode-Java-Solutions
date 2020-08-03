@@ -1,28 +1,29 @@
 class Solution {
-  Set<Integer> set = new HashSet<>();
   public boolean canFinish(int numCourses, int[][] prerequisites) {
     Map<Integer, Set<Integer>> map = new HashMap<>();
+    int[] indegree = new int[numCourses];
     for (int[] prerequisite : prerequisites) {
-      map.computeIfAbsent(prerequisite[0], k -> new HashSet<>()).add(prerequisite[1]);
+      map.computeIfAbsent(prerequisite[1], k -> new HashSet<>()).add(prerequisite[0]);
+      indegree[prerequisite[0]]++;
     }
+    Queue<Integer> queue = new LinkedList<>();
+    Set<Integer> taken = new HashSet<>();
     for (int i = 0; i < numCourses; i++) {
-      set.clear();
-      dfs(map, i);
-      if (set.contains(i)) {
-        return false;
+      if (indegree[i] == 0) {
+        queue.add(i);
+        taken.add(i);
       }
     }
-    return true;
-  }
-  
-  private void dfs(Map<Integer, Set<Integer>> map, int num) {
-    Iterator<Integer> iter = map.getOrDefault(num, new HashSet<>()).iterator();
-    while (iter.hasNext()) {
-      int course = iter.next();
-      if (!set.contains(course)) {
-        set.add(course);
-        dfs(map, course);
+    while (!queue.isEmpty()) {
+      int removed = queue.remove();
+      for (Integer dependentCourse : map.getOrDefault(removed, new HashSet<>())) {
+        indegree[dependentCourse]--;
+        if (indegree[dependentCourse] == 0) {
+          taken.add(dependentCourse);
+          queue.add(dependentCourse);
+        }
       }
     }
+    return taken.size() == numCourses;
   }
 }
