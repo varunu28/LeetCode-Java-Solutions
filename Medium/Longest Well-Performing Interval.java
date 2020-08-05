@@ -1,27 +1,20 @@
 class Solution {
-    public int longestWPI(int[] hours) {
-        int ans = 0;
-        int[] preComputed = new int[hours.length + 1];
-        
-        for (int i = 1; i < preComputed.length; i++) {
-            if (hours[i - 1] > 8) {
-                ans = 1;
-                preComputed[i] = preComputed[i - 1] + 1;
-            }
-            else {
-                preComputed[i] = preComputed[i - 1] - 1;
-            }
-        }
-        
-        for(int i = 0; i <= hours.length; i++){
-            for(int j = hours.length; j > i; j--){
-                if(preComputed[j]-preComputed[i] > 0){
-                    ans = Math.max(ans, j - i);
-                    break;
-                }
-            }
-        }
-        
-        return ans;
+  public int longestWPI(int[] hours) {
+    int sum = 0;
+    int maxInterval = 0;
+    boolean greaterThanEightFound = false;
+    Map<Integer, Integer> map = new HashMap<>();
+    for (int i = 0; i < hours.length; i++) {
+      sum += hours[i] > 8 ? 1 : -1;
+      greaterThanEightFound = hours[i] > 8 ? true : greaterThanEightFound;
+      map.putIfAbsent(sum, i);
+      if (sum >= 1) {
+        maxInterval = Math.max(maxInterval, i + 1);
+      }
+      else if (map.containsKey(sum - 1)) {
+        maxInterval = Math.max(maxInterval, i - map.get(sum - 1));
+      }
     }
+    return maxInterval == 0 ? (greaterThanEightFound ? 1 : 0) : maxInterval;
+  }
 }

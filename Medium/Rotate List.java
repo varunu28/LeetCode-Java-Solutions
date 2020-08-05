@@ -3,54 +3,43 @@
  * public class ListNode {
  *     int val;
  *     ListNode next;
- *     ListNode(int x) { val = x; }
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
 class Solution {
-    
-    public void rotateArr(int[] arr) {
-        int temp = arr[0];
-        for (int i=1;i<arr.length;i++) {
-            int t = arr[i];
-            arr[i] = temp;
-            temp = t;
-        }
-        
-        arr[0] = temp;
+  public ListNode rotateRight(ListNode head, int k) {
+    if (head == null || head.next == null || k == 0) {
+      return head;
     }
-    
-    public ListNode rotateRight(ListNode head, int k) {
-        if (head == null || head.next == null || k == 0) return head;
-        int l = 0;
-        ListNode curr = head;
-        while (curr != null) {
-            curr = curr.next;
-            l++;
-        }
-        
-        int[] arr = new int[l];
-        curr = head;
-        
-        for (int i=0;i<l;i++) {
-            arr[i] = curr.val;
-            curr = curr.next;
-        }
-        
-        k = k%l;
-        
-        while (k > 0) {
-            rotateArr(arr);
-            k--;
-        }
-    
-        curr = head;
-        int j = 0;
-        while (curr != null) {
-            curr.val = arr[j];
-            j++;
-            curr = curr.next;
-        }
-        
-        return head;
+    ListNode curr = head;
+    // Get length of list & update the number of rotations
+    int count = 0;
+    while (curr != null) {
+      curr = curr.next;
+      count++;
     }
+    k %= count;
+    if (k == 0) {
+      return head;
+    }
+    // Move the pointer just before the rotation index
+    int stop = count - k;
+    int currCount = 1;
+    curr = head;
+    while (currCount < stop) {
+      currCount++;
+      curr = curr.next;
+    }
+    ListNode nextNode = curr.next;
+    // Detach rotation part of list and append it in the beginning of list
+    curr.next = null;
+    ListNode newHead = nextNode;
+    while (nextNode.next != null) {
+      nextNode = nextNode.next;
+    }
+    nextNode.next = head;
+    return newHead;
+  }
 }
