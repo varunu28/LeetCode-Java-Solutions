@@ -1,55 +1,38 @@
 class Solution {
-    public String[] spellchecker(String[] wordlist, String[] queries) {
-        Map<String, String> caseMap = new HashMap<>();
-        Set<String> set = new HashSet<>();
-        
-        // Case Part
-        for (String word : wordlist) {
-            if (!caseMap.containsKey(word.toLowerCase())) {
-                caseMap.put(word.toLowerCase(), word);
-            }
-            
-            set.add(word);
-        }
-        
-        // Vowel Part
-        Map<String, String> vowelMap = new HashMap<>();
-        for (String word : wordlist) {
-            String genericVal = makeGenericVowel(word);
-            if (!vowelMap.containsKey(genericVal)) {
-                vowelMap.put(genericVal, word);
-            }
-        }
-        
-        String[] ans = new String[queries.length];
-        
-        for (int i=0; i<queries.length; i++) {
-            if (set.contains(queries[i])) {
-                ans[i] = queries[i];
-            }
-            else if (caseMap.containsKey(queries[i].toLowerCase())) {
-                ans[i] = caseMap.get(queries[i].toLowerCase());
-            } 
-            else if (vowelMap.containsKey(makeGenericVowel(queries[i]))) {
-                ans[i] = vowelMap.get(makeGenericVowel(queries[i]));
-            } 
-            else {
-                ans[i] = "";
-            }
-        }
-        
-        return ans;
+  public String[] spellchecker(String[] wordlist, String[] queries) {
+    Map<String, String> capsMap = new HashMap<>();
+    Map<String, String> vowMap = new HashMap<>();
+    Set<String> perfect = new HashSet<>();
+    for (String word : wordlist) {
+      perfect.add(word);
+      capsMap.putIfAbsent(word.toLowerCase(), word);
+      vowMap.putIfAbsent(getVowelKey(word.toLowerCase()), word);
     }
-    
-    private String makeGenericVowel(String s) {
-        String vowel = "aeiou";
-        char[] ch = s.toLowerCase().toCharArray();
-        for (int i=0; i<ch.length; i++) {
-            if (vowel.indexOf(ch[i]) != -1) {
-                ch[i] = '#';
-            }
-        }
-        
-        return String.valueOf(ch);
+    String[] ans = new String[queries.length];
+    for (int i = 0; i < queries.length; i++) {
+      if (perfect.contains(queries[i])) {
+        ans[i] = queries[i];
+      }
+      else if (capsMap.containsKey(queries[i].toLowerCase())) {
+        ans[i] = capsMap.get(queries[i].toLowerCase());
+      }
+      else {
+        ans[i] = vowMap.getOrDefault(getVowelKey(queries[i].toLowerCase()), "");
+      }
     }
+    return ans;
+  }
+  
+  private String getVowelKey(String word) {
+    StringBuilder sb = new StringBuilder();
+    for (char c : word.toCharArray()) {
+      if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u') {
+        sb.append('*');
+      }
+      else {
+        sb.append(c);
+      }
+    }
+    return sb.toString();
+  }
 }
