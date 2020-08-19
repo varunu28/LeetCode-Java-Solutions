@@ -1,38 +1,28 @@
 class Solution {
   public String toGoatLatin(String S) {
     StringBuilder sb = new StringBuilder();
-    StringBuilder temp = new StringBuilder();
-    String vowels = "aeiouAEIOU";
-    StringBuilder aAppend = new StringBuilder("a");
-    int idx = 0;
+    StringBuilder endAppend = new StringBuilder("a");
+    final String CONSTANT_APPEND = "ma";
+    int start = 0;
+    int end = 0;
     int n = S.length();
-    Boolean startVowel = null;
-    while (idx < n) {
-      if (startVowel == null) {
-        startVowel = vowels.indexOf(S.charAt(idx)) != -1;
+    while (end < n) {
+      while (end < n && S.charAt(end) != ' ') {
+        end++;
       }
-      if (S.charAt(idx) == ' ' || idx == n - 1) {
-        if (S.charAt(idx) != ' ') {
-          temp.append(S.charAt(idx));
-        }
-        if (!startVowel) {
-          char c = temp.charAt(0);
-          temp.deleteCharAt(0);
-          temp.append(c);
-        }
-        temp.append("ma").append(aAppend.toString());
-        sb.append(temp.toString());
-        temp.setLength(0);
-        aAppend.append("a");
-        startVowel = null;
-        if (idx != n - 1) {
-          sb.append(" ");
-        }
+      char c = Character.toLowerCase(S.charAt(start));
+      if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u') {
+        sb.append(S.substring(start, end)).append(CONSTANT_APPEND).append(endAppend.toString());
       }
       else {
-        temp.append(S.charAt(idx));
+        sb.append(S.substring(start + 1, end)).append(S.charAt(start)).append(CONSTANT_APPEND).append(endAppend.toString());
       }
-      idx++;
+      endAppend.append('a');
+      end++;
+      start = end;
+      if (end < n) {
+        sb.append(' ');
+      }
     }
     return sb.toString();
   }
