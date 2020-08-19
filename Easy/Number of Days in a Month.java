@@ -1,24 +1,7 @@
 class Solution {
-    public int numberOfDays(int Y, int M) {
-        int[] arr = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-        if (M == 2) {
-            return isLeapYear(Y) ? arr[M - 1] + 1 : arr[M - 1];
-        }
-
-        return arr[M- 1];
-    }
-
-    private boolean isLeapYear (int y) {
-        if (y % 4  == 0) {
-            if (y % 100 == 0) {
-                return y % 400 == 0;
-            }
-            else {
-                return true;
-            }
-        }
-        else {
-            return false;
-        }
-    }
+  final int[] DAY_COUNT = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+  public int numberOfDays(int Y, int M) {
+    boolean isLeapYear = Y % 4 == 0 && ((Y % 100 == 0) ? (Y % 400 == 0) : true);
+    return DAY_COUNT[M - 1] + (M == 2 ? (isLeapYear ? 1 : 0) : 0);
+  }
 }
