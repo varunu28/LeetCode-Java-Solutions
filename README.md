@@ -1,8 +1,6 @@
 # Leetcode-Java-Solutions 
 
 ## Solutions to Leetcode problems in Java
-Category | Count
---- | ---
-[Easy](https://github.com/varunu28/LeetCode-Java-Solutions/tree/master/Easy) | 282
-[Medium](https://github.com/varunu28/LeetCode-Java-Solutions/tree/master/Medium) | 331
-[Hard](https://github.com/varunu28/LeetCode-Java-Solutions/tree/master/Hard) | 54
+
+## [Current Leetcode profile: Solved 700+ Problems](https://leetcode.com/varunsjsu/)
+## [Previous Leetcode profile: Solved 759 Problems](https://leetcode.com/varunu28/)
