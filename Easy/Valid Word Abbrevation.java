@@ -1,31 +1,26 @@
 class Solution {
-    public static boolean validWordAbbreviation(String word, String abbr) {
-        char[] wordChar = word.toCharArray();
-        char[] abbrChar = abbr.toCharArray();
-
-        int i = 0;
-        int j = 0;
-
-        while (j < abbrChar.length && i < wordChar.length) {
-            if (abbrChar[j] == wordChar[i]) {
-                i++;
-                j++;
-                continue;
-            }
-
-            if (abbrChar[j] <= '0' || abbrChar[j] > '9') {
-                return false;
-            }
-
-            int start = j;
-            while (j<abbrChar.length && abbrChar[j] >= '0' && abbrChar[j] <= '9') {
-                ++j;
-            }
-
-            int num = Integer.valueOf(abbr.substring(start, j));
-            i += num;
+  public boolean validWordAbbreviation(String word, String abbr) {
+    int idx1 = 0;
+    int idx2 = 0;
+    while (idx1 < word.length() && idx2 < abbr.length()) {
+      if (!Character.isDigit(abbr.charAt(idx2))) {
+        if (word.charAt(idx1) != abbr.charAt(idx2)) {
+          return false;
         }
-
-        return i == wordChar.length && j == abbrChar.length;
+        idx1++;
+        idx2++;
+      }
+      else {
+        if (abbr.charAt(idx2) == '0') {
+          return false;
+        }
+        int count = 0;
+        while (idx2 < abbr.length() && Character.isDigit(abbr.charAt(idx2))) {
+          count = count * 10 + Character.getNumericValue(abbr.charAt(idx2++));
+        }
+        idx1 += count;
+      }
     }
+    return idx1 == word.length() && idx2 == abbr.length();
+  }
 }
