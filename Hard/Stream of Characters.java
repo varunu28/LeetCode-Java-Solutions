@@ -5,19 +5,15 @@ class StreamChecker {
     root = new TrieNode('-');
     stream = new ArrayDeque();
     for (String word : words) {
-      addWord(word);
-    }
-  }
-  
-  private void addWord(String s) {
-    TrieNode curr = root;
-    for (int i = s.length() - 1; i >= 0; i--) {
-      if (!curr.map.containsKey(s.charAt(i))) {
-        curr.map.put(s.charAt(i), new TrieNode(s.charAt(i)));
+      TrieNode curr = root;
+      for (int i = word.length() - 1; i >= 0; i--) {
+        if (!curr.map.containsKey(word.charAt(i))) {
+          curr.map.put(word.charAt(i), new TrieNode(word.charAt(i)));
+        }
+        curr = curr.map.get(word.charAt(i));
       }
-      curr = curr.map.get(s.charAt(i));
+      curr.isWord = true;
     }
-    curr.isWord = true;
   }
 
   public boolean query(char letter) {
@@ -36,11 +32,6 @@ class StreamChecker {
   }
 }
 
-/**
- * Your StreamChecker object will be instantiated and called as such:
- * StreamChecker obj = new StreamChecker(words);
- * boolean param_1 = obj.query(letter);
- */
 
 class TrieNode {
   char c;
@@ -53,3 +44,9 @@ class TrieNode {
     isWord = false;
   }
 }
+
+/**
+ * Your StreamChecker object will be instantiated and called as such:
+ * StreamChecker obj = new StreamChecker(words);
+ * boolean param_1 = obj.query(letter);
+ */
