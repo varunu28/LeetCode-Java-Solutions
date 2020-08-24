@@ -15,23 +15,28 @@
  */
 class Solution {
   public int sumOfLeftLeaves(TreeNode root) {
-    int[] sum = {0};
-    helper(root, null, sum);
-    return sum[0];
-  } 
-  
-  private void helper(TreeNode root, TreeNode parent, int[] sum) {
     if (root == null) {
-      return;
+      return 0;
     }
-    if (root.left == null && root.right == null) {
-      if (parent != null && parent.left == root) {
-        sum[0] += root.val;
+    int sum = 0;
+    Queue<TreeNode[]> queue = new LinkedList<>();
+    queue.add(new TreeNode[]{root, null});
+    while (!queue.isEmpty()) {
+      TreeNode[] removed = queue.remove();
+      if (removed[0].left == null && removed[0].right == null) {
+        if (removed[1] != null && removed[1].left == removed[0]) {
+          sum += removed[0].val;
+        }
+      }
+      else {
+        if (removed[0].left != null) {
+          queue.add(new TreeNode[]{removed[0].left, removed[0]});
+        }
+        if (removed[0].right != null) {
+          queue.add(new TreeNode[]{removed[0].right, removed[0]});
+        }
       }
     }
-    else {
-      helper(root.left, root, sum);
-      helper(root.right, root, sum);
-    }
+    return sum;
   }
 }
