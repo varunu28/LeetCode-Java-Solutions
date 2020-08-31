@@ -1,49 +1,38 @@
 class Solution {
-    int[] rowCount;
-    int[] colCount;
-    int[] diagCount;
-    public String tictactoe(int[][] moves) {
-        rowCount = new int[3];
-        colCount = new int[3];
-        diagCount = new int[2];
-        int numOfMoves = 0;
-        for (int i = 0; i < moves.length; i++) {
-            int x = moves[i][0];
-            int y = moves[i][1];
-            int move = i % 2 == 0 ? 1 : -1;
-            updateBoard(x, y, move);
-            numOfMoves++;
-            if (checkForWinner(x, y)) {
-                return i % 2 == 0 ? "A" : "B";
-            }
+  public String tictactoe(int[][] moves) {
+    int n = 3;
+    Map<Integer, Map<Character, Integer>> rowMap = new HashMap<>();
+    Map<Integer, Map<Character, Integer>> colMap = new HashMap<>();
+    Map<Character, Integer> rightDiagMap = new HashMap<>();
+    Map<Character, Integer> leftDiagMap = new HashMap<>();
+    for (int i = 0; i < moves.length; i++) {
+      int x = moves[i][0];
+      int y = moves[i][1];
+      char move = i % 2 == 0 ? 'X' : 'O';
+      String player = i % 2 == 0 ? "A" : "B";
+      Map<Character, Integer> row = rowMap.computeIfAbsent(x, k -> new HashMap<>());
+      row.put(move, row.getOrDefault(move, 0) + 1);
+      if (row.get(move) == 3) {
+        return player;
+      }
+      Map<Character, Integer> col = colMap.computeIfAbsent(y, k -> new HashMap<>());
+      col.put(move, col.getOrDefault(move, 0) + 1);
+      if (col.get(move) == 3) {
+        return player;
+      }
+      if (x == y) {
+        leftDiagMap.put(move, leftDiagMap.getOrDefault(move, 0) + 1);
+        if (leftDiagMap.get(move) == 3) {
+          return player;
         }
-        return numOfMoves == 9 ? "Draw" : "Pending";
+      }
+      if (x + y == n - 1) {
+        rightDiagMap.put(move, rightDiagMap.getOrDefault(move, 0) + 1);
+        if (rightDiagMap.get(move) == 3) {
+          return player;
+        }
+      }
     }
-    
-    private boolean checkForWinner(int x, int y) {
-        if (rowCount[x] == 3 || rowCount[x] == -3) {
-            return true;
-        }
-        if (colCount[y] == 3 || colCount[y] == -3) {
-            return true;
-        }
-        if (x == y && (diagCount[0] == 3 || diagCount[0] == -3)) {
-            return true;
-        }
-        if (x + y == 2 && (diagCount[1] == 3 || diagCount[1] == -3)) {
-            return true;
-        }
-        return false;
-    }
-    
-    private void updateBoard(int x, int y, int move) {
-        rowCount[x] += move;
-        colCount[y] += move;
-        if (x == y) {
-            diagCount[0] += move;
-        }
-        if (x + y == 2) {
-            diagCount[1] += move;
-        }
-    }
+    return moves.length == n * n ? "Draw" : "Pending";
+  }
 }
