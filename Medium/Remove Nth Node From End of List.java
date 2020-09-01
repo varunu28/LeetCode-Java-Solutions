@@ -3,36 +3,31 @@
  * public class ListNode {
  *     int val;
  *     ListNode next;
- *     ListNode(int x) { val = x; }
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
 class Solution {
-    public ListNode removeNthFromEnd(ListNode head, int n) {
-        
-        if (head ==  null || head.next == null) return null;
-        
-        ListNode curr = head;
-        int i = 0;
-        
-        while (curr != null) {
-            curr = curr.next;
-            i++;
-        }
-        
-        if (i == n) {
-            return head.next;
-        }
-        
-        n = i - n;
-        i = 1;
-        curr = head;
-        
-        while (i != n) {
-            curr = curr.next;
-            i++;
-        }
-        curr.next = curr.next.next;
-        
-        return head;
+  public ListNode removeNthFromEnd(ListNode head, int n) {
+    if (head == null || n == 0) {
+      return head;
     }
+    ListNode slow = head;
+    int count = 0;
+    while (count < n) {
+      slow = slow.next;
+      count++;
+    }
+    if (slow == null) {
+      return head.next;
+    }
+    ListNode fast = head;
+    while (slow.next != null) {
+      slow = slow.next;
+      fast = fast.next;
+    }
+    fast.next = fast.next.next;
+    return head;
+  }
 }
