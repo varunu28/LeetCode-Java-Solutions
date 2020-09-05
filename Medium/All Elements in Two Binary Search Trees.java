@@ -4,49 +4,50 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-  List<Integer> ans;
   public List<Integer> getAllElements(TreeNode root1, TreeNode root2) {
-    ans = new ArrayList<>();
-    helper(root1, root2);
-    return ans;
-  }
-  
-  private void helper(TreeNode r1, TreeNode r2) {
     Stack<TreeNode> stack1 = new Stack<>();
     Stack<TreeNode> stack2 = new Stack<>();
-    addToStack(stack1, r1);
-    addToStack(stack2, r2);
+    updateStack(stack1, root1);
+    updateStack(stack2, root2);
+    List<Integer> list = new ArrayList<>();
     while (!stack1.isEmpty() || !stack2.isEmpty()) {
-      TreeNode popped1 = stack1.isEmpty() ? null : stack1.pop();
-      TreeNode popped2 = stack2.isEmpty() ? null : stack2.pop();
-      if (popped1 != null && popped2 != null) {
-        if (popped1.val > popped2.val) {
-          ans.add(popped2.val);
-          addToStack(stack2, popped2.right);
-          stack1.push(popped1);
+      if (!stack1.isEmpty() && !stack2.isEmpty()) {
+        if (stack1.peek().val < stack2.peek().val) {
+          TreeNode popped = stack1.pop();
+          list.add(popped.val);
+          updateStack(stack1, popped.right);
         }
         else {
-          ans.add(popped1.val);
-          addToStack(stack1, popped1.right);
-          stack2.push(popped2);
+          TreeNode popped = stack2.pop();
+          list.add(popped.val);
+          updateStack(stack2, popped.right);
         }
       }
-      else if (popped2 == null) {
-        ans.add(popped1.val);
-        addToStack(stack1, popped1.right);
+      else if (!stack1.isEmpty() && stack2.isEmpty()) {
+        TreeNode popped = stack1.pop();
+        list.add(popped.val);
+        updateStack(stack1, popped.right);
       }
       else {
-        ans.add(popped2.val);
-        addToStack(stack2, popped2.right);
+        TreeNode popped = stack2.pop();
+        list.add(popped.val);
+        updateStack(stack2, popped.right);
       }
     }
+    return list;
   }
   
-  private void addToStack(Stack<TreeNode> stack, TreeNode node) {
+  private void updateStack(Stack<TreeNode> stack, TreeNode node) {
     while (node != null) {
       stack.push(node);
       node = node.left;
