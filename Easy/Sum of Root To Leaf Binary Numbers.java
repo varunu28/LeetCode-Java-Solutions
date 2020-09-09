@@ -4,42 +4,43 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-  List<String> list;
   public int sumRootToLeaf(TreeNode root) {
-    list = new ArrayList<>();
-    helper(root, new StringBuilder());
-    int ans = 0;
-    for (String num : list) {
-      ans += getIntegerVal(num);
-    }
-    return ans;
+    int[] sum = {0};
+    helper(root, new StringBuilder(), sum);
+    return sum[0];
   }
   
-  private void helper(TreeNode root, StringBuilder sb) {
+  private void helper(TreeNode root, StringBuilder sb, int[] sum) {
     if (root == null) {
       return;
     }
     sb.append(root.val);
     if (root.left == null && root.right == null) {
-      list.add(sb.toString());
+      sum[0] += getDecimalValue(sb.toString());
     }
     else {
-      helper(root.left, new StringBuilder(sb.toString()));
-      helper(root.right, new StringBuilder(sb.toString()));
+      helper(root.left, new StringBuilder(sb.toString()), sum);
+      helper(root.right, new StringBuilder(sb.toString()), sum);
     }
   }
   
-  private int getIntegerVal(String s) {
-    int num = 0;
-    int pow = 1;
+  private int getDecimalValue(String s) {
+    int val = 0;
+    int mul = 1;
     for (int i = s.length() - 1; i >= 0; i--) {
-      num += Character.getNumericValue(s.charAt(i)) * pow;
-      pow *= 2;
+      val += mul * (s.charAt(i) == '1' ? 1 : 0);
+      mul *= 2;
     }
-    return num;
+    return val;
   }
 }
