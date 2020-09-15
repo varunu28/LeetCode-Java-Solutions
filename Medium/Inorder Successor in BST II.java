@@ -7,34 +7,30 @@ class Node {
     public Node parent;
 };
 */
+
 class Solution {
-    public Node inorderSuccessor(Node x) {
-        
-        // If right node exists => Find lowest value in right node. 
-        if (x.right != null) {
-            Node node = x.right;
-            
-            while (node.left != null) {
-                node = node.left;
-            }
-            
-            return node;
-        }
-        
-        // Find the first left which a node took to reach the node x
-        Node parent = x.parent;
-        Node lastNode = x;
-        Node lastLeft = null;
-        
-        while (parent != null) {
-            if (parent.left == lastNode && lastLeft == null) {
-                lastLeft = parent;
-            }
-            
-            lastNode = parent;
-            parent = parent.parent;
-        }
-        
-        return lastLeft;
+  public Node inorderSuccessor(Node node) {
+    if (node == null) {
+      return null;
     }
+    if (node.right != null) {
+      Node rightNode = node.right;
+      while (rightNode.left != null) {
+        rightNode = rightNode.left;
+      }
+      return rightNode;
+    }
+    else {
+      Node curr = node;
+      Node parentNode = node.parent;
+      while (parentNode != null) {
+        if (parentNode.left == curr) {
+          return parentNode;
+        }
+        curr = parentNode;
+        parentNode = parentNode.parent;
+      }
+    }
+	return null;
+  }
 }
