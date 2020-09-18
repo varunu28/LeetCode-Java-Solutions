@@ -1,21 +1,16 @@
 class Solution {
-	public int peakIndexInMountainArray(int[] A) {
-        return peakIndexInMountainArrayImpl(A, 0, A.length-1);
+  public int peakIndexInMountainArray(int[] A) {
+    int low = 0;
+    int high = A.length - 1;
+    while (low < high) {
+      int mid = low + (high - low) / 2;
+      if (A[mid] < A[mid + 1]) {
+        low = mid + 1;
+      }
+      else {
+        high = mid;
+      }
     }
-	
-	private int peakIndexInMountainArrayImpl(int[] arr, int start, int end) {
-		if (start > end) return -1;
-		
-		int mid = (start + end)/2;
-		
-		if (arr[mid] > arr[mid-1] && arr[mid] > arr[mid+1]) {
-			return mid;
-		}
-		else if (arr[mid] < arr[mid-1]) {
-			return peakIndexInMountainArrayImpl(arr, start, mid-1);
-		}
-		else {
-			return peakIndexInMountainArrayImpl(arr, mid+1, end);
-		}
-	}
+    return low;
+  }
 }

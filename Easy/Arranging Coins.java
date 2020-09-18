@@ -1,20 +1,14 @@
 class Solution {
-    public int arrangeCoins(int n) {
-        long j = 1;
-        long sum = 0;
-    
-        int ans = 0;
-        while (true) {
-            sum += j;
-            if (sum <= n) {
-                ans++;
-            } 
-            else {
-                break;
-            }
-            j++;
-        }
-        
-        return ans;
+  public int arrangeCoins(int n) {
+    int copy = n;
+    int count = 0;
+    for (int i = 1; i <= copy && n > 0; i++) {
+      n -= i;
+      if (n < 0) {
+        break;
+      }
+      count++;
     }
+    return count;
+  }
 }

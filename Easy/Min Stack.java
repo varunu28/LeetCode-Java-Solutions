@@ -1,33 +1,30 @@
 class MinStack {
 
-    public int min = Integer.MAX_VALUE;
-    public Stack<Integer> stack = new Stack<Integer>();
     /** initialize your data structure here. */
-    public MinStack() {
-        
-    }
-    
-    public void push(int x) {
-        if (x<=min) {
-            stack.push(min);
-            min = x;
-        }
-        stack.push(x);
-    }
-    
-    public void pop() {
-        if(stack.pop() == min) {
-            min=stack.pop();
-        }
-    }
-    
-    public int top() {
-        return stack.peek();
-    }
-    
-    public int getMin() {
-        return min;
-    }
+  Stack<Integer> stack;
+  Stack<Integer> min;
+  public MinStack() {
+    stack = new Stack<>();
+    min = new Stack<>();
+  }
+
+  public void push(int x) {
+    stack.push(x);
+    min.push(Math.min(x, min.isEmpty() ? Integer.MAX_VALUE : min.peek()));
+  }
+
+  public void pop() {
+    stack.pop();
+    min.pop();
+  }
+
+  public int top() {
+    return stack.peek();
+  }
+
+  public int getMin() {
+    return min.peek();
+  }
 }
 
 /**

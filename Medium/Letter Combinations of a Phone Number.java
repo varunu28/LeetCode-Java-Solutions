@@ -1,46 +1,35 @@
 class Solution {
-    public List<String> combinations;
-    public Map<Character, String> map;
-
-    public List<String> letterCombinations(String number) {
-        if (number.length() == 0) {
-            return new ArrayList<>();
-        }
-        
-        combinations = new ArrayList<>();
-        map = new HashMap<>();
-        char[] chars = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
-        String[] values = {"*", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
-
-        for (int i=0; i<chars.length; i++) {
-            map.put(chars[i], values[i]);
-        }
-
-        StringBuilder sb = new StringBuilder();
-        helper(number, sb, 0);
-
-        return combinations;
+  public List<String> letterCombinations(String digits) {
+    if (digits.length() == 0) {
+      return new ArrayList<>();
     }
-
-    private void helper(String num, StringBuilder sb, int start) {
-        if (sb.length() == num.length()) {
-            combinations.add(new StringBuilder(sb.toString()).toString());
-            return;
-        }
-
-        for (int i=start; i<num.length(); i++) {
-            String val = map.get(num.charAt(i));
-
-            for (char c : val.toCharArray()) {
-                // Choose
-                sb.append(c);
-
-                // Explore
-                helper(num, sb, i+1);
-
-                // Un-choose
-                sb.deleteCharAt(sb.length() - 1);
-            }
-        }
+    String[] strs = {"abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+    Map<Integer, String> map = new HashMap<>();
+    for (int i = 2; i <= 9; i++) {
+      map.put(i, strs[i - 2]);
     }
+    List<String> list = new ArrayList<>();
+    helper(digits, 0, digits.length(), new StringBuilder(), map, list);
+    return list;
+  }
+  
+  private void helper(
+    String digits, int idx, int n, StringBuilder sb, Map<Integer, String> map, List<String> list
+  ) {
+    if (idx == n) {
+      if (sb.length() == n) {
+        list.add(sb.toString());
+      }
+    }
+    else {
+      for (int i = idx; i < n; i++) {
+        int digit = Character.getNumericValue(digits.charAt(i));
+        for (char c : map.get(digit).toCharArray()) {
+          sb.append(c);
+          helper(digits, i + 1, n, sb, map, list);
+          sb.deleteCharAt(sb.length() - 1);
+        }
+      }
+    }
+  }
 }

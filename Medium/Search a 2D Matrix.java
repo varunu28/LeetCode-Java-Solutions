@@ -1,37 +1,26 @@
 class Solution {
-    public boolean searchMatrix(int[][] matrix, int target) {
-        if (matrix.length == 0 || matrix[0].length == 0) {
-            return false;
-        }
-        
-        if (target < matrix[0][0] || target > matrix[matrix.length-1][matrix[matrix.length-1].length - 1]) {
-            return false;
-        }
-        
-        int i=0;
-        for (i=0; i<matrix.length-1; i++) {
-            if (target >= matrix[i][0] && target < matrix[i+1][0]) {
-                return binarySearch(matrix[i], 0, matrix[i].length-1, target);
-            }
-        }
-        
-        return binarySearch(matrix[i], 0, matrix[i].length-1, target);
+  public boolean searchMatrix(int[][] matrix, int target) {
+    if (matrix.length == 0 || matrix[0].length == 0) {
+      return false;
     }
-    
-    private boolean binarySearch(int[] arr, int start, int end, int target) {
-        while (start <= end) {
-            int mid = (start + end)/2;
-            if (arr[mid] == target) {
-                return true;
-            }
-            else if (arr[mid] > target) {
-                end = mid - 1;
-            }
-            else {
-                start = mid + 1;
-            }
+    int i = 0;
+    int j = 0;
+    int rows = matrix.length;
+    int cols = matrix[0].length;
+    while (i < rows && j < cols) {
+      int num = matrix[i][j];
+      if (num == target) {
+        return true;
+      }
+      else {
+        if (i != rows - 1 && matrix[i + 1][j] <= target) {
+          i++;
         }
-        
-        return false;
+        else {
+          j++;
+        }
+      }
     }
+    return false;
+  }
 }

@@ -4,29 +4,37 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-    public String tree2str(TreeNode t) {
-        StringBuilder sb = new StringBuilder();
-        helper(sb,t);
-        return sb.toString();
+  public String tree2str(TreeNode t) {
+    StringBuilder sb = new StringBuilder();
+    helper(t, sb);
+    return sb.toString();
+  }
+  
+  private void helper(TreeNode node, StringBuilder sb) {
+    if (node == null) {
+      return;
     }
-    
-    public void helper(StringBuilder sb,TreeNode t){
-        if(t!=null){
-            sb.append(t.val);
-            if(t.left!=null||t.right!=null){
-                sb.append("(");
-                helper(sb,t.left);
-                sb.append(")");
-                if(t.right!=null){
-                    sb.append("(");
-                helper(sb,t.right);
-                sb.append(")");
-                }
-            }
-        }
+    sb.append(node.val);
+    if (node.left == null && node.right == null) {
+      return;
     }
+    sb.append("(");
+    helper(node.left, sb);
+    sb.append(")");
+    if (node.right != null) {
+      sb.append("(");
+      helper(node.right, sb);
+      sb.append(")");
+    }
+  }
 }

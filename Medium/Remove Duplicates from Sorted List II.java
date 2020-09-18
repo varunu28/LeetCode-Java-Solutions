@@ -7,26 +7,27 @@
  * }
  */
 class Solution {
-    public ListNode deleteDuplicates(ListNode head) {
-        if(head==null) return null;
-        
-        ListNode FakeHead=new ListNode(0);
-        FakeHead.next=head;
-        ListNode pre=FakeHead;
-        ListNode cur=head;
-        
-        while(cur!=null){
-            while(cur.next!=null&&cur.val==cur.next.val){
-                cur=cur.next;
-            }
-            if(pre.next==cur){
-                pre=pre.next;
-            }
-            else{
-                pre.next=cur.next;
-            }
-            cur=cur.next;
+  public ListNode deleteDuplicates(ListNode head) {
+    ListNode curr = head;
+    ListNode prev = null;
+    while (curr != null) {
+      if (curr.next != null && curr.val == curr.next.val) {
+        int currVal = curr.val;
+        while (curr != null && curr.val == currVal) {
+          curr = curr.next;
         }
-        return FakeHead.next;
+        if (prev == null) {
+          head = curr;
+        }
+        else {
+          prev.next = curr;
+        }
+      }
+      else {
+        prev = curr;
+        curr = curr.next;
+      }
     }
+    return head;
+  }
 }

@@ -27,41 +27,46 @@
  * }
  */
 class Solution {
-    int idx = 0;
-    public NestedInteger deserialize(String s) {
-        int l = s.length();
-        NestedInteger ans = new NestedInteger();
-        
-        while (idx < l) { 
-            if (s.charAt(idx) == '-' || s.charAt(idx) >= '0' && s.charAt(idx) <= '9') {
-                int num = 0;
-                int sign = 1;
-                
-                if (s.charAt(idx) == '-') {
-                    sign = -1;
-                    idx++;
-                }
-                
-                while (idx < l && s.charAt(idx) >= '0' && s.charAt(idx) <= '9') {
-                    num = num * 10 + (s.charAt(idx) - '0');
-                    idx++;
-                }
-                
-                ans.add(new NestedInteger(num * sign));
-            }
-            else if (s.charAt(idx) == '[') {
-                idx++;
-                ans.add(deserialize(s));
-            }
-            else if (s.charAt(idx) == ']') {
-                idx++;
-                return ans;
-            }
-            else {
-                idx++;
-            }
-        }
-        
-        return ans.getList().get(0);
+  public NestedInteger deserialize(String s) {
+    if (s == null || s.length() == 0) {
+      return null;
     }
+    if (s.charAt(0) != '[') {
+      return new NestedInteger(Integer.valueOf(s));
+    }
+    Stack<NestedInteger> stack = new Stack<>();
+    NestedInteger curr = null;
+    int start = 0;
+    int n = s.length();
+    for (int end = 0; end < n; end++) {
+      char c = s.charAt(end);
+      if (c == '[') {
+        if (curr != null) {
+          stack.push(curr);
+        }
+        curr = new NestedInteger();
+        start = end + 1;
+      }
+      else if (c == ']') {
+        String num = s.substring(start, end);
+        if (!num.isEmpty()) {
+          curr.add(new NestedInteger(Integer.valueOf(num)));
+        }
+        if (!stack.isEmpty()) {
+          NestedInteger popped = stack.pop();
+          popped.add(curr);
+          curr = popped;
+        }
+        start = end + 1;
+      }
+      else if (c == ',') {
+        if (s.charAt(end - 1) != ']') {
+          String num = s.substring(start, end);
+          curr.add(new NestedInteger(Integer.valueOf(num)));
+        }
+        start = end + 1;
+      }
+    }
+    return curr;
+  }
 }

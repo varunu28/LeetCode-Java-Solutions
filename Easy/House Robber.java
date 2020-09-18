@@ -1,22 +1,14 @@
 class Solution {
-    public int rob(int[] nums) {
-        int[] dp = new int[nums.length];
-        Arrays.fill(dp, -1);
-        
-        return robImpl(nums, 0, dp);
+  public int rob(int[] nums) {
+    if (nums.length == 0) {
+      return 0;
     }
-    
-    private int robImpl(int[] nums, int start, int[] dp) {
-        if (start > nums.length-1) {
-            return 0;
-        }
-        
-        if (dp[start] != -1) {
-            return dp[start];
-        }
-        
-        dp[start] = Math.max(nums[start] + robImpl(nums, start+2, dp), robImpl(nums, start+1, dp));
-        
-        return dp[start];
+    int[] dp = new int[nums.length + 1];
+    dp[0] = 0;
+    dp[1] = nums[0];
+    for (int i = 1; i < nums.length; i++) {
+      dp[i + 1] = Math.max(dp[i], dp[i - 1] + nums[i]);
     }
+    return dp[nums.length];
+  }
 }

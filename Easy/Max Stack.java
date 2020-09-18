@@ -1,49 +1,45 @@
 class MaxStack {
 
-    /** initialize your data structure here. */
-    PriorityQueue<Integer> pr;
-    List<Integer> list;
-    public MaxStack() {
-        pr = new PriorityQueue<>((a,b) -> b-a);
-        list = new ArrayList<>();
+  /** initialize your data structure here. */
+  Stack<Integer> stack;
+  Stack<Integer> max;
+  public MaxStack() {
+    stack = new Stack<>();
+    max = new Stack<>();
+  }
+
+  public void push(int x) {
+    stack.push(x);
+    max.push(max.isEmpty() ? x : Math.max(x, max.peek()));
+  }
+
+  public int pop() {
+    max.pop();
+    return stack.pop();
+  }
+
+  public int top() {
+    return stack.peek();
+  }
+
+  public int peekMax() {
+    return max.peek();
+  }
+
+  public int popMax() {
+    int num = max.peek();
+    Stack<Integer> temp = new Stack<>();
+    while (stack.peek() != num) {
+      temp.push(stack.pop());
+      max.pop();
     }
-
-    public void push(int x) {
-        pr.add(x);
-        list.add(x);
+    max.pop();
+    stack.pop();
+    while (!temp.isEmpty()) {
+      push(temp.pop());
     }
-
-    public int pop() {
-        int res = list.get(list.size()-1);
-        list.remove(list.size()-1);
-        pr.remove(res);
-        return res;
-    }
-
-    public int top() {
-        return list.get(list.size()-1);
-    }
-
-    public int peekMax() {
-        return pr.peek();
-    }
-
-    public int popMax() {
-        int res = pr.poll();
-        int i = list.size()-1;
-
-        while (i >= 0) {
-            if (list.get(i) == res) {
-                break;
-            }
-
-            i--;
-        }
-
-        list.remove(i);
-
-        return res;
-    }
+    return num;
+  } 
 }
 
 /**

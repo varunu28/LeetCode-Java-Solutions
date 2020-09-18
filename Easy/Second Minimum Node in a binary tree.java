@@ -4,35 +4,35 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
-class Solution {
-    public int findSecondMinimumValue(TreeNode root) {
-        if (root == null) {
-            return -1;
-        }
-        if (root.left == null && root.right == null) {
-            return -1;
-        }
-
-        int left = root.left.val;
-        int right = root.right.val;
-
-        // if value same as root value, need to find the next candidate
-        if (root.left.val == root.val) {
-            left = findSecondMinimumValue(root.left);
-        }
-        if (root.right.val == root.val) {
-            right = findSecondMinimumValue(root.right);
-        }
-
-        if (left != -1 && right != -1) {
-            return Math.min(left, right);
-        } else if (left != -1) {
-            return left;
-        } else {
-            return right;
-        }
+class Solution {  
+  Integer minimum;
+  long secondMinimum;
+  public int findSecondMinimumValue(TreeNode root) {
+    minimum = root.val;
+    secondMinimum = Long.MAX_VALUE;
+    helper(root);
+    return secondMinimum == Long.MAX_VALUE ? -1 : (int) secondMinimum;
+  }
+  
+  private void helper(TreeNode root) {
+    if (root == null) {
+      return;
     }
+    if (minimum < root.val && root.val < secondMinimum) {
+      secondMinimum = root.val;
+    }
+    else if (root.val == minimum) {
+      helper(root.left);
+      helper(root.right);
+    }
+  }
 }

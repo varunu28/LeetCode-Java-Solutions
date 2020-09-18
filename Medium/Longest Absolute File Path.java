@@ -1,40 +1,36 @@
 class Solution {
-    public int lengthLongestPath(String s) {
-        int max = 0, count = 0, level = 1;
-        boolean isFile = false;
-        Map<Integer, Integer> map = new HashMap<>();
-
-        int length = s.length();
-        int i = 0;
-        while (i < length) {
-            while (s.charAt(i) == '\t') {
-                ++level;
-                ++i;
-            }
-
-            while (i < length && s.charAt(i) != '\n') {
-                if (s.charAt(i) == '.') {
-                    isFile = true;
-                }
-
-                ++count;
-                ++i;
-            }
-
-            if (isFile) {
-                max = Math.max(max, map.getOrDefault(level-1, 0) + count);
-            }
-            else {
-                map.put(level, map.getOrDefault(level-1, 0) + count + 1);
-            }
-
-            count = 0;
-            level = 1;
-            isFile = false;
-
-            ++i;
+  public int lengthLongestPath(String input) {
+    int maxLen = 0;
+    int currLevel = 1;
+    boolean isFile = false;
+    int currLen = 0;
+    Map<Integer, Integer> map = new HashMap<>();
+    map.put(0, 0);
+    int idx = 0;
+    int n = input.length();
+    while (idx < n) {
+      while (idx < n && input.charAt(idx) == '\t') {
+        idx++;
+        currLevel++;
+      }
+      while (idx < n && input.charAt(idx) != '\n') {
+        if (input.charAt(idx) == '.') {
+          isFile = true;
         }
-
-        return max;
+        currLen++;
+        idx++;
+      }
+      if (isFile) {
+        maxLen = Math.max(maxLen, map.get(currLevel - 1) + currLen);
+      }
+      else {
+        map.put(currLevel, map.get(currLevel - 1) + 1 + currLen);
+      }
+      currLen = 0;
+      currLevel = 1;
+      isFile = false;
+      idx++;
     }
+    return maxLen;
+  }
 }

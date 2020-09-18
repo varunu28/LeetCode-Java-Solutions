@@ -1,26 +1,28 @@
-public class Solution {
-    public String reverseWords(String s) {
-        StringBuilder sb = new StringBuilder();
-        int i = s.length() - 1;
-        StringBuilder temp = new StringBuilder();
-        while (i >= 0) {
-            if (s.charAt(i) != ' ') {
-                while (i >= 0 && s.charAt(i) != ' ') {
-                    temp.append(s.charAt(i));
-                    i--;
-                }
-
-                sb.append(temp.reverse().toString()).append(" ");
-                temp = new StringBuilder();
-            }
-
-            i--;
+class Solution {
+  public String reverseWords(String s) {
+    Stack<String> stack = new Stack<>();
+    StringBuilder sb = new StringBuilder();
+    int idx = 0;
+    int n = s.length();
+    while (idx < n) {
+      if (s.charAt(idx) != ' ') {
+        sb.append(s.charAt(idx));
+      }
+      if (s.charAt(idx) == ' ' || idx == n - 1) {
+        if (sb.length() > 0) {
+          stack.push(sb.toString());
+          sb.setLength(0);
         }
-
-        if (temp.length() > 0) {
-            sb.append(temp.reverse().toString());
-        }
-
-        return sb.toString().trim();
+      }
+      idx++;
     }
+    sb.setLength(0);
+    while (!stack.isEmpty()) {
+      sb.append(stack.pop());
+      if (!stack.isEmpty()) {
+        sb.append(" ");
+      }
+    }
+    return sb.toString();
+  }
 }

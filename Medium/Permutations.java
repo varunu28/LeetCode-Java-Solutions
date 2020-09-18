@@ -1,30 +1,26 @@
 class Solution {
-    public List<List<Integer>> ans = new ArrayList<>();
-    
-    public List<List<Integer>> permute(int[] nums) {
-        List<Integer> list = new ArrayList<>();
-        permuteHelper(nums, list, 0);
-        return ans;
+  public List<List<Integer>> permute(int[] nums) {
+    List<List<Integer>> ans = new ArrayList <>();
+    Set<Integer> used = new HashSet <>();
+    permuteHelper(nums, nums.length, ans, used, new ArrayList<>());
+    return ans;
+  }
+
+  private void permuteHelper(int[] nums, int length, List<List<Integer>> ans,
+                                    Set<Integer> used, ArrayList<Integer> curr) {
+    if (curr.size() == length) {
+      ans.add(new ArrayList <>(curr));
+      return;
     }
 
-    private void permuteHelper(int[] nums, List<Integer> list, int idx) {
-        if (list.size() == nums.length) {
-            ans.add(new ArrayList<>(list));
-        }
-        else {
-            for (int i=0; i<nums.length; i++) {
-                // Choose
-                if (list.contains(nums[i])) {
-                    continue;
-                }
-                list.add(nums[i]);
-
-                // Explore
-                permuteHelper(nums, list, i+1);
-
-                // Un-choose
-                list.remove(list.size()-1);
-            }
-        }
+    for (int i = 0; i < length; i++) {
+      if (!used.contains(nums[i])) {
+        used.add(nums[i]);
+        curr.add(nums[i]);
+        permuteHelper(nums, length, ans, used, curr);
+        used.remove(nums[i]);
+        curr.remove(curr.size() - 1);
+      }
     }
+  }
 }

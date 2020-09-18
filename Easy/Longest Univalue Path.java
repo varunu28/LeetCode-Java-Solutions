@@ -4,23 +4,37 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-    
-    public int longestUnivaluePath(TreeNode root) {
-        int[] res = new int[1];
-        if (root != null) dfs(root, res);
-        return res[0];
+  public int longestUnivaluePath(TreeNode root) {
+    int[] max = {0};
+    helper(root, max);
+    return max[0];
+  }
+  
+  private int helper(TreeNode root, int[] max) {
+    if (root == null) {
+      return 0;
     }
-
-    private int dfs(TreeNode node, int[] res) {
-        int l = node.left != null ? dfs(node.left, res) : 0;
-        int r = node.right != null ? dfs(node.right, res) : 0;
-        int resl = node.left != null && node.left.val == node.val ? l + 1 : 0;
-        int resr = node.right != null && node.right.val == node.val ? r + 1 : 0;
-        res[0] = Math.max(res[0], resl + resr);
-        return Math.max(resl, resr);
+    int left = helper(root.left, max);
+    int right = helper(root.right, max);
+    int leftVal = 0;
+    int rightVal = 0;
+    if (root.left != null && root.val == root.left.val) {
+      leftVal = left + 1;
     }
+    if (root.right != null && root.val == root.right.val) {
+      rightVal = right + 1;
+    }
+    max[0] = Math.max(max[0], leftVal + rightVal);
+    return Math.max(leftVal, rightVal);
+  }
 }

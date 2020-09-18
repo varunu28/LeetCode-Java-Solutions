@@ -1,6 +1,6 @@
-# LeetCode-Java-Solutions
-Repository to store solutions to various problems in Leetcode practice and weekly contests
+# Leetcode-Java-Solutions 
 
-[My Leetcode Profile](https://leetcode.com/varunu28/)
+## Solutions to Leetcode problems in Java
 
-![image](https://cdn-images-1.medium.com/max/1360/1*5qdPLs4x9TuabvQJwu7iuA.png)
+## [Current Leetcode profile: Solved 700+ Problems](https://leetcode.com/varunsjsu/)
+## [Previous Leetcode profile: Solved 759 Problems](https://leetcode.com/varunu28/)

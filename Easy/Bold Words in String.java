@@ -1,43 +1,30 @@
 class Solution {
-    public String boldWords(String[] words, String S) {
-        if (S.length() == 0 || words.length == 0) {
-            return S;
+  public String boldWords(String[] words, String S) {
+    int N = S.length();
+    boolean[] mask = new boolean[N];
+    for (int i = 0; i < N; ++i) {
+      for (String word: words) search: {
+        for (int k = 0; k < word.length(); ++k) {
+          if (k + i >= S.length() || S.charAt(k + i) != word.charAt(k)) {
+            break search;
+          }
         }
-
-        int l = S.length();
-        int[] match = new int[l];
-
-        for (String word : words) {
-            int idx = 0;
-            while (idx < l) {
-                int startIdx = S.indexOf(word, idx);
-                if (startIdx != -1) {
-                    for (int i = startIdx; i < startIdx + word.length(); i++) {
-                        match[i] = 1;
-                    }
-
-                    idx = startIdx + 1;
-                }
-                else {
-                    break;
-                }
-            }
+        for (int j = i; j < i + word.length(); ++j) {
+          mask[j] = true;
         }
-
-        String startTag = "<b>";
-        String endTag = "</b>";
-
-        StringBuilder sb = new StringBuilder();
-        for (int i=0; i<l; i++) {
-            if ((i == 0 || match[i-1] == 0) && match[i] == 1) {
-                sb.append(startTag);
-            }
-            sb.append(S.charAt(i));
-            if ((i == l-1 || match[i+1] == 0) && match[i] == 1) {
-                sb.append(endTag);
-            }
-        }
-
-        return sb.toString();
+      }
     }
+    StringBuilder ans = new StringBuilder();
+    int anchor = 0;
+    for (int i = 0; i < N; ++i) {
+      if (mask[i] && (i == 0 || !mask[i - 1])) {
+        ans.append("<b>");
+      }
+      ans.append(S.charAt(i));
+      if (mask[i] && (i == N - 1 || !mask[i + 1])) {
+        ans.append("</b>");
+      }
+    }
+    return ans.toString();
+  }
 }

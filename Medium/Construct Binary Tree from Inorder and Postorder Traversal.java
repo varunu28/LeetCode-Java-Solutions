@@ -4,41 +4,34 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-    public TreeNode buildTree(int[] inorder, int[] postorder) { 
-        if (postorder.length == 0) {
-            return null;
-        }
-        
-        TreeNode root = constructTree(inorder, 0, inorder.length - 1, postorder, postorder.length-1);
-        
-        return root;
+  int idx;
+  public TreeNode buildTree(int[] inorder, int[] postorder) {
+    Map<Integer, Integer> map = new HashMap<>();
+    for (int i = 0; i < inorder.length; i++) {
+      map.put(inorder[i], i);
     }
-    
-    private TreeNode constructTree(int[] inorder, int inStart, int inEnd, int[] postorder, int postStart) {
-        if (inStart > inEnd) {
-            return null;
-        }
-        
-        int idx = getIndex(inorder, postorder[postStart], inStart, inEnd);
-
-        TreeNode node = new TreeNode(inorder[idx]);
-        node.left = constructTree(inorder, inStart, idx - 1, postorder, postStart-(inEnd - idx) - 1);
-        node.right = constructTree(inorder, idx + 1, inEnd, postorder, postStart-1);
-        
-        return node;
+    idx = postorder.length - 1;
+    return helper(inorder, postorder, 0, postorder.length - 1, map);
+  }
+  
+  private TreeNode helper(int[] inorder, int[] postorder, int start, int end, Map<Integer, Integer> map) {
+    if (start > end) {
+      return null;
     }
-    
-    private int getIndex(int[] arr, int num, int start, int end) {
-        for (int i=start; i<=end; i++) {
-            if (arr[i] == num) {
-                return i;
-            }
-        }
-        
-        return -1;
-    }
+    TreeNode node = new TreeNode(postorder[idx]);
+    int pos = map.get(postorder[idx--]);
+    node.right = helper(inorder, postorder, pos + 1, end, map);
+    node.left = helper(inorder, postorder, start, pos - 1, map);
+    return node;
+  }
 }

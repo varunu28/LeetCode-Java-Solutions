@@ -1,51 +1,40 @@
-class Solution {
-    int MAX_VALUE = 10001;
+public class Solution {
     public int[][] updateMatrix(int[][] matrix) {
-        int[][] visited = new int[matrix.length][matrix[0].length];
+        int m = matrix.length;
+        int n = matrix[0].length;
         
-        for (int i=0; i<matrix.length; i++) {
-            for (int j=0; j<matrix[i].length; j++) {
+        Queue<int[]> queue = new LinkedList<>();
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
                 if (matrix[i][j] == 0) {
+                    queue.offer(new int[] {i, j});
+                }
+                else {
+                    matrix[i][j] = Integer.MAX_VALUE;
+                }
+            }
+        }
+        
+        int[][] dirs = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+        
+        while (!queue.isEmpty()) {
+            int[] cell = queue.poll();
+            for (int[] d : dirs) {
+                int r = cell[0] + d[0];
+                int c = cell[1] + d[1];
+                if (r < 0 || 
+                    r >= m || 
+                    c < 0 || 
+                    c >= n || 
+                    matrix[r][c] <= matrix[cell[0]][cell[1]] + 1) {
                     continue;
                 }
                 
-                matrix[i][j] = getDistance(matrix, i, j, visited);
+                queue.add(new int[] {r, c});
+                matrix[r][c] = matrix[cell[0]][cell[1]] + 1;
             }
         }
         
         return matrix;
-    }
-    
-    private int getDistance(int[][] matrix, int i, int j, int[][] visited) {
-        if (i >= matrix.length || i < 0 || j >= matrix[0].length || j < 0 || visited[i][j] == 1) {
-            return MAX_VALUE;
-        }
-        
-        if (i - 1 >= 0 && matrix[i - 1][j] == 0) {
-            return 1;
-        }
-        
-        if (j - 1 >= 0 && matrix[i][j - 1] == 0) {
-            return 1;
-        }
-        
-        if (i + 1 < matrix.length && matrix[i + 1][j] == 0) {
-            return 1;
-        }
-        
-        if (j + 1 < matrix[0].length && matrix[i][j + 1] == 0) {
-            return 1;
-        }
-        
-        visited[i][j] = 1;
-        
-        int down = getDistance(matrix, i+1, j, visited);
-        int top = getDistance(matrix, i-1, j, visited);
-        int left = getDistance(matrix, i, j-1, visited);
-        int right = getDistance(matrix, i, j+1, visited);
-        
-        visited[i][j] = 0;
-        
-        return 1 + Math.min(Math.min(down, top), Math.min(left, right));
     }
 }

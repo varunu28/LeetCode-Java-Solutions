@@ -3,27 +3,27 @@
  * public class ListNode {
  *     int val;
  *     ListNode next;
- *     ListNode(int x) { val = x; }
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
 class Solution {
-    public ListNode insertionSortList(ListNode head) {
-        ListNode temp = head;
-        while (temp != null) {
-            ListNode curr =temp;
-            int v = curr.val;
-            ListNode t = temp;
-            while (curr != null) {
-                if (curr.val < v) {
-                    v = curr.val;
-                    t = curr;
-                }
-                curr = curr.next;
-            }
-            t.val = temp.val;
-            temp.val = v;
-            temp = temp.next;
-        }
-        return head;
+  public ListNode insertionSortList(ListNode head) {
+    ListNode dummy = new ListNode(0);
+    ListNode curr = head;
+    ListNode prev = dummy;
+    ListNode next = null;
+    while (curr != null) {
+      next = curr.next;
+      while (prev.next != null && prev.next.val < curr.val) {
+        prev = prev.next;
+      }
+      curr.next = prev.next;
+      prev.next = curr;
+      prev = dummy;
+      curr = next;
     }
+    return dummy.next; 
+  }
 }

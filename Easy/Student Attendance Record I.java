@@ -1,18 +1,16 @@
 class Solution {
-    public boolean checkRecord(String s) {
-        int absCount = 0;
-        if (s.contains("LLL")) {
-            return false;
+  public boolean checkRecord(String s) {
+    int absentCount = 0;
+    for (int i = 0; i< s.length(); i++) {
+      if (s.charAt(i) == 'A') {
+        absentCount++;
+      }
+      else if (s.charAt(i) == 'L') {
+        if (i + 1 < s.length() && i + 2 < s.length() && s.charAt(i + 1) == 'L' && s.charAt(i + 2) == 'L') {
+          return false;
         }
-        
-        for (int i=0;i<s.length();i++) {
-            if (s.charAt(i) == 'A') {
-                absCount++;
-            }
-            if (absCount>1) {
-                return false;
-            } 
-        }
-        return true;
+      }
     }
+    return absentCount <= 1;
+  }
 }

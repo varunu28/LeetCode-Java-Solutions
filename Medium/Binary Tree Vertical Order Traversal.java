@@ -4,62 +4,47 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
+  public List<List<Integer>> verticalOrder(TreeNode root) {
+    if (root == null) {
+      return new ArrayList<>();
+    }
     Map<Integer, List<Integer>> map = new TreeMap<>();
-    public List<List<Integer>> verticalOrder(TreeNode root) {
-        List<List<Integer>> ans = new ArrayList<>();
-        updateMap(root, 0);
-        
-        for (int key : map.keySet()) {
-            ans.add(map.get(key));
+    Queue<TreeLevel> queue = new LinkedList<>();
+    queue.add(new TreeLevel(root, 0));
+    while (!queue.isEmpty()) {
+      int size = queue.size();
+      while (size-- > 0) {
+        TreeLevel removed = queue.remove();
+        map.computeIfAbsent(removed.level, k -> new ArrayList<>()).add(removed.node.val);
+        if (removed.node.left != null) {
+          queue.add(new TreeLevel(removed.node.left, removed.level - 1));
         }
-        
-        return ans;
+        if (removed.node.right != null) {
+          queue.add(new TreeLevel(removed.node.right, removed.level + 1));
+        }
+      }
     }
-    
-    private void updateMap(TreeNode root, int level) {
-        if (root == null) {
-            return;
-        }
-        
-        Queue<Element> queue = new LinkedList<>();
-        queue.add(new Element(root, 0));
-        
-        while (!queue.isEmpty()) {
-            int size = queue.size();
-            
-            while (size-- > 0) {
-                Element temp = queue.remove();
-                if (map.containsKey(temp.level)) {
-                    map.get(temp.level).add(temp.node.val);
-                }
-                else {
-                    List<Integer> list = new ArrayList<>();
-                    list.add(temp.node.val);
-                    map.put(temp.level, list);
-                }
-                
-                if (temp.node.left != null) {
-                    queue.add(new Element(temp.node.left, temp.level-1));
-                }
-                
-                if (temp.node.right != null) {
-                    queue.add(new Element(temp.node.right, temp.level+1));
-                }
-            }
-        }
-    }
+    return new ArrayList<>(map.values());
+  }
 }
 
-class Element {
-    public TreeNode node;
-    public int level;
 
-    public Element(TreeNode node, int level) {
-        this.node = node;
-        this.level = level;
-    }
+class TreeLevel {
+  TreeNode node;
+  int level;
+  
+  public TreeLevel(TreeNode node, int level) {
+    this.node = node;
+    this.level = level;
+  }
 }

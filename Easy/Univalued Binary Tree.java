@@ -8,24 +8,20 @@
  * }
  */
 class Solution {
-    int currVal;
-    public boolean isUnivalTree(TreeNode root) {
-        currVal = Integer.MAX_VALUE;
-        return isUnivalTreeHelper(root);
+  public boolean isUnivalTree(TreeNode root) {
+    if (root == null) {
+      return true;
     }
-    
-    private boolean isUnivalTreeHelper(TreeNode root) {
-        if (root == null) {
-            return true;
-        }
-        
-        if (currVal == Integer.MAX_VALUE) {
-            currVal = root.val;
-        }
-        else if (currVal != root.val) {
-            return false;
-        }
-        
-        return isUnivalTreeHelper(root.left) && isUnivalTreeHelper(root.right);
+    return helper(root, root.val);
+  }
+  
+  private boolean helper(TreeNode root, int val) {
+    if (root == null) {
+      return true;
     }
+    if (root.val != val) {
+      return false;
+    }
+    return helper(root.left, val) && helper(root.right, val);
+  }
 }

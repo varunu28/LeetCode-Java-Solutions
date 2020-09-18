@@ -1,25 +1,36 @@
 class HitCounter {
 
     /** Initialize your data structure here. */
-    Queue<Integer> queue;
+    int[] times;
+    int[] hits;
     public HitCounter() {
-        queue = new LinkedList<>();
+        times = new int[300];
+        hits = new int[300];
     }
-
+    
     /** Record a hit.
-     @param timestamp - The current timestamp (in seconds granularity). */
+        @param timestamp - The current timestamp (in seconds granularity). */
     public void hit(int timestamp) {
-        queue.add(timestamp);
-    }
-
-    /** Return the number of hits in the past 5 minutes.
-     @param timestamp - The current timestamp (in seconds granularity). */
-    public int getHits(int timestamp) {
-        while (!queue.isEmpty() && timestamp - queue.peek() >= 300) {
-            queue.remove();
+        int idx = timestamp % 300;
+        if (times[idx] != timestamp) {
+            times[idx] = timestamp;
+            hits[idx] = 1;
         }
-
-        return queue.size();
+        else {
+            hits[idx]++;
+        }
+    }
+    
+    /** Return the number of hits in the past 5 minutes.
+        @param timestamp - The current timestamp (in seconds granularity). */
+    public int getHits(int timestamp) {
+        int totalCount = 0;
+        for (int i = 0; i < 300; i++) {
+            if (timestamp - times[i] < 300) {
+                totalCount += hits[i];
+            }
+        }
+        return totalCount;
     }
 }
 

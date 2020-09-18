@@ -1,39 +1,25 @@
 class Solution {
-    public int romanToInt(String s) {
-        String symbol = "IVXLCDM";
-        int[] val = {1, 5, 10, 50, 100, 500, 1000};
-        
-        char[] s_char = s.toCharArray();
-        
-        int[] s_val = new int[s_char.length];
-        
-        for (int i=0;i<s_char.length;i++) {
-            s_val[i] = val[symbol.indexOf(s_char[i])];
-        }
-        
-        int total = 0;
-        int k = 0;
-        
-        while (k < s_val.length) {
-            int s1  = s_val[k];
-            if (k+1 < s_val.length) {
-                int s2 = s_val[k+1];
-                
-                if (s1 >= s2) {
-                    total += s1;
-                    k++;
-                }
-                else{
-                    total += s2-s1;
-                    k += 2;
-                }
-            }
-            else {
-                total += s1;
-                k++;
-            }
-        }
-        
-        return total;
+  public int romanToInt(String s) {
+    String[] keys = {"I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M"};
+    int[] values = {1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000};
+    Map<String, Integer> map = new HashMap<>();
+    for (int i = 0; i < keys.length; i++) {
+      map.put(keys[i], values[i]);
     }
+    int val = 0;
+    int idx = 0;
+    int n = s.length();
+    while (idx < n) {
+      char c = s.charAt(idx);
+      if (idx + 1 < n && map.containsKey(s.substring(idx, idx + 2))) {
+        val += map.get(s.substring(idx, idx + 2));
+        idx += 2;
+      }
+      else {
+        val += map.get(String.valueOf(c));
+        idx++;
+      }
+    }
+    return val;
+  }
 }

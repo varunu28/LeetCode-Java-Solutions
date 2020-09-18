@@ -1,44 +1,33 @@
-class Vector2D implements Iterator<Integer> {
+class Vector2D {
+  int vectorIdx;
+  int currIdx;
+  int[][] v;
+  public Vector2D(int[][] v) {
+    vectorIdx = 0;
+    currIdx = 0;
+    this.v = v;
+  }
 
-    Iterator<List<Integer>> listIterator;
-    Iterator<Integer> iterator;
-    boolean flag;
+  public int next() {
+    hasNext();
+    return v[vectorIdx][currIdx++];
+  }
 
-    public Vector2D(List<List<Integer>> vec2d) {
-        listIterator = vec2d.iterator();
-        check();
+  public boolean hasNext() {
+    while (vectorIdx < v.length) {
+      if (currIdx < v[vectorIdx].length) {
+        return true;
+      }
+      vectorIdx++;
+      currIdx = 0;
     }
-
-    private void check() {
-        while (listIterator.hasNext()) {
-            List<Integer> list = listIterator.next();
-            if (list.size() > 0) {
-                iterator = list.iterator();
-                break;
-            }
-        }
-
-        flag = iterator != null;
-    }
-
-    @Override
-    public Integer next() {
-        int num = iterator.next();
-        if (!iterator.hasNext()) {
-            iterator = null;
-            check();
-        }
-
-        return num;
-    }
-
-    @Override
-    public boolean hasNext() {
-        return flag;
-    }
+    return false;
+  }
 }
+
 /**
  * Your Vector2D object will be instantiated and called as such:
- * Vector2D i = new Vector2D(vec2d);
- * while (i.hasNext()) v[f()] = i.next();
+ * Vector2D obj = new Vector2D(v);
+ * int param_1 = obj.next();
+ * boolean param_2 = obj.hasNext();
  */

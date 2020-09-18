@@ -27,21 +27,29 @@
  * }
  */
 class Solution {
-    int sum;
-    public int depthSum(List<NestedInteger> nestedList) {
-        sum = 0;
-        helper(nestedList, 1);
-        return sum;
+  public int depthSum(List<NestedInteger> nestedList) {
+    int level = 1;
+    Queue<NestedInteger> queue = new LinkedList<>();
+    int sum = 0;
+    for (NestedInteger nestedInteger : nestedList) {
+      queue.add(nestedInteger);
     }
-    
-    private void helper(List<NestedInteger> nestedList, int level) {
-        for (NestedInteger nested : nestedList) {
-            if (nested.isInteger()) {
-                sum += nested.getInteger() * level;
-            }
-            else {
-                helper(nested.getList(), level + 1);
-            }
+    while (!queue.isEmpty()) {
+      int size = queue.size();
+      while (size-- > 0) {
+        NestedInteger nestedInteger = queue.remove();
+        if (nestedInteger.isInteger()) {
+          sum += nestedInteger.getInteger() * level;
         }
+        else {
+          List<NestedInteger> nList = nestedInteger.getList();
+          for (NestedInteger nInteger : nList) {
+            queue.add(nInteger);
+          }
+        }
+      }
+      level++;
     }
+    return sum;
+  }
 }

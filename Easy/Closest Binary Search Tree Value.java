@@ -8,29 +8,26 @@
  * }
  */
 class Solution {
-    int ans = 0;
+  public int closestValue(TreeNode root, double target) {
+    int[] ans = {0};
     double minDiff = Double.MAX_VALUE;
-    
-    public int closestValue(TreeNode root, double target) {
-        updateVal(root, target);    
-        return ans;
+    helper(root, target, ans, minDiff);
+    return ans[0];
+  }
+  
+  private void helper(TreeNode root, double target, int[] ans, double minDiff) {
+    if (root == null) {
+      return;
     }
-    
-    private void updateVal(TreeNode root, double target) {
-        if (root == null) {
-            return;
-        }
-        
-        if (Math.abs(root.val - target) < minDiff) {
-            minDiff = Math.abs(root.val - target);
-            ans = root.val;
-        }
-        
-        if (root.val < target) {
-            updateVal(root.right, target);
-        }
-        else {
-            updateVal(root.left, target);
-        }
+    if (Math.abs(root.val - target) < minDiff) {
+      minDiff = Math.abs(root.val - target);
+      ans[0] = root.val;
     }
+    if (root.val < target) {
+      helper(root.right, target, ans, minDiff);
+    }
+    else {
+      helper(root.left, target, ans, minDiff);
+    }
+  }
 }

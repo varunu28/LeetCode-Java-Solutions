@@ -1,33 +1,23 @@
 class Solution {
-    public boolean wordPattern(String pattern, String str) {
-        Map<Character, Integer> patternMap = new HashMap<>();
-        StringBuilder patternCode = new StringBuilder();
-        int maxVal = 1;
-        
-        for (char c : pattern.toCharArray()) {
-            if (patternMap.containsKey(c)) {
-                patternCode.append(patternMap.get(c));
-            }
-            else {
-                patternMap.put(c, maxVal++);
-                patternCode.append(patternMap.get(c));
-            }
-        }
-        
-        Map<String, Integer> strMap = new HashMap<>();
-        StringBuilder strCode = new StringBuilder();
-        maxVal = 1;
-        
-        for (String s : str.trim().split("\\s+")) {
-            if (strMap.containsKey(s)) {
-                strCode.append(strMap.get(s));
-            }
-            else {
-                strMap.put(s, maxVal++);
-                strCode.append(strMap.get(s));
-            }
-        }
-        
-        return patternCode.toString().equals(strCode.toString());
+  public boolean wordPattern(String pattern, String str) {
+    StringBuilder patternSb = new StringBuilder();
+    Map<Character, Integer> patternMap = new HashMap<>();
+    int count = 0;
+    for (char c : pattern.toCharArray()) {
+      if (!patternMap.containsKey(c)) {
+        patternMap.put(c, count++);
+      }
+      patternSb.append(patternMap.get(c));
     }
+    StringBuilder strSb = new StringBuilder();
+    Map<String, Integer> strMap = new HashMap<>();
+    count = 0;
+    for (String s : str.split("\\s+")) {
+      if (!strMap.containsKey(s)) {
+        strMap.put(s, count++);
+      }
+      strSb.append(strMap.get(s));
+    }
+    return patternSb.toString().equals(strSb.toString());
+  }
 }

@@ -1,122 +1,71 @@
 class TicTacToe {
 
-    /** Initialize your data structure here. */
-    int[][] board;
-    int n;
-    boolean win;
+  /** Initialize your data structure here. */
+  int[][] board;
+  Map<Integer, Map<Integer, Integer>> rowMap;
+  Map<Integer, Map<Integer, Integer>> colMap;
+  Map<Integer, Integer> leftDiagonalMap;
+  Map<Integer, Integer> rightDiagonalMap;
+  int n;
+  public TicTacToe(int n) {
+    board = new int[n][n];
+    rowMap = new HashMap<>();
+    colMap = new HashMap<>();
+    leftDiagonalMap = new HashMap<>();
+    rightDiagonalMap = new HashMap<>();
+    this.n = n;
+  }
 
-    public TicTacToe(int n) {
-        this.n = n;
-        board = new int[n][n];
+  /** Player {player} makes a move at ({row}, {col}).
+      @param row The row of the board.
+      @param col The column of the board.
+      @param player The player, can be either 1 or 2.
+      @return The current winning condition, can be either:
+              0: No one wins.
+              1: Player 1 wins.
+              2: Player 2 wins. */
+  public int move(int row, int col, int player) {
+    if (!rowMap.containsKey(row)) {
+      Map<Integer, Integer> map = new HashMap<>();
+      rowMap.put(row, map);
     }
-
-    /** Player {player} makes a move at ({row}, {col}).
-     @param row The row of the board.
-     @param col The column of the board.
-     @param player The player, can be either 1 or 2.
-     @return The current winning condition, can be either:
-     0: No one wins.
-     1: Player 1 wins.
-     2: Player 2 wins. */
-    public int move(int row, int col, int player) {
-        if (win) {
-            return 0;
-        }
-
-        board[row][col] = player;
-
-        boolean cCheck = columnCheck(col, n, player);
-        boolean rCheck = rowCheck(row, n, player);
-        boolean diagCheck = diagonalCheck(row, col, n, player);
-
-        if (cCheck || rCheck  || diagCheck) {
-            win = true;
-            return player;
-        }
-
-        return 0;
+    rowMap.get(row).put(player, rowMap.get(row).getOrDefault(player, 0) + 1);
+    if (ifWinner(rowMap.get(row), player)) {
+      return player;
     }
-
-    private boolean diagonalCheck(int row, int col, int n, int player) {
-        int count = 0;
-
-        int rowNum = row;
-        int colNum = col;
-
-        while (rowNum < n && colNum < n) {
-            if (board[rowNum][colNum] == player) {
-                count++;
-            }
-
-            rowNum++;
-            colNum++;
-        }
-
-        rowNum = row-1;
-        colNum = col-1;
-
-        while (rowNum >= 0 && colNum >= 0) {
-            if (board[rowNum][colNum] == player) {
-                count++;
-            }
-
-            rowNum--;
-            colNum--;
-        }
-
-        if (count == n) {
-            return true;
-        }
-
-        count = 0;
-        rowNum = row;
-        colNum = col;
-
-        while (rowNum >= 0 && colNum < n) {
-            if (board[rowNum][colNum] == player) {
-                count++;
-            }
-
-            rowNum--;
-            colNum++;
-        }
-
-        rowNum = row;
-        colNum = col;
-
-        while (rowNum < n && colNum >= 0) {
-            if (board[rowNum][colNum] == player) {
-                count++;
-            }
-
-            rowNum++;
-            colNum--;
-        }
-
-        if (count == n+1) {
-            return true;
-        }
-
-        return false;
+    if (!colMap.containsKey(col)) {
+      Map<Integer, Integer> map = new HashMap<>();
+      colMap.put(col, map);
     }
-
-    private boolean rowCheck(int row, int n, int player) {
-        for (int i=0; i<n;i++) {
-            if (board[row][i] != player) {
-                return false;
-            }
-        }
-
-        return true;
+    colMap.get(col).put(player, colMap.get(col).getOrDefault(player, 0) + 1);
+    if (ifWinner(colMap.get(col), player)) {
+      return player;
     }
-
-    private boolean columnCheck(int col, int n, int player) {
-        for (int i=0; i<n; i++) {
-            if (board[i][col] != player) {
-                return false;
-            }
-        }
-
-        return true;
+    if (row == col) {
+      leftDiagonalMap.put(player, leftDiagonalMap.getOrDefault(player, 0) + 1);
     }
+    if (ifWinner(leftDiagonalMap, player)) {
+      return player;
+    }
+    if (row + col == n - 1) {
+      rightDiagonalMap.put(player, rightDiagonalMap.getOrDefault(player, 0) + 1);
+    }
+    if (ifWinner(rightDiagonalMap, player)) {
+      return player;
+    }
+    return 0;
+  }
+  
+  private boolean ifWinner(Map<Integer, Integer> map, int player) {
+    if (map.size() > 1) {
+      return false;
+    }
+    return map.values().stream().reduce(0, Integer::sum) == n;
+  }
 }
+
+/**
+ * Your TicTacToe object will be instantiated and called as such:
+ * TicTacToe obj = new TicTacToe(n);
+ * int param_1 = obj.move(row,col,player);
+ */

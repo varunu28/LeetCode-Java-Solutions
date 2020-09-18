@@ -1,27 +1,26 @@
 class Solution {
-    public List<List<Integer>> combine(int n, int k) {
-        List<Integer> temp = new ArrayList<>();
-        List<List<Integer>> ans = new ArrayList<>();
-        helper(n, 1, temp, ans, k);
-        
-        return ans;
+  public List<List<Integer>> combine(int n, int k) {
+    List<List<Integer>> ans = new ArrayList<>();
+    List<Integer> curr = new ArrayList<>();
+    helper(ans, curr, new boolean[n], k, 0);
+    return ans;
+  }
+  
+  private void helper(List<List<Integer>> ans, List<Integer> curr, boolean[] visited, int k, int idx) {
+    if (curr.size() == k) {
+      ans.add(new ArrayList<>(curr));
     }
-    
-    private void helper(int n, int start, List<Integer> temp, List<List<Integer>> ans, int len) {
-        if (temp.size() == len) {
-            ans.add(new ArrayList<>(temp));
-            return;
+    else {
+      for (int i = idx; i < visited.length; i++) {
+        if (visited[i]) {
+          continue;
         }
-        
-        for (int i=start; i<=n; i++) {
-            // Choose
-            temp.add(i);
-            
-            // Explore
-            helper(n, i+1, temp, ans, len);
-            
-            // Un-choose
-            temp.remove(temp.size() - 1);
-        }
+        curr.add(i + 1);
+        visited[i] = true;
+        helper(ans, curr, visited, k, i + 1);
+        curr.remove(curr.size() - 1);
+        visited[i] = false;
+      }
     }
-} 
+  }
+}

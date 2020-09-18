@@ -1,41 +1,22 @@
 class Solution {
-    
-    public List<List<String>> findDuplicate(String[] paths) {
-
-        Map<String, ArrayList<String>> map = new HashMap<>();
-        List<List<String>> ans = new ArrayList<>();
-
-        for (String s : paths) {
-            String[] temp = s.split("\\s");
-
-            for (int i=1;i<temp.length;i++) {
-                String message = temp[i].substring(temp[i].indexOf("(")+1, temp[i].indexOf(")"));
-                String fileName = temp[i].substring(0, temp[i].indexOf("("));
-
-                if (map.containsKey(message)) {
-                    ArrayList<String> tempList = map.get(message);
-                    tempList.add(temp[0] + "/" + fileName);
-                    map.put(message, tempList);
-                }
-                else {
-                    ArrayList<String> tempList = new ArrayList<>();
-                    tempList.add(temp[0] + "/" + fileName);
-                    map.put(message, tempList);
-                }
-
-            }
-        }
-
-        for (Map.Entry<String,ArrayList<String>> entry : map.entrySet()) {
-
-            List<String> l = entry.getValue();
-
-            if (l.size() > 1) {
-                ans.add(l);
-            }
-            
-        }
-
-        return ans;
+  public List<List<String>> findDuplicate(String[] paths) {
+    Map<String, List<String>> map = new HashMap<>();
+    for (String path : paths) {
+      String[] strs = path.split("\\s+");
+      String filePath = strs[0];
+      for (int i = 1; i < strs.length; i++) {
+        int startIdx = strs[i].indexOf('(');
+        String fileName = strs[i].substring(0, startIdx);
+        String content = strs[i].substring(startIdx, strs[i].length());
+        map.computeIfAbsent(content, k -> new ArrayList<>()).add(filePath + "/" + fileName);
+      }
     }
+    List<List<String>> duplicateFiles = new ArrayList<>();
+    for (String key : map.keySet()) {
+      if (map.get(key).size() > 1) {
+        duplicateFiles.add(map.get(key));
+      } 
+    }
+    return duplicateFiles;
+  }
 }

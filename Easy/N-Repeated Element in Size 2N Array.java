@@ -1,15 +1,12 @@
 class Solution {
-    public int repeatedNTimes(int[] A) {
-        int maxCounter = A.length / 2;
-        Map<Integer, Integer> map = new HashMap<>();
-        for (int num : A) {
-            map.put(num, map.getOrDefault(num, 0) + 1);
-            
-            if (map.get(num) == maxCounter) {
-                return num;
-            }
-        }
-        
-        return -1;
+  public int repeatedNTimes(int[] A) {
+    int[] arr = new int[10001];
+    for (int num : A) {
+      if (arr[num] == 1) {
+        return num;
+      }
+      arr[num]++;
     }
+    return -1;
+  }
 }

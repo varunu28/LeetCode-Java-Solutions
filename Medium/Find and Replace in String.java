@@ -1,24 +1,34 @@
 class Solution {
-    public String findReplaceString(String S, int[] indexes, String[] sources, String[] targets) {
-        Map<Integer, String> sourceMap = new HashMap<>();
-        Map<Integer, String> targetMap = new HashMap<>();
-        
-        for (int i=0; i<indexes.length; i++) {
-            sourceMap.put(indexes[i], sources[i]);
-            targetMap.put(indexes[i], targets[i]);
-        }
-        
-        StringBuilder sb = new StringBuilder();
-        for (int i=0; i<S.length(); i++) {
-            if (sourceMap.containsKey(i) && S.substring(i).startsWith(sourceMap.get(i))) {
-                sb.append(targetMap.get(i));
-                i += sourceMap.get(i).length() - 1;
-            }
-            else {
-                sb.append(S.charAt(i));
-            }
-        }
-        
-        return sb.toString();
+  public String findReplaceString(String S, int[] indexes, String[] sources, String[] targets) {
+    Map<Integer, String[]> map = new HashMap<>();
+    for (int i = 0; i < indexes.length; i++) {
+      map.put(indexes[i], new String[]{sources[i], targets[i]});
     }
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < S.length(); i++) {
+      if (map.containsKey(i)) {
+        String source = map.get(i)[0];
+        String target = map.get(i)[1];
+        int currIdx = 0;
+        boolean mismatch = false;
+        while (currIdx + i < S.length() && currIdx < source.length()) {
+          if (source.charAt(currIdx) != S.charAt(currIdx + i)) {
+            mismatch = true;
+            break;
+          }
+          currIdx++;
+        }
+        if (mismatch || currIdx != source.length()) {
+          sb.append(S.charAt(i));
+          continue;
+        }
+        sb.append(target);
+        i += source.length() - 1;
+      }
+      else {
+        sb.append(S.charAt(i));
+      }
+    }
+    return sb.toString();
+  }
 }

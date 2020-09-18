@@ -4,58 +4,35 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-    public List<List<Integer>> findLeaves(TreeNode root) {
-        List<List<Integer>> list = new ArrayList<>();
-        
-        while (root != null) {
-            List<Integer> leaves = getLeaves(root);
-            root = removeLeaves(root);
-            list.add(leaves);
-        }
-        
-        return list;
+  public List<List<Integer>> findLeaves(TreeNode root) {
+    List<List<Integer>> result = new ArrayList<>();
+    helper(result, root);
+    return result;
+  }
+  
+  private int helper(List<List<Integer>> result, TreeNode root) {
+    if (root == null) {
+      return -1;
     }
-    
-    private TreeNode removeLeaves(TreeNode root) {
-        if (root == null) {
-            return null;
-        }
-        
-        if (root.left == null && root.right == null) {
-            return null;
-        }
-        
-        root.left = removeLeaves(root.left);
-        root.right = removeLeaves(root.right);
-        
-        return root;
+    int left = helper(result, root.left);
+    int right = helper(result, root.right);
+    int maxDepth = Math.max(left, right) + 1;
+    if (maxDepth == result.size()) {
+      result.add(new ArrayList<>());
     }
-    
-    private List<Integer> getLeaves(TreeNode root) {
-        Queue<TreeNode> queue = new LinkedList<>();
-        queue.add(root);
-        List<Integer> list = new ArrayList<>();
-        
-        while (!queue.isEmpty()) {
-            TreeNode node = queue.remove();
-            if (node.left == null && node.right == null) {
-                list.add(node.val);
-            }
-            else {
-                if (node.left != null) {
-                    queue.add(node.left);
-                }
-                
-                if (node.right != null) {
-                    queue.add(node.right);
-                }
-            }
-        }
-        
-        return list;
-    } 
+    result.get(maxDepth).add(root.val);
+    // Cut the tree
+    root.left = root.right = null;
+    return maxDepth;
+  }
 }

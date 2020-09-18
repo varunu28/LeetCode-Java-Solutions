@@ -1,24 +1,29 @@
 class Solution {
-    public static String toGoatLatin(String S) {
-    	
-    	StringBuilder sb = new StringBuilder("");
-    	String[] strs = S.split("\\s+");
-    	
-    	String vowels = "aeiou";
-    	StringBuilder suffix = new StringBuilder("a");
-    	
-    	for (String s : strs) {
-    		if (vowels.indexOf(s.toLowerCase().charAt(0)) != -1) {
-    			sb.append(s).append("ma").append(suffix).append(" ");
-    		}
-    		else {
-    			sb.append(s.substring(1, s.length())).append(s.charAt(0)).append("ma").append(suffix).append(" ");
-    		}
-    		
-    		suffix.append("a");
-    	}
-        
-        return sb.toString().trim();
+  public String toGoatLatin(String S) {
+    StringBuilder sb = new StringBuilder();
+    StringBuilder endAppend = new StringBuilder("a");
+    final String CONSTANT_APPEND = "ma";
+    int start = 0;
+    int end = 0;
+    int n = S.length();
+    while (end < n) {
+      while (end < n && S.charAt(end) != ' ') {
+        end++;
+      }
+      char c = Character.toLowerCase(S.charAt(start));
+      if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u') {
+        sb.append(S.substring(start, end)).append(CONSTANT_APPEND).append(endAppend.toString());
+      }
+      else {
+        sb.append(S.substring(start + 1, end)).append(S.charAt(start)).append(CONSTANT_APPEND).append(endAppend.toString());
+      }
+      endAppend.append('a');
+      end++;
+      start = end;
+      if (end < n) {
+        sb.append(' ');
+      }
     }
+    return sb.toString();
+  }
 }
-

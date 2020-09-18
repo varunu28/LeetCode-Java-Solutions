@@ -4,22 +4,29 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-    public int findTilt(TreeNode root) {
-        if (root == null) {
-            return 0;
-        }
-        return Math.abs(sum(root.left) - sum(root.right)) + findTilt(root.right) + findTilt(root.left);
+  public int findTilt(TreeNode root) {
+    int[] total = {0};
+    helper(root, total);
+    return total[0];
+  }
+  
+  private int helper(TreeNode root, int[] total) {
+    if (root == null) {
+      return 0;
     }
-    
-    
-    public int sum(TreeNode root) {
-        if(root == null) {
-            return 0;
-        }
-        return root.val + sum(root.left) + sum(root.right);
-    }
+    int left = helper(root.left, total);
+    int right = helper(root.right, total);
+    total[0] += Math.abs(left - right);
+    return left + right + root.val;
+  }
 }

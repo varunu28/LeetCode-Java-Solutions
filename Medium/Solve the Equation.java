@@ -1,108 +1,93 @@
 class Solution {
     public String solveEquation(String equation) {
-        String[] sides = equation.split("=");
+        int leftXCount = 0;
+        int rightXCount = 0;
+        int leftNumCount = 0;
+        int rightNumCount = 0;
+        boolean switchDone = false;
+        int sign = 1;
+        StringBuilder sb = new StringBuilder();
 
-        int[] leftVal = getParsedValue(sides[0]);
-        int[] rightVal = getParsedValue(sides[1]);
+        for (char c : equation.toCharArray()) {
+            if (c == '=') {
+                if (sb.length() > 0) {
+                    leftNumCount += sign * Integer.parseInt(sb.toString());
+                    sb.setLength(0);
+                    sign = 1;
+                }
 
-        int leftXCount = leftVal[0];
-        int rightXCount = rightVal[0];
-        int leftNumCount = leftVal[1];
-        int rightNumCOunt = rightVal[1];
+                switchDone = true;
+                continue;
+            }
 
-        int actualXCount = leftXCount - rightXCount;
-        int actualNumCount = rightNumCOunt - leftNumCount;
+            if (c == 'x') {
+                if (switchDone) {
+                    rightXCount += sign * (sb.length() > 0 ? Integer.parseInt(sb.toString()) : 1);
+                }
+                else {
+                    leftXCount += sign * (sb.length() > 0 ? Integer.parseInt(sb.toString()) : 1);
+                }
 
-        if (actualXCount == 0 && actualNumCount == 0) {
-            return "Infinite solutions";
+                sign = 1;
+                sb.setLength(0);
+            }
+            else if (Character.isDigit(c)) {
+                sb.append(c);
+            }
+            else if (c == '+' || c == '-') {
+                if (sb.length() > 0) {
+                    if (switchDone) {
+                        rightNumCount += sign * (Integer.parseInt(sb.toString()));
+                    }
+                    else {
+                        leftNumCount += sign * (Integer.parseInt(sb.toString()));
+                    }
+
+                    sb.setLength(0);
+                }
+
+                sign = c == '+' ? 1 : -1;
+            }
         }
-        else if (actualXCount == 0) {
+
+        if (sb.length() > 0) {
+            rightNumCount += sign * Integer.parseInt(sb.toString());
+        }
+
+        if (leftXCount == rightXCount && leftNumCount != rightNumCount) {
             return "No solution";
         }
-        else if (actualNumCount == 0) {
-            return "x=0";
+        else if (leftXCount == rightXCount && leftNumCount == rightNumCount) {
+            return "Infinite solutions";
         }
         else {
-            if (actualXCount < 0) {
-                actualXCount *= -1;
-                actualNumCount *= -1;
+            int totalXCount = leftXCount - rightXCount;
+            int totalValueCount = rightNumCount - leftNumCount;
+
+            int gcd = getGcd(totalXCount, totalValueCount);
+            if (gcd != 0) {
+                totalXCount /= gcd;
+                totalValueCount /= gcd;
             }
 
-            if (Math.abs(actualNumCount) / Math.abs(actualXCount) > 0) {
-                actualNumCount /= actualXCount;
-                actualXCount = 1;
+            if (totalXCount < 0) {
+                totalXCount *= -1;
+                totalValueCount *= -1;
             }
 
-            return (actualXCount > 1 ? actualXCount : "")+ "x=" + actualNumCount;
+            return new StringBuilder()
+                            .append(totalXCount > 1 ? totalXCount : "")
+                            .append("x=")
+                            .append(totalValueCount)
+                            .toString();
         }
     }
 
-     private int[] getParsedValue(String s) {
+    private int getGcd(int totalXCount, int totalValueCount) {
+        if (totalXCount == 0) {
+            return totalValueCount;
+        }
 
-         StringBuilder sb = new StringBuilder();
-         boolean negative = false;
-
-         int xCount = 0;
-         int numCount = 0;
-
-         for (int i=0; i<s.length(); i++) {
-             if (s.charAt(i) == '+' || s.charAt(i) == '-') {
-                 if (sb.length() > 0) {
-                     if (negative) {
-                         sb.insert(0, '-');
-                     }
-
-                     if (sb.toString().indexOf('x') != -1) {
-                         if (sb.length() == 1) {
-                             xCount += 1;
-                         }
-                         else if (negative && sb.length() == 2) {
-                             xCount += -1;
-                         }
-                         else if (negative) {
-                             xCount += -1 * Integer.parseInt(sb.toString().substring(1, sb.length() - 1));
-                         }
-                         else {
-                             xCount += Integer.parseInt(sb.toString().substring(0, sb.length() - 1));
-                         }
-                     } else {
-                         numCount += Integer.parseInt(sb.toString());
-                     }
-                 }
-
-                 negative = s.charAt(i) == '-';
-                 sb = new StringBuilder();
-             }
-             else {
-                 sb.append(s.charAt(i));
-             }
-         }
-
-         if (sb.length() > 0) {
-             if (negative) {
-                 sb.insert(0, '-');
-             }
-
-
-             if (sb.toString().indexOf('x') != -1) {
-                 if (sb.length() == 1) {
-                     xCount += 1;
-                 }
-                 else if (negative && sb.length() == 2) {
-                     xCount += -1;
-                 }
-                 else if (negative) {
-                     xCount += -1 * Integer.parseInt(sb.toString().substring(1, sb.length() - 1));
-                 }
-                 else {
-                     xCount += Integer.parseInt(sb.toString().substring(0, sb.length() - 1));
-                 }
-             }
-             else {
-                 numCount += Integer.parseInt(sb.toString());
-             }
-         }
-
-         return new int[]{xCount, numCount};
-     }
+        return getGcd(totalValueCount % totalXCount, totalXCount);
+    }
 }

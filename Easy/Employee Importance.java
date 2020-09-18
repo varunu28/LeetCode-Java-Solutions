@@ -1,35 +1,28 @@
 /*
-// Employee info
+// Definition for Employee.
 class Employee {
-    // It's the unique id of each node;
-    // unique id of this employee
     public int id;
-    // the importance value of this employee
     public int importance;
-    // the id of direct subordinates
     public List<Integer> subordinates;
 };
 */
+
 class Solution {
-    
-    public int getImportance(List<Employee> employees, int id) {
-        Map<Integer, Employee> map = new HashMap<>();
-        
-        for (int i=0;i<employees.size(); i++) {
-            map.put(employees.get(i).id, employees.get(i));
-        }
-        
-        return solver(map, id);
+  public int getImportance(List<Employee> employees, int id) {
+    Map<Integer, Employee> map = new HashMap<>();
+    for (Employee employee : employees) {
+      map.put(employee.id, employee);
     }
-    
-    public int solver(Map<Integer, Employee> map, int id) {
-        Employee main = map.get(id);
-        int total = main.importance;
-        
-        for(int s : main.subordinates) {
-            total += solver(map, s);
-        }
-        
-        return total;
+    int importance = 0;
+    Queue<Employee> queue = new LinkedList<>();
+    queue.add(map.get(id));
+    while (!queue.isEmpty()) {
+      Employee removed = queue.remove();
+      importance += removed.importance;
+      for (Integer subordinate : removed.subordinates) {
+        queue.add(map.get(subordinate));
+      }
     }
+    return importance;
+  }
 }

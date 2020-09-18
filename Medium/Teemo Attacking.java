@@ -1,14 +1,16 @@
 class Solution {
     public int findPoisonedDuration(int[] timeSeries, int duration) {
+        if (duration == 0 || timeSeries.length == 0) {
+            return 0;
+        }
+
+        int totalTime = 0;
+        int beginTime = timeSeries[0];
+        for (int time : timeSeries) {
+            totalTime += (time < beginTime + duration ? time - beginTime : duration);
+            beginTime = time;
+        }
         
-        if (timeSeries.length == 0 || duration == 0) return 0;
-        
-            int begin = timeSeries[0], total = 0;
-            for (int t : timeSeries) {
-                total = total + (t < begin + duration ? t - begin : duration);
-                begin = t;
-            }   
-        
-        return total + duration;
+        return totalTime + duration;
     }
 }

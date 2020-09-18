@@ -1,16 +1,20 @@
 class Solution {
-    public boolean isOneBitCharacter(int[] bits) {
-        int l = bits.length;
-        int i = 0;
-        
-        while(i<l-1) {
-            if(bits[i] == 0) {
-                i++;
-            }
-            else {
-                i += 2;
-            }
+  public boolean isOneBitCharacter(int[] bits) {
+    int idx = 0;
+    int n = bits.length; 
+    while (idx < n) {
+      if (bits[idx] == 1) {
+        if (idx + 1 == n - 1) {
+          return false;
         }
-        return i == l-1;
+        else {
+          idx += 2;
+        }
+      }
+      else {
+        idx++;
+      }
     }
+    return true;
+  }
 }

@@ -1,86 +1,61 @@
 class WordFilter {
 
-    Map<String, Integer> wordWeight;
-    Node root;
-    public WordFilter(String[] words) {
-        wordWeight = new HashMap<>();
-        root = new Node("");
-        for (int i=0; i<words.length; i++) {
-            wordWeight.put(words[i], i);
-            insertWord(words[i]);
-        }
+  Node root;
+  Map<String, Integer> weightMap;
+  public WordFilter(String[] words) {
+    root = new Node('-');
+    weightMap = new HashMap<>();
+    for (int i = 0; i < words.length; i++) {
+      root.words.add(words[i]);
+      addWord(words[i], 0, root);
+      weightMap.put(words[i], i);
     }
-
-    private void insertWord(String word) {
-        Node curr = root;
-        for (int i=0; i<word.length(); i++) {
-            if (!curr.childrens.containsKey(word.charAt(i))) {
-                Node temp = new Node(word.substring(0, i+1));
-                curr.childrens.put(word.charAt(i), temp);
-            }
-
-            curr = curr.childrens.get(word.charAt(i));
-
-            if (i == (word.length() - 1)) {
-                curr.isWord = true;
-            }
-        }
+  }
+  
+  private void addWord(String word, int idx, Node curr) {
+    if (idx == word.length()) {
+      return;
     }
-
-    public int f(String prefix, String suffix) {
-        List<String> words = getWords(prefix);
-        int idx = -1;
-        int maxWeight = Integer.MIN_VALUE;
-
-        for (String word : words) {
-            if (word.endsWith(suffix)) {
-                if (wordWeight.get(word) > maxWeight) {
-                    maxWeight = wordWeight.get(word);
-                    idx = wordWeight.get(word);
-                }
-            }
-        }
-
-        return idx;
+    char c = word.charAt(idx);
+    if (!curr.children.containsKey(c)) {
+      curr.children.put(c, new Node(c));
     }
+    curr = curr.children.get(c);
+    curr.words.add(word);
+    addWord(word, idx + 1, curr);
+  }
 
-    private List<String> getWords(String prefix) {
-        List<String> words = new ArrayList<>();
-        Node curr = root;
-        for (int i=0; i<prefix.length(); i++) {
-            if (curr.childrens.containsKey(prefix.charAt(i))) {
-                curr = curr.childrens.get(prefix.charAt(i));
-            }
-            else {
-                return words;
-            }
+  public int f(String prefix, String suffix) {
+    Node curr = root;
+    if (prefix.length() != 0) {
+      for (char c : prefix.toCharArray()) {
+        if (!curr.children.containsKey(c)) {
+          return -1;
         }
-
-        findAllChildWords(words, curr);
-
-        return words;
+        curr = curr.children.get(c);
+      }
     }
-
-    private void findAllChildWords(List<String> words, Node curr) {
-        if (curr.isWord) {
-            words.add(curr.prefix);
-        }
-
-        for (char c : curr.childrens.keySet()) {
-            findAllChildWords(words, curr.childrens.get(c));
-        }
+    int ans = -1;
+    for (String word : curr.words) {
+      if (suffix.length() == 0 || word.endsWith(suffix)) {
+        ans = Math.max(ans, weightMap.get(word));
+      }
     }
+    return ans;
+  }
+}
 
-    class Node {
-        String prefix;
-        Map<Character, Node> childrens;
-        boolean isWord = false;
 
-        public Node(String prefix) {
-            this.prefix = prefix;
-            childrens = new HashMap<>();
-        }
-    }
+class Node {
+  char c;
+  Map<Character, Node> children;
+  Set<String> words;
+  
+  public Node(char c) {
+    this.c = c;
+    children = new HashMap<>();
+    words = new HashSet<>();
+  } 
 }
 
 /**

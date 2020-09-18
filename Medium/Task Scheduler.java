@@ -1,28 +1,16 @@
 class Solution {
-    public int leastInterval(char[] tasks, int n) {
-        int[] map = new int[26];
-        int time = 0;
-        
-        for (char c : tasks) {
-            map[c - 'A']++;
-        }
-        
-        Arrays.sort(map);
-        
-        while(map[25] > 0) {
-            int i = 0;
-            while (i <= n) {
-                if (map[25] == 0) break;
-                if (i < 26 && map[25-i] > 0) {
-                    map[25 - i]--;
-                }
-                i++;
-                time++;
-            }
-            
-            Arrays.sort(map);
-        }
-        
-        return time;
+  public int leastInterval(char[] tasks, int n) {
+    int[] counter = new int[26];
+    for (char task : tasks) {
+      counter[task - 'A']++;
     }
+    Arrays.sort(counter);
+    int maxFrequency = counter[25];
+    int idleTime = (maxFrequency - 1) * n;
+    for (int i = counter.length - 2; i >= 0 && idleTime > 0; i--) {
+      idleTime -= Math.min(maxFrequency - 1, counter[i]);
+    }
+    idleTime = Math.max(0, idleTime);
+    return idleTime + tasks.length;
+  }
 }

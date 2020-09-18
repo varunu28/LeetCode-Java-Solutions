@@ -5,43 +5,33 @@ class Node {
     public Node prev;
     public Node next;
     public Node child;
-
-    public Node() {}
-
-    public Node(int _val,Node _prev,Node _next,Node _child) {
-        val = _val;
-        prev = _prev;
-        next = _next;
-        child = _child;
-    }
 };
 */
+
 class Solution {
-    Node ans;
-    Node curr;
-    public Node flatten(Node head) {
-        ans = new Node(-1);
-        curr = ans;
-        
-        helper(head);
-        
-        return ans.next;
+  public Node flatten(Node head) {
+    if (head == null) {
+      return null;
     }
-    
-    private void helper(Node node) {
-        if (node == null) {
-            return;
-        }
-        
-        Node prev = curr;
-        curr.next = new Node(node.val);
-        curr = curr.next;
-        curr.prev = prev.val == -1 ? null : prev;
-        
-        if (node.child != null) {
-            helper(node.child);
-        }
-        
-        helper(node.next);
+    Stack<Node> stack = new Stack<>();
+    stack.push(head);
+    Node dummy = new Node(0, null, head, null);
+    Node prev = dummy;
+    Node curr = dummy;
+    while (!stack.isEmpty()) {
+      curr = stack.pop();
+      prev.next = curr;
+      curr.prev = prev;
+      if (curr.next != null) {
+        stack.push(curr.next);
+      }
+      if (curr.child != null) {
+        stack.push(curr.child);
+        curr.child = null;
+      }
+      prev = curr;
     }
+    dummy.next.prev = null;
+    return dummy.next;
+  }
 }

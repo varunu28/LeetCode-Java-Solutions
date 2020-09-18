@@ -1,41 +1,31 @@
 class Solution {
-    public static int compareVersion(String version1, String version2) {
-        String[] v1 = version1.split("\\.");
-        String[] v2 = version2.split("\\.");
-
-        int v1Start = 0;
-        int v2Start = 0;
-
-        while (v1Start < v1.length || v2Start < v2.length) {
-
-            if (v1Start < v1.length && v2Start < v2.length) {
-                if (Integer.parseInt(v1[v1Start]) < Integer.parseInt(v2[v2Start])) {
-                    return -1;
-                } else if (Integer.parseInt(v1[v1Start]) > Integer.parseInt(v2[v2Start])) {
-                    return 1;
-                }
-
-                v1Start++;
-                v2Start++;
-            }
-            else if (v1Start < v1.length && v2Start == v2.length) {
-                if (Integer.parseInt(v1[v1Start]) > 0) {
-                    return 1;
-                }
-                else {
-                    v1Start++;
-                }
-            }
-            else {
-                if (Integer.parseInt(v2[v2Start]) > 0) {
-                    return -1;
-                }
-                else {
-                    v2Start++;
-                }
-            }
+  public int compareVersion(String version1, String version2) {
+    String[] versionSplit1 = version1.split("\\.");
+    String[] versionSplit2 = version2.split("\\.");
+    int idx1 = 0;
+    int idx2 = 0;
+    while (idx1 < versionSplit1.length || idx2 < versionSplit2.length) {
+      if (idx1 < versionSplit1.length && idx2 < versionSplit2.length) {
+        int ver1 = Integer.parseInt(versionSplit1[idx1++]);
+        int ver2 = Integer.parseInt(versionSplit2[idx2++]);
+        int c = ver1 - ver2;
+        if (c != 0) {
+          return c > 0 ? 1 : -1;
         }
-
-        return 0;
+      }
+      else if (idx1 < versionSplit1.length || idx2 == versionSplit2.length) {
+        int ver1 = Integer.parseInt(versionSplit1[idx1++]);
+        if (ver1 != 0) {
+          return 1;
+        }
+      }
+      else {
+        int ver2 = Integer.parseInt(versionSplit2[idx2++]);
+        if (ver2 != 0) {
+          return -1;
+        }
+      }
     }
+    return 0;
+  } 
 }

@@ -16,42 +16,48 @@
  * }
  */
 public class NestedIterator implements Iterator<Integer> {
-    List<Integer> list;
-    int index;
-    int size;
-    public NestedIterator(List<NestedInteger> nestedList) {
-        list = new ArrayList<>();
-        index = 0;
-        for (NestedInteger n : nestedList) {
-            dfsHelper(n);
-        }
-        
-        size = list.size();
-    }
-    
-    private void dfsHelper(NestedInteger n) {
-        if (n.isInteger()) {
-            list.add(n.getInteger());
-        }
-        else {
-            for (NestedInteger ni : n.getList()) {
-                dfsHelper(ni);
-            }
-        }
-    }
+  List<NestedInteger> nestedList;
+  Queue<Integer> queue;
+  int idx;
+  public NestedIterator(List<NestedInteger> nestedList) {
+    this.nestedList = nestedList;
+    queue = new LinkedList<>();
+    idx = 0;
+    addToQueue();
+  }
 
-    @Override
-    public Integer next() {
-        if (index < size) {
-            return list.get(index++);
-        }
-        return -1;
+  @Override
+  public Integer next() {
+    int val = queue.remove();
+    if (queue.isEmpty()) {
+      if (idx != nestedList.size()) {
+        addToQueue();
+      }
     }
+    return val;
+  }
+  
+  private void addToQueue() {
+    while (idx < nestedList.size() && queue.isEmpty()) {
+      addToQueueHelper(nestedList.get(idx++));
+    }
+  }
+  
+  private void addToQueueHelper(NestedInteger ns) {
+    if (ns.isInteger()) {
+      queue.add(ns.getInteger());
+    }
+    else {
+      for (NestedInteger ni : ns.getList()) {
+        addToQueueHelper(ni);
+      }
+    }
+  }
 
-    @Override
-    public boolean hasNext() {
-        return !(index == size);        
-    }
+  @Override
+  public boolean hasNext() {
+    return !(queue.isEmpty() && idx == nestedList.size());
+  }
 }
 
 /**

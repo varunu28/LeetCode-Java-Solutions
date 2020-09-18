@@ -1,42 +1,36 @@
 class Solution {
-    int[][] dp;
+    int[][] dirs = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
     public int longestIncreasingPath(int[][] matrix) {
         if (matrix.length == 0 || matrix[0].length == 0) {
             return 0;
         }
         
+        int[][] dp = new int[matrix.length][matrix[0].length];
         int max = 0;
-        dp = new int[matrix.length][matrix[0].length];
-        
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[0].length; j++) {
-                max = Math.max(max, getIncreasingPathLength(matrix, i, j, Integer.MIN_VALUE));
+                max = Math.max(max, dfs(matrix, i, j, dp, Integer.MIN_VALUE));
             }
         }
         
         return max;
     }
     
-    private int getIncreasingPathLength(int[][] matrix, int row, int col, int prev) {
-        if (row < 0 || 
-            col < 0 || 
-            row >= matrix.length || 
-            col >= matrix[0].length || 
-            matrix[row][col] <= prev) {
+    private int dfs(int[][] matrix, int x, int y, int[][] dp, int prevVal) {
+        if (x < 0 || x >= matrix.length || y < 0 || y >= matrix[0].length || matrix[x][y] <= prevVal) {
             return 0;
         }
         
-        if (dp[row][col] != 0) {
-            return dp[row][col];
+        if (dp[x][y] != 0) {
+            return dp[x][y];
         }
         
-        int up = getIncreasingPathLength(matrix, row - 1, col, matrix[row][col]);
-        int down = getIncreasingPathLength(matrix, row + 1, col, matrix[row][col]);
-        int right = getIncreasingPathLength(matrix, row, col + 1, matrix[row][col]);
-        int left = getIncreasingPathLength(matrix, row, col - 1, matrix[row][col]);
+        int temp = 0;
+        for (int[] dir : dirs) {
+            temp = Math.max(temp, dfs(matrix, x + dir[0], y + dir[1], dp, matrix[x][y]));
+        }
         
-        dp[row][col] = 1 + Math.max(Math.max(up, down), Math.max(right, left));
-        
-        return dp[row][col];
+        dp[x][y] = temp + 1;
+        return dp[x][y];
     }
 }

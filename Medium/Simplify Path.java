@@ -1,32 +1,35 @@
 class Solution {
-    public String simplifyPath(String path) {
-        String[] splitPaths = path.split("\\/");
-        Stack<String> paths = new Stack<>();
-        for (String p : splitPaths) {
-            if (p.length() == 0 || p.equals("/") || p.equals(" ") || p.equals(".")) {
-                continue;
-            }
-
-            if (p.equals("..")) {
-                if (!paths.isEmpty()) {
-                    paths.pop();
-                }
-            }
-            else {
-                paths.push(p.trim());
-            }
+  public String simplifyPath(String path) {
+    Stack<String> stack = new Stack<>();
+    StringBuilder sb = new StringBuilder();
+    int idx = 0;
+    int n = path.length();
+    while (idx < n) {
+      if (path.charAt(idx) == '/') {
+        idx++;
+        while (idx < n && path.charAt(idx) != '/') {
+          sb.append(path.charAt(idx++));
         }
-
-        Stack<String> revPath = new Stack<>();
-        while (!paths.isEmpty()) {
-            revPath.push(paths.pop());
+        String dir = sb.toString();
+        sb.setLength(0);
+        if (dir.equals("..")) {
+          if (!stack.isEmpty()) {
+            stack.pop(); 
+          }
         }
-
-        StringBuilder sb = new StringBuilder();
-        while (!revPath.isEmpty()) {
-            sb.append("/").append(revPath.pop());
+        else if (dir.equals(".") || dir.length() == 0) {
+          continue;
         }
-
-        return sb.length() == 0 ? "/" : sb.toString();
+        else {
+          stack.push(dir);
+        }
+      }
     }
+    sb = new StringBuilder();
+    while (!stack.isEmpty()) {
+      sb.insert(0, stack.pop());
+      sb.insert(0, "/");
+    }
+    return sb.length() > 0 ? sb.toString() : "/";
+  }
 }

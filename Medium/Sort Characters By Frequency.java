@@ -1,47 +1,20 @@
 class Solution {
-    
-    public String frequencySort(String s) {
-        Map<Character, Integer> map = new HashMap<>();
-
-        for (int i=0;i<s.length();i++) {
-            if (map.containsKey(s.charAt(i))) {
-                map.put(s.charAt(i), map.get(s.charAt(i))+1);
-            }
-            else {
-                map.put(s.charAt(i), 1);
-            }
-        }
-
-        Map<Character, Integer> sortedMap = sortByValue(map);
-
-
-        StringBuilder sb = new StringBuilder("");
-
-        for (Map.Entry<Character,Integer> entry : sortedMap.entrySet()) {
-            String t = String.join("", Collections.nCopies(entry.getValue(), String.valueOf(entry.getKey())));
-            sb.append(t);
-        }
-
-        return sb.toString();
+  public String frequencySort(String s) {
+    Map<Character, Integer> map = new HashMap<>();
+    for (char c : s.toCharArray()) {
+      map.put(c, map.getOrDefault(c, 0) + 1);
     }
-
-    private Map<Character, Integer> sortByValue(Map<Character, Integer> unsortMap) {
-
-        List<Map.Entry<Character, Integer>> list =
-                new LinkedList<Map.Entry<Character, Integer>>(unsortMap.entrySet());
-
-        Collections.sort(list, new Comparator<Map.Entry<Character, Integer>>() {
-            public int compare(Map.Entry<Character, Integer> o1,
-                               Map.Entry<Character, Integer> o2) {
-                return (o2.getValue()).compareTo(o1.getValue());
-            }
-        });
-
-        Map<Character, Integer> sortedMap = new LinkedHashMap<Character, Integer>();
-        for (Map.Entry<Character, Integer> entry : list) {
-            sortedMap.put(entry.getKey(), entry.getValue());
-        }
-
-        return sortedMap;
+    PriorityQueue<Character> pq = new PriorityQueue<>((o1, o2) -> map.get(o2) - map.get(o1));
+    pq.addAll(map.keySet());
+    StringBuilder sb = new StringBuilder();
+    while (!pq.isEmpty()) {
+      char c = pq.poll();
+      int count  = map.get(c);
+      while (count-- > 0) {
+        sb.append(c);
+      }
     }
+    return sb.toString();
+  }
 }
+

@@ -1,24 +1,26 @@
 class Solution {
-    public boolean isValid(String s) {
-        Stack<Character> stack = new Stack<>();
-        String open = "{([";
-        String close = "})]";
-        for (int i=0;i<s.length();i++) {
-            if (open.indexOf(s.charAt(i)) != -1) {
-                stack.push(s.charAt(i));
-            }
-            else {
-                if (!stack.empty()) {
-                    char c = stack.pop();
-                    if (open.indexOf(c) != close.indexOf(s.charAt(i))) {
-                        return false;
-                    }
-                }
-                else {
-                    return false;
-                }
-            }
+  public boolean isValid(String s) {
+    Stack<Character> stack = new Stack<>();
+    String closing = ")}]";
+    String opening = "({[";
+    
+    for (char c : s.toCharArray()) {
+      if (closing.indexOf(c) == -1) {
+        stack.push(c);
+      }
+      else {
+        if (stack.isEmpty()) {
+          System.out.println("HERE");
+          return false;
         }
-        return stack.empty();
+        char temp = stack.pop();
+        if (opening.indexOf(temp) != closing.indexOf(c)) {
+          System.out.println(opening.indexOf(temp) + " " + closing.indexOf(c));
+          return false;
+        }
+      }
     }
+    System.out.println(stack);
+    return stack.isEmpty();
+  }
 }

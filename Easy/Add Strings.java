@@ -1,35 +1,27 @@
 class Solution {
-    public String addStrings(String num1, String num2) {
-        String big = num2;
-        String small = num1;
-        if (num1.length() > num2.length()) {
-            big = num1;
-            small = num2;
-        }
-        
-        StringBuilder answer = new StringBuilder("");
-        int small_i = small.length() - 1;
-        int big_i = big.length() - 1;
-        
-        int carryOver = 0;
-        
-        while (small_i >= 0) {
-            int mid = Integer.parseInt(String.valueOf(small.charAt(small_i))) + Integer.parseInt(String.valueOf(big.charAt(big_i))) + carryOver;
-            carryOver = mid/10;
-            mid = mid%10;
-            answer.append(String.valueOf(mid));
-            small_i--;
-            big_i--;
-        }
-        
-        while (big_i >= 0) {
-            int mid = Integer.parseInt(String.valueOf(big.charAt(big_i))) + carryOver;
-            carryOver = mid/10;
-            mid = mid%10;
-            answer.append(String.valueOf(mid));
-            big_i--;
-        }
-        
-        return carryOver > 0 ? String.valueOf(carryOver) + answer.reverse().toString() : answer.reverse().toString();
+  public String addStrings(String num1, String num2) {
+    StringBuilder sb = new StringBuilder();
+    int idx1 = num1.length() - 1;
+    int idx2 = num2.length() - 1;
+    int carry = 0;
+    while (idx1 >= 0 || idx2 >= 0) {
+      int temp = carry;
+      if (idx1 >= 0 && idx2 >= 0) {
+        temp += Character.getNumericValue(num1.charAt(idx1--)) + Character.getNumericValue(num2.charAt(idx2--));
+      }
+      else if (idx1 >= 0 && idx2 < 0) {
+        temp += Character.getNumericValue(num1.charAt(idx1--));
+      }
+      else {
+        temp += Character.getNumericValue(num2.charAt(idx2--));
+      }
+      carry = temp > 9 ? 1 : 0;
+      temp = temp > 9 ? temp % 10 : temp;
+      sb.append(temp);
     }
+    if (carry > 0) {
+      sb.append(carry);
+    }
+    return sb.reverse().toString();
+  }
 }

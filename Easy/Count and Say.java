@@ -1,32 +1,23 @@
 class Solution {
-    public String countAndSay(int n) {
-        String first = "1";
-        String str = "11";
-        
-        if (n == 1) return first;
-        if (n == 2) return str;
-        
-        for (int i = 3; i<=n; i++) {
-            str += "$";
-            int len = str.length();
-
-            int cnt = 1; 
-            String  tmp = ""; 
-            
-            for (int j = 1; j < len; j++) {
-                if (str.charAt(j) != str.charAt(j-1)) {
-                    tmp += String.valueOf(cnt);
-                    tmp += str.charAt(j-1);
-
-                    cnt = 1;
-                }
-
-                else cnt++;
-            }
-
-            str = tmp;
-        }
-        
-        return str;
+  public String countAndSay(int n) {
+    return rec(n, "1");
+  }
+  
+  private String rec(int n, String s) {
+    if (n == 1) {
+      return s;
     }
+    StringBuilder sb = new StringBuilder();
+    int idx = 0;
+    while (idx < s.length()) {
+      char c = s.charAt(idx);
+      int count = 0;
+      while (idx < s.length() && s.charAt(idx) == c) {
+        idx++;
+        count++;
+      }
+      sb.append(count).append(c);
+    }
+    return rec(n - 1, sb.toString());
+  }
 }

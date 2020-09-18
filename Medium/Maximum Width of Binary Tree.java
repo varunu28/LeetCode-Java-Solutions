@@ -8,38 +8,20 @@
  * }
  */
 class Solution {
-    public int widthOfBinaryTree(TreeNode root) {
-        if (root == null) {
-            return 1;
-        }
-        
-        int size = 0;
-        Queue<TreeNode> queue = new LinkedList<>();
-        Map<TreeNode, Integer> map = new HashMap<>();
-        map.put(root, 0);
-        queue.add(root);
-        
-        while (!queue.isEmpty()) {
-            int len = queue.size();
-            int leftPos = map.get(queue.peek());
-            
-            for (int i=0; i<len; i++) {
-                TreeNode popped = queue.remove();
-                int currPos = map.get(popped);
-                size = Math.max(size, currPos - leftPos + 1);
-                
-                if (popped.left != null) {
-                    queue.add(popped.left);
-                    map.put(popped.left, 2 * currPos);
-                }
-                
-                if (popped.right != null) {
-                    queue.add(popped.right);
-                    map.put(popped.right, 2 * currPos + 1);
-                }
-            }
-        }
-        
-        return size;
+  public int widthOfBinaryTree(TreeNode root) {
+    int[] ans = {0};
+    Map<Integer, Integer> map = new HashMap<>();
+    dfs(root, 0, 0, ans, map);
+    return ans[0];
+  }
+  
+  private void dfs(TreeNode root, int depth, int pos, int[] ans, Map<Integer, Integer> map) {
+    if (root == null) {
+      return;
     }
+    map.putIfAbsent(depth, pos);
+    ans[0] = Math.max(ans[0], pos - map.get(depth) + 1);
+    dfs(root.left, depth + 1, 2 * pos, ans, map);
+    dfs(root.right, depth + 1, 2 * pos + 1, ans, map);
+  }
 }

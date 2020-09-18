@@ -1,29 +1,41 @@
 class Solution {
-    public List<Integer> findClosestElements(int[] arr, int k, int x) {
-        if (x <= arr[0]) {
-            return Arrays.stream(arr).boxed().collect(Collectors.toList()).subList(0, k);
-        }
-        else if (x >= arr[arr.length - 1]) {
-            return Arrays.stream(arr).boxed().collect(Collectors.toList()).subList(arr.length - k, arr.length);
+  public List<Integer> findClosestElements(int[] arr, int k, int x) {
+    if (k == 0 || arr.length == 0) {
+      return new ArrayList<>();
+    }
+    int[] diffArr = new int[arr.length];
+    int minDiff = Integer.MAX_VALUE;
+    int minDiffIdx = -1;
+    for (int i = 0; i < arr.length; i++) {
+      diffArr[i] = Math.abs(arr[i] - x);
+      if (minDiff > diffArr[i]) {
+        minDiff = diffArr[i];
+        minDiffIdx = i;
+      }
+    }
+    int left = minDiffIdx - 1;
+    int right = minDiffIdx + 1;
+    List<Integer> list = new ArrayList<>();
+    list.add(arr[minDiffIdx]);
+    k--;
+    while (k > 0) {
+      if (left >= 0 && right < arr.length) {
+        if (diffArr[left] <= diffArr[right]) {
+          list.add(arr[left--]);
         }
         else {
-            int idx = Arrays.binarySearch(arr, x);
-            if (idx < 0) {
-                idx = -idx - 1;
-            }
-            int low = Math.max(0, idx - k - 1);
-            int high = Math.min(arr.length - 1, idx + k - 1);
-
-            while (high - low > k - 1) {
-                if (low < 0 || (x - arr[low]) <= (arr[high] - x)) {
-                    high--;
-                }
-                else if ((high > arr.length - 1 || (x - arr[low]) > (arr[high] - x))) {
-                    low++;
-                }
-            }
-
-            return Arrays.stream(arr).boxed().collect(Collectors.toList()).subList(low, high + 1);
+          list.add(arr[right++]);
         }
+      }
+      else if (left >= 0 && right == arr.length) {
+        list.add(arr[left--]);
+      }
+      else {
+        list.add(arr[right++]);
+      }
+      k--;
     }
+    Collections.sort(list);
+    return list;
+  }
 }

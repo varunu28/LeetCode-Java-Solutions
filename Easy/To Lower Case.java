@@ -1,14 +1,15 @@
 class Solution {
-    public String toLowerCase(String str) {
-        char[] chars = str.toCharArray();
-        for (int i=0; i<chars.length; i++) {
-            int ascii = (int) chars[i];
-            if (ascii >= 65 && ascii <= 90) {
-                ascii = 97 + (ascii - 65);
-                chars[i] = (char) ascii;
-            }
-        }
-        
-        return String.valueOf(chars);
+  public String toLowerCase(String str) {
+    StringBuilder sb = new StringBuilder();
+    for (char c : str.toCharArray()) {
+      int ascii = (int) c;
+      if (c >= 65 && c <= 90) {
+        sb.append((char) (c - 65 + 97));
+      }
+      else {
+        sb.append(c);
+      }
     }
+    return sb.toString();
+  }
 }

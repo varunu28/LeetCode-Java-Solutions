@@ -1,58 +1,30 @@
 class Solution {
-    public int[] searchRange(int[] nums, int target) {
-        int idx = findBinary(nums, 0, nums.length-1, target);
-        int startIdx = idx;
-        int endIdx = idx;
-        
-        int start = 0;
-        int end = idx - 1;
-        
-        while (true) {
-            int temp = findBinary(nums, start, end, target);
-            if (temp != -1) {
-                startIdx = temp;
-                start = 0;
-                end = temp - 1;
-            }
-            else {
-                break;
-            }
+  public int[] searchRange(int[] nums, int target) {
+    return new int[]{binarySearchHelper(nums, target, -1), binarySearchHelper(nums, target, 1)};
+  } 
+  
+  private int binarySearchHelper(int[] nums, int target, int dir) {
+    int start = 0;
+    int end = nums.length - 1;
+    int idx = -1;
+    while (start <= end) {
+      int mid = (start + end) / 2;
+      if (nums[mid] == target) {
+        idx = mid;
+        if (dir == -1) {
+          end = mid - 1;
         }
-        
-        start = idx + 1;
-        end = nums.length - 1;
-        
-        while (true) {
-            int temp = findBinary(nums, start, end, target);
-            if (temp != -1) {
-                endIdx = temp;
-                start = temp + 1;
-                end = nums.length - 1;
-            }
-            else {
-                break;
-            }
+        else {
+          start = mid + 1;
         }
-        
-        int[] ans = new int[]{startIdx, endIdx};
-            
-        return ans;
+      }
+      else if (nums[mid] < target) {
+        start = mid + 1;
+      }
+      else {
+        end = mid - 1;
+      }
     }
-    
-    private int findBinary(int[] nums, int start, int end, int target) {
-        while (start <= end) {
-            int mid = (start + end)/2;
-            if (nums[mid] == target) {
-                return mid;
-            }
-            else if (nums[mid] > target) {
-                end = mid-1;
-            }
-            else {
-                start = mid + 1;
-            }
-        }
-        
-        return -1;
-    }
+    return idx;
+  }
 }

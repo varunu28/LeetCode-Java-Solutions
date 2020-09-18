@@ -1,29 +1,27 @@
 class Solution {
-    public boolean validPalindrome(String s) {
-        if (isPalindrome(s)) return true;        
-    
-        int i=0;
-        int j = s.length()-1;
-         
-        while (i<j && s.charAt(i) == s.charAt(j)) {
-            i++;
-            j--;
-        }
-        
-        if (i>=j) {
-            return true;
-        }
-        
-        if (isPalindrome(s.substring(i+1,j+1)) || isPalindrome(s.substring(i,j))) {
-            return true;
-        }
-        
-        return false;
+  public boolean validPalindrome(String s) {
+    int start = 0;
+    int end = s.length() - 1;
+    while (start < end && s.charAt(start) == s.charAt(end)) {
+      start++;
+      end--;
     }
-    
-    public boolean isPalindrome(String s) {
-        StringBuilder sb = new StringBuilder("");
-        sb.append(s);
-        return s.equals(sb.reverse().toString());
+    if (start >= end) {
+      return true;
     }
+    if (isPalindrome(s.substring(start + 1, end + 1)) || isPalindrome(s.substring(start, end))) {
+      return true;
+    }
+    return false;
+  }
+  
+  private boolean isPalindrome(String s) {
+    int start = 0;
+    int end = s.length() - 1;
+    while (start < end && s.charAt(start) == s.charAt(end)) {
+      start++;
+      end--;
+    }
+    return start >= end;
+  }
 }

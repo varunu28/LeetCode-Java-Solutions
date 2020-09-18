@@ -1,21 +1,19 @@
 class Solution {
-    public static List<List<Integer>> subsets(int[] nums) {
-
-        Arrays.sort(nums);
-        List<List<Integer>> perms = new ArrayList<>();
-        List<Integer> temp = new ArrayList<>();
-        subsetsHelper(nums, perms, temp, 0);
-
-        return perms;
+  public List<List<Integer>> subsets(int[] nums) {
+    List<List<Integer>> list = new ArrayList<>();
+    helper(nums, list, new ArrayList<>(), 0);
+    return list;
+  }
+  
+  private void helper(int[] nums, List<List<Integer>> list, List<Integer> curr, int idx) {
+    list.add(new ArrayList<>(curr));
+    if (idx >= nums.length) {
+      return;
     }
-
-    private static void subsetsHelper(int[] nums, List<List<Integer>> perms, List<Integer> temp, int start) {
-        perms.add(new ArrayList<>(temp));
-
-        for (int i=start; i<nums.length; i++) {
-            temp.add(nums[i]);
-            subsetsHelper(nums, perms, temp, i+1);
-            temp.remove(temp.size()-1);
-        }
+    for (int i = idx; i < nums.length; i++) {
+      curr.add(nums[i]);
+      helper(nums, list, curr, i + 1);
+      curr.remove(curr.size() - 1);
     }
+  }
 }
