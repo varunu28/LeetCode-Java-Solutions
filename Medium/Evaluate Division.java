@@ -1,44 +1,45 @@
 class Solution {
-  public double[] calcEquation(List<List<String>> equations, double[] values, List<List<String>> queries) {
-    Map<String, List<String>> map = new HashMap<>();
-    Map<String, List<Double>> valueMap = new HashMap<>();
-    for (int i = 0; i < equations.size(); i++) {
-      List<String> equation = equations.get(i);
-      map.computeIfAbsent(equation.get(0), k -> new ArrayList<>()).add(equation.get(1));
-      map.computeIfAbsent(equation.get(1), k -> new ArrayList<>()).add(equation.get(0));
-      valueMap.computeIfAbsent(equation.get(0), k -> new ArrayList<>()).add(values[i]);
-      valueMap.computeIfAbsent(equation.get(1), k -> new ArrayList<>()).add(1 / values[i]);      
-    }
+  public double[] calcEquation(List<List<String>> equations, double[] values,
+      List<List<String>> queries) {
     double[] ans = new double[queries.size()];
+    Map<String, Set<String>> connectionMap = new HashMap<>();
+    Map<String, Double> valueMap = new HashMap<>();
+    for (int i = 0; i < equations.size(); i++) {
+      String equation = equations.get(i).get(0) + "/" + equations.get(i).get(1);
+      connectionMap.computeIfAbsent(equations.get(i).get(0), k -> new HashSet<>())
+          .add(equations.get(i).get(1));
+      connectionMap.computeIfAbsent(equations.get(i).get(1), k -> new HashSet<>())
+          .add(equations.get(i).get(0));
+      valueMap.put(equation, values[i]);
+    }
     for (int i = 0; i < queries.size(); i++) {
-      List<String> query = queries.get(i);
-      ans[i] = dfs(map, valueMap, query.get(0), query.get(1), new HashSet<>(), 1.0);
-      ans[i] = ans[i] == 0.0 ? -1.0 : ans[i];
+      String source = queries.get(i).get(0);
+      String target = queries.get(i).get(1);
+      double[] res = {-1.0};
+      dfs(connectionMap, valueMap, source, target, new HashSet<>(), res, 1.0);
+      ans[i] = res[0];
     }
     return ans;
   }
-  
-  private double dfs(Map<String, List<String>> map, Map<String, List<Double>> valueMap, String a, String b, Set<String> set, double curr) {
-    if (set.contains(a)) {
-      return 0.0;
+
+  private void dfs(Map<String, Set<String>> connectionMap, Map<String, Double> valueMap,
+      String source, String target, Set<String> visited, double[] res, double currVal) {
+    if (source.equals(target) && (
+        connectionMap.containsKey(source) || connectionMap.containsKey(target))
+    ) {
+      res[0] = currVal;
+      return;
     }
-    if (!map.containsKey(a)) {
-      return 0.0;
-    }
-    if (a.equals(b)) {
-      return curr;
-    }
-    set.add(a);
-    List<String> children = map.get(a);
-    List<Double> valueList = valueMap.get(a);
-    double temp = 0.0;
-    for (int i = 0; i < children.size(); i++) {
-      temp = dfs(map, valueMap, children.get(i), b, set, curr * valueList.get(i));
-      if (temp != 0.0) {
-        break;
+    for (String connection : connectionMap.getOrDefault(source, new HashSet<>())) {
+      if (!visited.contains(connection)) {
+        visited.add(connection);
+        double newwCurrVal = currVal * (
+            valueMap.containsKey(source + "/" + connection) ?
+                valueMap.get(source + "/" + connection) :
+                (1 / valueMap.get(connection + "/" + source))
+        );
+        dfs(connectionMap, valueMap, connection, target, visited, res, newwCurrVal);
       }
     }
-    set.remove(a);
-    return temp;
   }
 }
