@@ -1,34 +1,28 @@
 class Solution {
-    public int firstMissingPositive(int[] nums) {
-        int i = 0;
-        int n = nums.length;
-        while (i < n) {
-            // If in range 0..n & not in correct index then swap
-            if (nums[i] >= 0 && nums[i] < n && nums[nums[i]] != nums[i]) {
-                swap(nums, i, nums[i]);
-            }
-            else {
-                i++;
-            }
-        }
-
-        int k = 1;
-        // Keep incrementing until the values are its correct position
-        while (k < n && nums[k] == k) {
-            k++;
-        }
-
-        // If empty array or k breaks between the end of the array
-        if (n == 0 || k < n) {
-            return k;
-        }
-        
-        return nums[0] == k ? k + 1 : k;
+  public int firstMissingPositive(int[] nums) {
+    int n = nums.length;
+    int idx = 0;
+    while (idx < n) {
+      if (nums[idx] > 0 && nums[idx] < n && nums[nums[idx]] != nums[idx]) {
+        swap(nums, idx, nums[idx]);
+      }
+      else {
+        idx++;
+      }
     }
-
-    private void swap (int[] nums, int i, int num) {
-        int temp = nums[i];
-        nums[i] = nums[num];
-        nums[num] = temp;
+    idx = 1;
+    while (idx < n && nums[idx] == idx) {
+      idx++;
     }
+    if (n == 0 || idx < n) {
+      return idx;
+    }
+    return nums[0] == idx ? idx + 1 : idx;
+  }
+  
+  private void swap(int[] nums, int i, int j) {
+    int temp = nums[i];
+    nums[i] = nums[j];
+    nums[j] = temp;
+  }
 }
