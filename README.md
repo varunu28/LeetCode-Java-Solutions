@@ -1,4 +1,4 @@
-# Leetcode-Java-Solutions 
+# Leetcode-Java-Solutions Repo
 
 ## Solutions to Leetcode problems in Java
 
