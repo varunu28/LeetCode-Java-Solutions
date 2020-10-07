@@ -10,36 +10,31 @@
  */
 class Solution {
   public ListNode rotateRight(ListNode head, int k) {
-    if (head == null || head.next == null || k == 0) {
+    if (head == null || k == 0) {
       return head;
     }
+    int listSize = 0;
     ListNode curr = head;
-    // Get length of list & update the number of rotations
-    int count = 0;
     while (curr != null) {
       curr = curr.next;
-      count++;
+      listSize++;
     }
-    k %= count;
+    k = k % listSize;
     if (k == 0) {
       return head;
     }
-    // Move the pointer just before the rotation index
-    int stop = count - k;
-    int currCount = 1;
+    k = listSize - k;
     curr = head;
-    while (currCount < stop) {
-      currCount++;
+    while (k-- > 1) {
       curr = curr.next;
     }
-    ListNode nextNode = curr.next;
-    // Detach rotation part of list and append it in the beginning of list
+    ListNode newHead = curr.next;
     curr.next = null;
-    ListNode newHead = nextNode;
-    while (nextNode.next != null) {
-      nextNode = nextNode.next;
+    curr = newHead;
+    while (curr != null && curr.next != null) {
+      curr = curr.next;
     }
-    nextNode.next = head;
+    curr.next = head;
     return newHead;
   }
 }
