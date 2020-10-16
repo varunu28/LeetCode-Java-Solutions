@@ -3,22 +3,22 @@ class Solution {
     if (matrix.length == 0 || matrix[0].length == 0) {
       return false;
     }
-    int i = 0;
-    int j = 0;
-    int rows = matrix.length;
-    int cols = matrix[0].length;
-    while (i < rows && j < cols) {
-      int num = matrix[i][j];
-      if (num == target) {
+    int rowIdx = matrix.length - 1;
+    int colIdx = matrix[0].length - 1;
+    while (rowIdx >= 0 && colIdx >= 0) {
+      int val = matrix[rowIdx][colIdx];
+      if (val == target) {
         return true;
       }
+      if (val >= matrix[rowIdx][0]) {
+        colIdx--;
+        if (colIdx < 0) {
+          colIdx = matrix[0].length - 1;
+          rowIdx--;
+        }
+      }
       else {
-        if (i != rows - 1 && matrix[i + 1][j] <= target) {
-          i++;
-        }
-        else {
-          j++;
-        }
+        rowIdx--;
       }
     }
     return false;
