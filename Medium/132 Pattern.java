@@ -3,21 +3,21 @@ class Solution {
     if (nums.length < 3) {
       return false;
     }
-    Stack<Integer> stack = new Stack<>();
-    int[] min = new int[nums.length];
-    min[0] = nums[0];
-    for (int i = 1; i < nums.length; i++) {
-      min[i] = Math.min(min[i - 1], nums[i]);
+    int[] minTillIndex = new int[nums.length];
+    minTillIndex[0] = nums[0];
+    for (int idx = 1; idx < nums.length; idx++) {
+      minTillIndex[idx] = Math.min(minTillIndex[idx - 1], nums[idx]);
     }
-    for (int i = nums.length - 1; i >= 0; i--) {
-      if (nums[i] > min[i]) {  // Consider nums[i] as 3 and min[i] as 1
-        while (!stack.isEmpty() && stack.peek() <= min[i]) {  // Search for 2  
+    Stack<Integer> stack = new Stack<>();
+    for (int idx = nums.length - 1; idx >= 0; idx--) {
+      if (nums[idx] > minTillIndex[idx]) {
+        while (!stack.isEmpty() && stack.peek() <= minTillIndex[idx]) {
           stack.pop();
         }
-        if (!stack.isEmpty() && stack.peek() < nums[i]) {  // If 2 found
+        if (!stack.isEmpty() && stack.peek() < nums[idx]) {
           return true;
         }
-        stack.push(nums[i]);
+        stack.push(nums[idx]);
       }
     }
     return false;
