@@ -1,26 +1,17 @@
 class Solution {
-    public int[] findErrorNums(int[] nums) {
-        int[] ans = {-1,1};
-        Map<Integer, Integer> map = new HashMap<>();
-        
-        for(int i=0;i<nums.length;i++) {
-            if (map.containsKey(nums[i])) {
-                map.put(nums[i], map.get(nums[i])+1);
-            }
-            else {
-                map.put(nums[i], 1);
-            }
-        }
-        
-        for (int i=1;i<=nums.length;i++) {
-            if (!map.containsKey(i)) {
-                ans[1] = i;
-            }
-            if (map.containsKey(i) && map.get(i) == 2) {
-                ans[0] = i;
-            }
-        }
-        
-        return ans;
+  public int[] findErrorNums(int[] nums) {
+    Map<Integer, Integer> frequency = new HashMap<>();
+    for (int num : nums) {
+      frequency.put(num, frequency.getOrDefault(num, 0) + 1);
     }
+    int[] ans = new int[2];
+    for (int idx = 1; idx <= nums.length; idx++) {
+      if (!frequency.containsKey(idx)) {
+        ans[1] = idx;
+      } else if (frequency.get(idx) > 1) {
+        ans[0] = idx;
+      }
+    }
+    return ans;
+  }
 }
