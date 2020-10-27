@@ -4,53 +4,45 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-    Map<Integer, Integer> map = new HashMap<>();
-    int max = 0;
-    public int[] findFrequentTreeSum(TreeNode root) {
-        populateSum(root);
-        
-        int count = 0;
-        
-        for (Map.Entry<Integer, Integer> entry:map.entrySet()) {
-            if (entry.getValue() == max) {
-                count++;
-            }
-        }
-        
-        int[] ans = new int[count];
-        int i = 0;
-        
-        for (Map.Entry<Integer, Integer> entry:map.entrySet()) {
-            if (entry.getValue() == max) {
-                ans[i] = entry.getKey();
-                i++;
-            }
-        }
-        
-        return ans;
+  public int[] findFrequentTreeSum(TreeNode root) {
+    Map<Integer, Integer> subtreeSumFrequency = new HashMap<>();
+    Map<TreeNode, Integer> nodeToSum = new HashMap<>();
+    dfsHelper(root, nodeToSum, subtreeSumFrequency);
+    int maxFrequency = subtreeSumFrequency.values().stream()
+        .max(Comparator.comparingInt(Integer::intValue)).orElseGet(() -> 0);
+    return subtreeSumFrequency
+        .keySet()
+        .stream()
+        .filter(e -> subtreeSumFrequency.get(e) == maxFrequency)
+        .collect(Collectors.toList())
+        .stream()
+        .mapToInt(Integer::intValue)
+        .toArray();
+  }
+
+  private int dfsHelper(TreeNode node, Map<TreeNode, Integer> nodeToSum,
+      Map<Integer, Integer> subtreeSumFrequency) {
+    if (node == null) {
+      return 0;
     }
-    
-    public void populateSum(TreeNode root) {
-        
-        if (root == null) return; 
-        int sum = getSum(root);
-        map.put(sum, map.getOrDefault(sum, 0) + 1);
-        
-        max = Math.max(max, map.get(sum));
-        
-        populateSum(root.left);
-        populateSum(root.right);
-        
+    if (nodeToSum.containsKey(node)) {
+      return nodeToSum.get(node);
     }
-    
-    public int getSum(TreeNode root) {
-        if (root == null) return 0;
-        
-        int sum = root.val;
-        return sum + getSum(root.left) + getSum(root.right);
-    }
+    int leftSubtreeSum = dfsHelper(node.left, nodeToSum, subtreeSumFrequency);
+    int rightSubtreeSum = dfsHelper(node.right, nodeToSum, subtreeSumFrequency);
+    nodeToSum.put(node, node.val + leftSubtreeSum + rightSubtreeSum);
+    subtreeSumFrequency
+        .put(nodeToSum.get(node), subtreeSumFrequency.getOrDefault(nodeToSum.get(node), 0) + 1);
+    return nodeToSum.get(node);
+  }
 }
