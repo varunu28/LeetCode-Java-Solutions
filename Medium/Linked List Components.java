@@ -3,30 +3,26 @@
  * public class ListNode {
  *     int val;
  *     ListNode next;
- *     ListNode(int x) { val = x; }
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
 class Solution {
-    public int numComponents(ListNode head, int[] G) {
-        int count = 0;
-        Set<Integer> set = new HashSet<>();
-        for (int g : G) {
-            set.add(g);
+  public int numComponents(ListNode head, int[] G) {
+    int numOfComponents = 0;
+    Set<Integer> set = Arrays.stream(G).boxed().collect(Collectors.toSet());
+    while (head != null && !set.isEmpty()) {
+      if (set.contains(head.val)) {
+        while (head != null && !set.isEmpty() && set.contains(head.val)) {
+          set.remove(head.val);
+          head = head.next;
         }
-        
-        while (head != null) {
-            if (set.contains(head.val)) {
-                while (head != null && set.contains(head.val)) {
-                    head = head.next;
-                }
-                
-                count++;
-            }
-            else {
-                head = head.next;
-            }
-        }
-        
-        return count;
+        numOfComponents++;
+      } else {
+        head = head.next;
+      }
     }
+    return numOfComponents;
+  }
 }
