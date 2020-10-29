@@ -1,37 +1,21 @@
 class Solution {
-    public int kthSmallest(int[][] matrix, int k) {
-        PriorityQueue<Element> pq = new PriorityQueue<>(new Comparator<Element>() {
-            @Override
-            public int compare(Element o1, Element o2) {
-                return o1.val - o2.val;
-            }
-        });
-        
-        for (int i=0; i<matrix[0].length; i++) {
-            pq.offer(new Element(matrix[0][i], 0, i));
-        }
-        
-        for (int i=0; i<k-1; i++) {
-            Element temp = pq.poll();
-            if (temp.x == matrix.length-1) {
-                continue;
-            }
-            
-            pq.offer(new Element(matrix[temp.x+1][temp.y], temp.x+1, temp.y));
-        }
-        
-        return pq.poll().val;
+  public int kthSmallest(int[][] matrix, int k) {
+    int numOfRows = matrix.length;
+    PriorityQueue<int[]> pq = new PriorityQueue<>(new Comparator<int[]>(){
+      public int compare(int[] o1, int[] o2) {
+        return o1[2] - o2[2];
+      }
+    });
+    for (int j = 0; j < numOfRows; j++) {
+      pq.add(new int[]{0, j, matrix[0][j]});
     }
-
-    class Element {
-        int val;
-        int x;
-        int y;
-
-        public Element(int val, int x, int y) {
-            this.val = val;
-            this.x = x;
-            this.y = y;
-        }
+    for (int i = 0; i < k - 1; i++) {
+      int[] removed = pq.poll();
+      if (removed[0] == numOfRows - 1) {
+        continue;
+      }
+      pq.add(new int[]{removed[0] + 1, removed[1], matrix[removed[0] + 1][removed[1]]});
     }
+    return pq.peek()[2];
+  }
 }
