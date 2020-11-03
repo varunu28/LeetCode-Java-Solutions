@@ -1,17 +1,14 @@
 class Solution {
   public int maxPower(String s) {
-    int count = 0;
-    int idx = 0;
-    int n = s.length();
-    while (idx < n) {
-      char c = s.charAt(idx);
-      int tempCount = 0;
-      while (idx < n && s.charAt(idx) == c) {
+    int maximumRepeatingCount = 0;
+    for (int idx = 0; idx < s.length();) {
+      char currentChar = s.charAt(idx);
+      int currIdx = idx;
+      while (idx < s.length() && s.charAt(idx) == currentChar) {
         idx++;
-        tempCount++;
       }
-      count = Math.max(count, tempCount);
+      maximumRepeatingCount = Math.max(maximumRepeatingCount, idx - currIdx);
     }
-    return count;
+    return maximumRepeatingCount;
   }
 }
