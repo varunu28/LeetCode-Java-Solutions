@@ -4,7 +4,7 @@ class Solution {
       return Collections.singletonList(0);
     }
     Map<Integer, Set<Integer>> map = new HashMap<>();
-    for (int[] edge: edges) {
+    for (int[] edge : edges) {
       map.computeIfAbsent(edge[0], k -> new HashSet<>()).add(edge[1]);
       map.computeIfAbsent(edge[1], k -> new HashSet<>()).add(edge[0]);
     }
@@ -19,7 +19,8 @@ class Solution {
       int size = leaves.size();
       count -= size;
       List<Integer> newLeaves = new ArrayList<>();
-      for (int leaf : leaves) {
+      for (int i = 0; i < size; i++) {
+        int leaf = leaves.get(i);
         for (int toRemove : map.getOrDefault(leaf, new HashSet<>())) {
           map.get(toRemove).remove(leaf);
           if (map.get(toRemove).size() == 1) {
