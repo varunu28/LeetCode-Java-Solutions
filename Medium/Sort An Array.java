@@ -1,18 +1,40 @@
 class Solution {
-    public int[] sortArray(int[] nums) {
-        int[] counter = new int[2 * 50000 + 1];
-        for (int num : nums) {
-            counter[50000 + num]++;
-        }
-        
-        int idx = 0;
-        for (int i = 0; i < counter.length; i++) {
-            int val = i > 50000 ? i - 50000 : -(50000 - i);
-            while (counter[i]-- > 0) {
-                nums[idx++] = val;
-            }
-        }
-        
-        return nums;
+  public int[] sortArray(int[] nums) {
+    int n = nums.length - 1;
+    mergeSort(nums, 0, n);
+    return nums;
+  }
+  
+  private void mergeSort(int[] nums, int start, int end) {
+    if (end - start + 1 <= 1) {
+      return;
     }
+    int mid = start + (end - start) / 2;
+    mergeSort(nums, start, mid);
+    mergeSort(nums, mid + 1, end);
+    merge(nums, start, mid, end);
+  }
+  
+  private void merge(int[] nums, int start, int mid, int end) {
+    int left = start;
+    int right = mid + 1;
+    int[] temp = new int[end - start + 1];
+    int idx = 0;
+    while (left <= mid && right <= end) {
+      if (nums[left] < nums[right]) {
+        temp[idx++] = nums[left++];
+      } else {
+        temp[idx++] = nums[right++];
+      }
+    }
+    while (left <= mid) {
+      temp[idx++] = nums[left++];
+    }
+    while (right <= end) {
+      temp[idx++] = nums[right++];
+    }
+    for (int i = start; i <= end; i++) {
+      nums[i] = temp[i - start];
+    }
+  }
 }
