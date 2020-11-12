@@ -1,12 +1,15 @@
 class Solution {
-    public boolean hasAlternatingBits(int n) {
-        int prev = n%2;
-        n /=2;
-        while (n>0) {
-            if (n%2 == prev) return false;
-            prev = n%2;
-            n /= 2;
-        }
-        return true;
+  public boolean hasAlternatingBits(int n) {
+    Integer prev = null;
+    while (n > 0) {
+      int rem = n % 2;
+      n /= 2;
+      if (prev == null || prev != rem) {
+        prev = rem;
+      } else {
+        return false;
+      }
     }
+    return true;
+  }
 }
