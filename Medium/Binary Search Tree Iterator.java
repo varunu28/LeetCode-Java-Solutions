@@ -17,29 +17,22 @@ class BSTIterator {
   Stack<TreeNode> stack;
   public BSTIterator(TreeNode root) {
     stack = new Stack<>();
-    update(root);
-  }
-  
-  private void update(TreeNode node) {
-    if (node == null) {
-      return;
-    }
-    stack.add(node);
-    TreeNode leftNode = node.left;
-    while (leftNode != null) {
-      stack.add(leftNode);
-      leftNode = leftNode.left;
+    while (root != null) {
+      stack.push(root);
+      root = root.left;
     }
   }
 
-  /** @return the next smallest number */
   public int next() {
     TreeNode node = stack.pop();
-    update(node.right);
+    TreeNode rightNode = node.right;
+    while (rightNode != null) {
+      stack.push(rightNode);
+      rightNode = rightNode.left;
+    }
     return node.val;
   }
 
-  /** @return whether we have a next smallest number */
   public boolean hasNext() {
     return !stack.isEmpty();
   }
