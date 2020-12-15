@@ -1,35 +1,27 @@
 class Solution {
-  public int[] sortedSquares(int[] A) {
-    int posIdx = A.length;
-    for (int i = 0; i < A.length; i++) {
-      if (A[i] >= 0) {
-        posIdx = i;
-        break;
-      }
+  public int[] sortedSquares(int[] nums) {
+    int n = nums.length;
+    int[] squareSorted = new int[n];
+    int start = 0;
+    while (start < n && nums[start] < 0) {
+      start++;
     }
-    int[] ans = new int[A.length];
-    int negIdx = posIdx - 1;
+    int end = start;
+    start -= 1;
     int idx = 0;
-    while (negIdx >= 0 || posIdx < A.length) {
-      if (negIdx >= 0 && (posIdx >= 0 && posIdx < A.length)) {
-        if (A[negIdx] * A[negIdx] > A[posIdx] * A[posIdx]) {
-          ans[idx++] = A[posIdx] * A[posIdx];
-          posIdx++;
+    while (start >= 0 || end < n) {
+      if (start >= 0 && end < n) {
+        if (nums[start] * nums[start] > nums[end] * nums[end]) {
+          squareSorted[idx++] = nums[end] * nums[end++];
+        } else {
+          squareSorted[idx++] = nums[start] * nums[start--];
         }
-        else {
-          ans[idx++] = A[negIdx] * A[negIdx];
-          negIdx--;
-        }
-      }
-      else if (negIdx >= 0 && posIdx >= A.length) {
-        ans[idx++] = A[negIdx] * A[negIdx];
-        negIdx--;
-      }
-      else {
-        ans[idx++] = A[posIdx] * A[posIdx];
-        posIdx++;
+      } else if (start >= 0) {
+        squareSorted[idx++] = nums[start] * nums[start--];
+      } else {
+          squareSorted[idx++] = nums[end] * nums[end++];
       }
     }
-    return ans;
+    return squareSorted;
   }
 }
