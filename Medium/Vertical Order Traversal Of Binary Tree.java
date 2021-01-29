@@ -4,60 +4,64 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
   public List<List<Integer>> verticalTraversal(TreeNode root) {
-    if (root == null) {
-      return new ArrayList<>();
-    }
-    Map<Integer, List<TreeLevel>> map = new TreeMap<>();
-    Queue<TreeLevel> queue = new LinkedList<>();
-    queue.add(new TreeLevel(root, 0, 0));
+    Comparator<NodePoint> nodePointComparator = (o1, o2) -> {
+      int c = o2.y - o1.y;
+      if (c != 0) {
+        return c;
+      }
+      return o1.node.val - o2.node.val;
+    };
+    Map<Integer, PriorityQueue<NodePoint>> map = new TreeMap<>();
+    Queue<NodePoint> queue = new LinkedList<>();
+    queue.add(new NodePoint(0, 0, root));
     while (!queue.isEmpty()) {
       int size = queue.size();
       while (size-- > 0) {
-        TreeLevel removed = queue.remove();
-        map.computeIfAbsent(removed.xLevel, k -> new ArrayList<>()).add(removed);
+        NodePoint removed = queue.remove();
+        map.computeIfAbsent(
+            removed.x, k -> new PriorityQueue<>(nodePointComparator))
+            .add(removed);
         if (removed.node.left != null) {
-          queue.add(new TreeLevel(removed.node.left, removed.xLevel - 1, removed.yLevel - 1));
+          queue.add(new NodePoint(removed.x - 1, removed.y - 1, removed.node.left));
         }
         if (removed.node.right != null) {
-          queue.add(new TreeLevel(removed.node.right, removed.xLevel + 1, removed.yLevel - 1));
+          queue.add(new NodePoint(removed.x + 1, removed.y - 1, removed.node.right));
         }
       }
     }
-    List<List<Integer>> list = new ArrayList<>();
+    List<List<Integer>> result = new ArrayList<>();
     for (Integer key : map.keySet()) {
-      List<TreeLevel> temp = map.get(key);
-      Collections.sort(temp, new Comparator<TreeLevel>(){
-        public int compare(TreeLevel t1, TreeLevel t2) {
-          int c = t2.yLevel - t1.yLevel;
-          if (c == 0) {
-            c = t1.node.val - t2.node.val;
-          }
-          return c;
-        }
-      });
-      List<Integer> valTemp = new ArrayList<>();
-      for (TreeLevel t : temp) {
-        valTemp.add(t.node.val);
+      PriorityQueue<NodePoint> pq = map.get(key);
+      List<Integer> temp = new ArrayList<>();
+      while (!pq.isEmpty()) {
+        temp.add(pq.poll().node.val);
       }
-      list.add(valTemp);
+      result.add(temp);
     }
-    return list;
+    return result;
   }
 }
 
-class TreeLevel {
+
+class NodePoint {
+  int x;
+  int y;
   TreeNode node;
-  int xLevel;
-  int yLevel;
-  
-  public TreeLevel(TreeNode node, int xLevel, int yLevel) {
+
+  public NodePoint(int x, int y, TreeNode node) {
+    this.x = x;
+    this.y = y;
     this.node = node;
-    this.xLevel = xLevel;
-    this.yLevel = yLevel;
   }
 }
