@@ -1,15 +1,13 @@
 class Solution {
   public int findLHS(int[] nums) {
-    Map<Integer, Integer> map = new HashMap<>();
-    for (int num : nums) {
-      map.put(num, map.getOrDefault(num, 0) + 1);
-    }
-    int res = 0;
+    Map<Integer, Long> map = Arrays.stream(nums).boxed()
+        .collect(Collectors.groupingBy(Function.identity(), HashMap::new, Collectors.counting()));
+    int result = 0;
     for (Integer key : map.keySet()) {
       if (map.containsKey(key + 1)) {
-        res = Math.max(res, map.get(key) + map.get(key + 1));
+        result = Math.max(result, (int) (map.get(key) + map.get(key + 1)));
       }
     }
-    return res;
+    return result;
   }
 }
