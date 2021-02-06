@@ -4,41 +4,40 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-    List<Integer> list;
-    public List<Integer> rightSideView(TreeNode root) {
-        list = new ArrayList<>();
-        if (root == null) {
-            return list;
-        }
-        
-        helper(root);
-        return list;
+  public List<Integer> rightSideView(TreeNode root) {
+    if (root == null) {
+      return new ArrayList<>();
     }
-    
-    private void helper(TreeNode root) {
-        Queue<TreeNode> queue = new LinkedList<>();
-        queue.add(root);
-        
-        while (!queue.isEmpty()) {
-            int size = queue.size();
-            
-            for (int i=1; i<=size; i++) {
-                TreeNode popped = queue.remove();
-                if (popped.left != null) {
-                    queue.add(popped.left);
-                }
-                if (popped.right != null) {
-                    queue.add(popped.right);
-                }
-                
-                if (i == size) {
-                    list.add(popped.val);
-                }
-            }
+    List<Integer> list = new ArrayList<>();
+    Queue<TreeNode> queue = new LinkedList<>();
+    queue.add(root);
+    while (!queue.isEmpty()) {
+      int size = queue.size();
+      TreeNode rightMost = null;
+      while (size-- > 0) {
+        TreeNode removed = queue.remove();
+        if (rightMost == null) {
+          rightMost = removed;
         }
+        if (removed.right != null) {
+          queue.add(removed.right);
+        }
+        if (removed.left != null) {
+          queue.add(removed.left);
+        } 
+      }
+      list.add(rightMost.val);
     }
+    return list;
+  }
 }
