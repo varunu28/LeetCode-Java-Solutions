@@ -1,40 +1,28 @@
 class Solution {
   public int[] kWeakestRows(int[][] mat, int k) {
-    Map<Integer, Integer> map = new HashMap<>();
+    PriorityQueue<int[]> pq = new PriorityQueue<>(
+        Comparator.comparingInt((int[] o) -> o[1]).thenComparingInt(o -> o[0]));
     for (int i = 0; i < mat.length; i++) {
-      map.put(i, getLastIndex(mat[i], 0, mat[i].length - 1) + 1);
+      pq.add(new int[]{i, getNumberOfOnes(mat[i])});
     }
-    PriorityQueue<Integer> pq = new PriorityQueue<Integer>(new Comparator<Integer>(){
-      public int compare(Integer o1, Integer o2) {
-        int c = map.get(o1) - map.get(o2);
-        if (c != 0) {
-          return c;
-        }
-        return o1 - o2;
-      }
-    });
-    for (int i = 0; i < mat.length; i++) {
-      pq.add(i);
+    int[] result = new int[k];
+    for (int i = 0; i < result.length && !pq.isEmpty(); i++) {
+      result[i] = pq.poll()[0];
     }
-    int[] ans = new int[k];
-    for (int i = 0; i < k; i++) {
-      ans[i] = pq.poll();
-    }
-    return ans;
+    return result;
   }
-  
-  private int getLastIndex(int[] arr, int start, int end) {
-    int idx = -1;
+
+  private int getNumberOfOnes(int[] arr) {
+    int start = 0;
+    int end = arr.length - 1;
     while (start <= end) {
       int mid = (start + end) / 2;
-      if (arr[mid] == 1) {
-        idx = Math.max(idx, mid);
+      if (arr[mid] == 0) {
+        end = mid - 1;
+      } else {
         start = mid + 1;
       }
-      else {
-        end = mid - 1;
-      }
     }
-    return idx;
+    return end < 0 ? 0 : start;
   }
 }
