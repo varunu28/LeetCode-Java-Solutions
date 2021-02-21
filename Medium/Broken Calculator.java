@@ -1,18 +1,10 @@
 class Solution {
-    public int brokenCalc(int X, int Y) {
-        int count = 0;
-        
-        while (Y > X) {
-            if (Y % 2 == 0) {
-                Y = Y / 2;
-            }
-            else {
-                Y++;
-            }
-            
-            count++;
-        }
-        
-        return count + X - Y;
+  public int brokenCalc(int X, int Y) {
+    int count = 0;
+    while (Y > X) {
+      count++;
+      Y = Y % 2 == 1 ? Y + 1 : Y / 2;
     }
+    return count + X - Y;
+  }
 }
