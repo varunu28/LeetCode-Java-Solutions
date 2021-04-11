@@ -4,29 +4,30 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-  Map<Integer, Integer> map;
-  int deepestLevel;
   public int deepestLeavesSum(TreeNode root) {
-    map = new HashMap<>();
-    deepestLevel = 0;
-    helper(root, 0);
-    return map.get(deepestLevel);
+    Map<Integer, Integer> map = new HashMap<>();
+    helper(root, 0, map);
+    return map.getOrDefault(
+      map.keySet().stream().mapToInt(Integer::valueOf).max().orElse(0), 0
+    );
   }
   
-  private void helper(TreeNode root, int level) {
+  private void helper(TreeNode root, int currLevel, Map<Integer, Integer> map) {
     if (root == null) {
       return;
     }
-    if (root.left == null && root.right == null) {
-      map.put(level, map.getOrDefault(level, 0) + root.val);
-      deepestLevel = Math.max(deepestLevel, level);
-      return;
-    }
-    helper(root.left, level + 1);
-    helper(root.right, level + 1);
+    map.put(currLevel, map.getOrDefault(currLevel, 0) + root.val);
+    helper(root.left, currLevel + 1, map);
+    helper(root.right, currLevel + 1, map);
   }
 }
