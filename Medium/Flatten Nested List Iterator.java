@@ -11,52 +11,39 @@
  *     public Integer getInteger();
  *
  *     // @return the nested list that this NestedInteger holds, if it holds a nested list
- *     // Return null if this NestedInteger holds a single integer
+ *     // Return empty list if this NestedInteger holds a single integer
  *     public List<NestedInteger> getList();
  * }
  */
 public class NestedIterator implements Iterator<Integer> {
-  List<NestedInteger> nestedList;
-  Queue<Integer> queue;
-  int idx;
+
+  private Stack<NestedInteger> stack;
+  
   public NestedIterator(List<NestedInteger> nestedList) {
-    this.nestedList = nestedList;
-    queue = new LinkedList<>();
-    idx = 0;
-    addToQueue();
+    stack = new Stack<>();
+    for (int i = nestedList.size() - 1; i >= 0; i--) {
+      stack.push(nestedList.get(i));
+    }
   }
 
   @Override
   public Integer next() {
-    int val = queue.remove();
-    if (queue.isEmpty()) {
-      if (idx != nestedList.size()) {
-        addToQueue();
-      }
-    }
-    return val;
+    return stack.pop().getInteger();
   }
   
-  private void addToQueue() {
-    while (idx < nestedList.size() && queue.isEmpty()) {
-      addToQueueHelper(nestedList.get(idx++));
-    }
-  }
-  
-  private void addToQueueHelper(NestedInteger ns) {
-    if (ns.isInteger()) {
-      queue.add(ns.getInteger());
-    }
-    else {
-      for (NestedInteger ni : ns.getList()) {
-        addToQueueHelper(ni);
-      }
-    }
-  }
-
   @Override
   public boolean hasNext() {
-    return !(queue.isEmpty() && idx == nestedList.size());
+    while (!stack.isEmpty() && !stack.peek().isInteger()) {
+      NestedInteger popped = stack.pop();
+      if (popped == null) {
+        continue;
+      }
+      List<NestedInteger> list = popped.getList();
+      for (int i = list.size() - 1; i >= 0; i--) {
+        stack.push(list.get(i));
+      }
+    }
+    return !stack.isEmpty();
   }
 }
 
