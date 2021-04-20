@@ -6,47 +6,33 @@ class Node {
 
     public Node() {}
 
-    public Node(int _val,List<Node> _children) {
+    public Node(int _val) {
+        val = _val;
+    }
+
+    public Node(int _val, List<Node> _children) {
         val = _val;
         children = _children;
     }
 };
 */
-class Solution {
-    List<Integer> values = new ArrayList<>();
-    public List<Integer> preorder(Node root) {
-        updateListIterative(root);
-        return values;
-    }
-    
-    private void updateListIterative(Node root) {
-        if (root == null) {
-            return;
-        }
-        
-        Stack<Node> stack = new Stack<>();
-        stack.push(root);
 
-        while (!stack.empty()) {
-            Node temp = stack.pop();
-            values.add(temp.val);
-            
-            List<Node> childrens = temp.children;
-            
-            for (int i=childrens.size()-1; i>=0; i--) {
-                stack.push(childrens.get(i));
-            }
-        }
+class Solution {
+  public List<Integer> preorder(Node root) {
+    if (root == null) {
+      return new ArrayList<>();
     }
-    
-    private void updateListRecursive(Node root) {
-        if (root == null) {
-            return;
-        }
-        
-        values.add(root.val);
-        for (Node node : root.children) {
-            updateListRecursive(node);
-        }
+    List<Integer> list = new ArrayList<>();
+    Stack<Node> stack = new Stack<>();
+    stack.push(root);
+    while (!stack.isEmpty()) {
+      Node popped = stack.pop();
+      list.add(popped.val);
+      List<Node> children = popped.children;
+      for (int i = children.size() - 1; i >= 0; i--) {
+        stack.push(children.get(i));
+      }
     }
+    return list;
+  }
 }
