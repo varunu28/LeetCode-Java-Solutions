@@ -1,18 +1,21 @@
 class Solution {
   public int countPrimes(int n) {
-    boolean[] isPrime = new boolean[n];
-    Arrays.fill(isPrime, true);
-    for (int i = 2; i * i < n; i++) {
-      if (isPrime[i]) {
-        for (int j = i * i; j < n; j += i) {
-          isPrime[j] = false;
+    if (n < 2) {
+      return 0;
+    }
+    int[] nums = new int[n];
+    populateSieveArray(nums);
+    return (int) Arrays.stream(nums).boxed().filter(e -> e != -1).count();
+  }
+
+  private void populateSieveArray(int[] nums) {
+    Arrays.fill(nums, 0, 2, -1);
+    for (int i = 2; i < nums.length; i++) {
+      if (nums[i] != -1) {
+        for (int j = i + i; j < nums.length; j += i) {
+          nums[j] = -1;
         }
       }
     }
-    int numOfPrimes = 0;
-    for (int i = 2; i < n; i++) {
-      numOfPrimes += isPrime[i] ? 1 : 0;
-    }
-    return numOfPrimes;
   }
 }
