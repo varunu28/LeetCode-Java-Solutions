@@ -1,20 +1,15 @@
 class Solution {
   public int maximumUnits(int[][] boxTypes, int truckSize) {
-    PriorityQueue<int[]> pq = new PriorityQueue<>((o1, o2) -> {
-      int c = o2[1] - o1[1];
-      if (c != 0) {
-        return c;
+    Arrays.sort(boxTypes, (o1, o2) -> o2[1] - o1[1]);
+    int maxUnits = 0;
+    for (int[] boxType : boxTypes) {
+      if (truckSize == 0) {
+        break;
       }
-      return o2[0] - o1[0];
-    });
-    Collections.addAll(pq, boxTypes);
-    int maximumUnits = 0;
-    while (truckSize > 0 && !pq.isEmpty()) {
-      int[] boxType = pq.poll();
-      int boxesAdded = Math.min(boxType[0], truckSize);
-      maximumUnits += boxesAdded * boxType[1];
-      truckSize -= boxesAdded;
+      int numberOfBoxesLoaded = Math.min(truckSize, boxType[0]);
+      maxUnits += numberOfBoxesLoaded * boxType[1];
+      truckSize -= numberOfBoxesLoaded;
     }
-    return maximumUnits;
+    return maxUnits;
   }
 }
