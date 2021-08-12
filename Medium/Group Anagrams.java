@@ -1,19 +1,14 @@
 class Solution {
   public List<List<String>> groupAnagrams(String[] strs) {
-    Map<String, List<String>> map = new HashMap<>();
-    for (String str : strs) {
-      String key = getKey(str);
-      map.computeIfAbsent(key, k -> new ArrayList<>()).add(str);
-    }
-    List<List<String>> ans = new ArrayList<>(map.values());
-    return ans;
+    return new ArrayList<>(
+        Arrays.stream(strs).collect(Collectors.groupingBy(Solution::getCodedString)).values());
   }
-  
-  private String getKey(String s) {
-    int[] counter = new int[26];
-    for (char c : s.toCharArray()) {
-      counter[c - 'a']++;
-    }
-    return Arrays.toString(counter);
+
+  public static String getCodedString(String s) {
+    return s.chars()
+        .mapToObj(c -> (char) c)
+        .sorted()
+        .map(Object::toString)
+        .collect(Collectors.joining());
   }
 }
