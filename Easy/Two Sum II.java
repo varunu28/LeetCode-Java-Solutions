@@ -11,8 +11,8 @@ class Solution {
                 i++;
             }
         }
-        ans[0] = i+1;
-        ans[1] = j+1;
+        ans[0] = i;
+        ans[1] = j;
         
         return ans;
     }
