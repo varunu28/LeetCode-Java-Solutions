@@ -1,19 +1,18 @@
 class Solution {
   public char slowestKey(int[] releaseTimes, String keysPressed) {
-    int maxReleaseTime = 0;
-    int maxReleaseTimeIdx = 0;
-    for (int idx = 0; idx < releaseTimes.length; idx++) {
-      int currentIdx = keysPressed.charAt(idx) - 'a';
-      int currReleaseTime = releaseTimes[idx] - (idx == 0 ? 0 : releaseTimes[idx - 1]);
-      if (currReleaseTime >= maxReleaseTime) {
-        if (currReleaseTime > maxReleaseTime)  {
-          maxReleaseTimeIdx = currentIdx;
-        } else if (currentIdx > maxReleaseTimeIdx) {
-          maxReleaseTimeIdx = currentIdx;
-        }
-        maxReleaseTime = currReleaseTime;
+    int startTime = 0;
+    int maxPressedTime = 0;
+    char keyWithLongestTime = keysPressed.charAt(0);
+    for (int i = 0; i < releaseTimes.length; i++) {
+      int totalTime = releaseTimes[i] - startTime;
+      if (maxPressedTime < totalTime) {
+        keyWithLongestTime = keysPressed.charAt(i);
+        maxPressedTime = totalTime;
+      } else if (maxPressedTime == totalTime && keyWithLongestTime < keysPressed.charAt(i)) {
+        keyWithLongestTime = keysPressed.charAt(i);
       }
+      startTime = releaseTimes[i];
     }
-    return (char) (97 + maxReleaseTimeIdx);
+    return keyWithLongestTime;
   }
 }
