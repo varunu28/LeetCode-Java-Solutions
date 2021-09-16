@@ -1,64 +1,32 @@
 class Solution {
-    public List<Integer> spiralOrder(int[][] matrix) {
-        List<Integer> list = new ArrayList<>();
-
-        if (matrix.length == 0 || matrix[0].length == 0) {
-            return list;
+  public List<Integer> spiralOrder(int[][] matrix) {
+    List<Integer> list = new ArrayList<>();
+    int rowStart = 0;
+    int rowEnd = matrix.length - 1;
+    int colStart = 0;
+    int colEnd = matrix[0].length - 1;
+    while (rowStart <= rowEnd && colStart <= colEnd) {
+      for (int i = colStart; i <= colEnd; i++) {
+        list.add(matrix[rowStart][i]);
+      }
+      rowStart++;
+      for (int i = rowStart; i <= rowEnd; i++) {
+        list.add(matrix[i][colEnd]);
+      }
+      colEnd--;
+      if (rowStart <= rowEnd) {
+        for (int i = colEnd; i >= colStart; i--) {
+          list.add(matrix[rowEnd][i]);
         }
-
-        int i = 0;
-        int j = 0;
-        int top = 0;
-        int bottom = matrix.length;
-        int left = 0;
-        int right = matrix[0].length;
-        int dir = 0;
-        int count = 0;
-        int limit = matrix.length * matrix[0].length;
-
-        while (count < limit) {
-            if (dir == 0) {
-                while (j < right) {
-                    list.add(matrix[i][j++]);
-                    count++;
-                }
-                dir++;
-                right--;
-                i++;
-                j--;
-            }
-            else if (dir == 1) {
-                while (i < bottom) {
-                    list.add(matrix[i++][j]);
-                    count++;
-                }
-                dir++;
-                bottom--;
-                i--;
-                j--;
-            }
-            else if (dir == 2) {
-                while (j >= left) {
-                    list.add(matrix[i][j--]);
-                    count++;
-                }
-                dir++;
-                i--;
-                j++;
-                left++;
-            }
-            else if (dir == 3) {
-                while (i > top) {
-                    list.add(matrix[i--][j]);
-                    count++;
-                }
-                dir = 0;
-                top++;
-                i++;
-                j++;
-            }
+        rowEnd--;
+      }
+      if (colStart <= colEnd) {
+        for (int i = rowEnd; i >= rowStart; i--) {
+          list.add(matrix[i][colStart]);
         }
-
-        return list;
+        colStart++;
+      }
     }
+    return list;
+  }
 }
