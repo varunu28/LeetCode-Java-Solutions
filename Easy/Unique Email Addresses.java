@@ -1,37 +1,15 @@
 class Solution {
   public int numUniqueEmails(String[] emails) {
-    Set<String> set = new HashSet<>();
-    for (String email : emails) {
-      set.add(formattedEmail(email));
-    }
-    return set.size();
+    return Arrays.stream(emails).map(Solution::formatEmail).collect(Collectors.toSet()).size();
   }
-  
-  private String formattedEmail(String s) {
-    StringBuilder sb = new StringBuilder();
-    int i = 0;
-    int n = s.length();
-    boolean plusFound = false;
-    while (i < n) {
-      char c = s.charAt(i);
-      if (c == '@') {
-        break;
-      }
-      if (plusFound) {
-        i++;
-        continue;
-      }
-      else if (c == '+') {
-        plusFound = true;
-      }
-      else if (c != '.') {
-        sb.append(c);
-      }
-      i++;
-    }
-    while (i < n) {
-      sb.append(s.charAt(i++));
-    }
-    return sb.toString();
+
+  private static String formatEmail(String email) {
+    String localName = email.split("@")[0];
+    return (localName.indexOf('+') != -1
+                ? localName.substring(0, localName.indexOf('+'))
+                : localName)
+            .replaceAll("\\.", "")
+        + "@"
+        + email.split("@")[1];
   }
 }
