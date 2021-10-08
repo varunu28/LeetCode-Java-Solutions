@@ -1,70 +1,53 @@
 class Trie {
 
-  /** Initialize your data structure here. */
-  Node root;
+  TrieNode root;
   public Trie() {
-    root = new Node('-');
+    root = new TrieNode('-');
   }
 
-  /** Inserts a word into the trie. */
   public void insert(String word) {
-    insertHelper(word, 0, root);
-  }
-  
-  private void insertHelper(String word, int idx, Node root) {
-    if (idx >= word.length()) {
-      root.isWord = true;
-      return;
+    TrieNode node = root;
+    for (int i = 0; i < word.length(); i++) {
+      if (node.children[word.charAt(i) - 'a'] == null) {
+        node.children[word.charAt(i) - 'a'] = new TrieNode(word.charAt(i));
+      }
+      node = node.children[word.charAt(i) - 'a'];
+      if (i == word.length() - 1) {
+        node.isWord = true;
+      }
     }
-    if (!root.children.containsKey(word.charAt(idx))) {
-      root.children.put(word.charAt(idx), new Node(word.charAt(idx)));
-    }
-    root = root.children.get(word.charAt(idx));
-    insertHelper(word, idx + 1, root);
   }
 
-  /** Returns if the word is in the trie. */
   public boolean search(String word) {
-    return searchHelper(word, 0, root);
-  }
-  
-  private boolean searchHelper(String word, int idx, Node root) {
-    if (idx == word.length()) {
-      return root.isWord;
-    }
-    if (!root.children.containsKey(word.charAt(idx))) {
-      return false;
-    }
-    root = root.children.get(word.charAt(idx));
-    return searchHelper(word, idx + 1, root);
+    TrieNode node = searchHelper(word);
+    return node != null && node.isWord;
   }
 
-  /** Returns if there is any word in the trie that starts with the given prefix. */
   public boolean startsWith(String prefix) {
-    return startsWithHelper(prefix, 0, root);
+    return searchHelper(prefix) != null;
   }
   
-  private boolean startsWithHelper(String word, int idx, Node root) {
-    if (idx == word.length()) {
-      return true;
+  private TrieNode searchHelper(String word) {
+    TrieNode node = root;
+    for (int i = 0; i < word.length(); i++) {
+      if (node.children[word.charAt(i) - 'a'] == null) {
+        return null;
+      }
+      node = node.children[word.charAt(i) - 'a'];
     }
-    if (!root.children.containsKey(word.charAt(idx))) {
-      return false;
-    }
-    root = root.children.get(word.charAt(idx));
-    return startsWithHelper(word, idx + 1, root);
+    return node;
   }
-}
-
-class Node {
-  char val;
-  Map<Character, Node> children;
-  boolean isWord;
   
-  public Node(char val) {
-    this.val = val;
-    children = new HashMap<>();
-    isWord = false;
+  class TrieNode {
+    TrieNode[] children;
+    boolean isWord;
+    char c;
+    
+    public TrieNode(char c) {
+      this.c = c;
+      children = new TrieNode[26];
+      isWord = false;
+    }
   }
 }
 
