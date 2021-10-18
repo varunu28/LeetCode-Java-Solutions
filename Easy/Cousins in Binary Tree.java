@@ -15,27 +15,32 @@
  */
 class Solution {
   public boolean isCousins(TreeNode root, int x, int y) {
-    int[] depthAndParentX = {0, 0};
-    int[] depthAndParentY = {0, 0};
-    helper(root, x, 0, null, depthAndParentX);
-    helper(root, y, 0, null, depthAndParentY);
-    return depthAndParentX[0] == depthAndParentY[0] && depthAndParentX[1] != depthAndParentY[1];
+    NodeDetail nodeDetailX = getNodeDetail(root, x, null, 0);
+    NodeDetail nodeDetailY = getNodeDetail(root, y, null, 0);
+    return nodeDetailX.depth == nodeDetailY.depth && nodeDetailX.parent != nodeDetailY.parent;
   }
   
-  private void helper(
-    TreeNode root, int num, int currDepth, TreeNode currParent, int[] depthAndParent
-  ) {
+  private NodeDetail getNodeDetail(TreeNode root, int n, TreeNode parent, int depth) {
     if (root == null) {
-      return;
+      return null;
     }
-    if (root.val == num) {
-      System.out.println(root.val + " " + num + " " + (currParent == null ? -1 : currParent.val));
-      depthAndParent[0] = currDepth;
-      depthAndParent[1] = currParent == null ? -1 : currParent.val;
+    if (root.val == n) {
+      return new NodeDetail(parent, depth);
     }
-    else {
-      helper(root.left, num, currDepth + 1, root, depthAndParent);
-      helper(root.right, num, currDepth + 1, root, depthAndParent);
+    NodeDetail left = getNodeDetail(root.left, n, root, depth + 1);
+    if (left != null) {
+      return left;
+    }
+    return getNodeDetail(root.right, n, root, depth + 1);
+  }
+  
+  private class NodeDetail {
+    TreeNode parent;
+    int depth;
+
+    public NodeDetail(TreeNode parent, int depth) {
+      this.parent = parent;
+      this.depth = depth;
     }
   }
 }
