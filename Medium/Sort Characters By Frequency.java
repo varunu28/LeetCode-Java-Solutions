@@ -1,20 +1,41 @@
 class Solution {
   public String frequencySort(String s) {
-    Map<Character, Integer> map = new HashMap<>();
+    int[] freqMap = new int[62];
+    int maxFrequency = 0;
     for (char c : s.toCharArray()) {
-      map.put(c, map.getOrDefault(c, 0) + 1);
+      int charIdx = getCharIndex(c);
+      freqMap[charIdx]++;
+      maxFrequency = Math.max(maxFrequency, freqMap[charIdx]);
     }
-    PriorityQueue<Character> pq = new PriorityQueue<>((o1, o2) -> map.get(o2) - map.get(o1));
-    pq.addAll(map.keySet());
+    List<Character>[] revMap = new List[maxFrequency + 1];
+    for (int i = 0; i < 62; i++) {
+      char c = getDecodedChar(i);
+      int currFreq = freqMap[i];
+      if (currFreq != 0) {
+        if (revMap[currFreq] == null) {
+          revMap[currFreq] = new ArrayList<>();
+        }
+        revMap[currFreq].add(c);
+      }
+    }
     StringBuilder sb = new StringBuilder();
-    while (!pq.isEmpty()) {
-      char c = pq.poll();
-      int count  = map.get(c);
-      while (count-- > 0) {
-        sb.append(c);
+    for (int i = maxFrequency; i > 0; i--) {
+      if (revMap[i] != null) {
+        List<Character> characterList = revMap[i];
+        for (char c : characterList) {
+          sb.append(String.valueOf(c).repeat(i));
+        }
       }
     }
     return sb.toString();
   }
-}
 
+  private char getDecodedChar(int idx) {
+    return (char) (idx < 26 ? 97 + idx : (idx >= 52 ? 48 + idx - 52 : 65 + idx - 26));
+  }
+
+  private int getCharIndex(char c) {
+    return Character.isDigit(c) ? 52 + c - '0'
+        : (Character.isUpperCase(c) ? c - 'A' + 26 : c - 'a');
+  }
+}
