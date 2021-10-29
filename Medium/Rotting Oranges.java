@@ -1,39 +1,41 @@
 class Solution {
-  int[][] dirs = {{0, 1}, {1, 0}, {-1, 0}, {0, -1}};
-  public final int VISITED = -1;
+  private static final int[][] DIRS = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+
   public int orangesRotting(int[][] grid) {
-    int minutes = 0;
-    Queue<int[]> queue = new LinkedList<>();
+    Queue<int[]> infectedOranges = new LinkedList<>();
+    int numOfFreshOranges = 0;
     for (int i = 0; i < grid.length; i++) {
       for (int j = 0; j < grid[i].length; j++) {
         if (grid[i][j] == 2) {
-          queue.add(new int[]{i, j});
+          infectedOranges.add(new int[]{i, j});
         }
+        numOfFreshOranges += grid[i][j] == 1 ? 1 : 0;
       }
     }
-    while (!queue.isEmpty()) {
-      int size = queue.size();
-      while (size-- > 0) {
-        int[] removed = queue.remove();
-        for (int[] dir : dirs) {
-          int newX = removed[0] + dir[0];
-          int newY = removed[1] + dir[1];
-          if (newX >= 0 && newX < grid.length && newY >= 0 && newY < grid[0].length && grid[newX][newY] == 1) {
-            grid[newX][newY] = 2;
-            queue.add(new int[]{newX, newY});
+    int numOfMinutes = 0;
+    while (!infectedOranges.isEmpty()) {
+      int infectedOrangeSize = infectedOranges.size();
+      boolean newInfected = false;
+      while (infectedOrangeSize-- > 0) {
+        int[] infectedOrangeCoordinate = infectedOranges.poll();
+        for (int[] dir : DIRS) {
+          int newRowCoordinate = infectedOrangeCoordinate[0] + dir[0];
+          int newColCoordinate = infectedOrangeCoordinate[1] + dir[1];
+          if (isValidInfection(grid, newRowCoordinate, newColCoordinate)) {
+            infectedOranges.add(new int[]{newRowCoordinate, newColCoordinate});
+            grid[newRowCoordinate][newColCoordinate] = 2;
+            newInfected = true;
+            numOfFreshOranges--;
           }
         }
-        grid[removed[0]][removed[1]] = VISITED;
       }
-      minutes++;
+      numOfMinutes += newInfected ? 1 : 0;
     }
-    for (int i = 0; i < grid.length; i++) {
-      for (int j = 0; j < grid[i].length; j++) {
-        if (grid[i][j] == 1) {
-          return -1;
-        }
-      }
-    }
-    return minutes > 0 ? minutes - 1 : 0;
+    return numOfFreshOranges > 0 ? -1 : numOfMinutes;
+  }
+
+  private boolean isValidInfection(int[][] grid, int rowCoordinate, int colCoordinate) {
+    return rowCoordinate >= 0 && colCoordinate >= 0 && rowCoordinate < grid.length
+        && colCoordinate < grid[0].length && grid[rowCoordinate][colCoordinate] == 1;
   }
 }
