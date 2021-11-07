@@ -1,35 +1,33 @@
 class Solution {
-  public String multiply(String num1, String num2) {
-    int m = num1.length();
-    int n = num2.length();
-    int[] ans = new int[m + n];
-    int idx = ans.length - 1;
+    public String multiply(String num1, String num2) {
+    int[] result = new int[num1.length() + num2.length() + 1];
+    int idx = result.length - 1;
     for (int i = num1.length() - 1; i >= 0; i--) {
       int currIdx = idx;
       int carry = 0;
       for (int j = num2.length() - 1; j >= 0; j--) {
-        int temp = (
-          ans[currIdx] + Character.getNumericValue(num1.charAt(i)) * Character.getNumericValue(num2.charAt(j)) + carry
-        );
-        carry = temp > 9 ? temp / 10 : 0;
-        temp = temp > 9 ? temp % 10 : temp;
-        ans[currIdx--] = temp;
+        int currValue =
+            carry + Character.getNumericValue(num1.charAt(i)) * Character.getNumericValue(
+                num2.charAt(j)) + result[currIdx];
+        carry = currValue / 10;
+        currValue = currValue % 10;
+        result[currIdx--] = currValue;
       }
       while (carry > 0) {
-        int temp = ans[currIdx] + carry;
-        carry = temp > 9 ? temp / 10 : 0;
-        temp = temp > 9 ? temp % 10 : temp;
-        ans[currIdx--] = temp;
+        int currValue = carry + result[currIdx];
+        carry = currValue / 10;
+        currValue = currValue % 10;
+        result[currIdx--] = currValue;
       }
       idx--;
     }
-    int zeroIdx = 0;
-    while (zeroIdx < ans.length && ans[zeroIdx] == 0) {
-      zeroIdx++;
-    }
     StringBuilder sb = new StringBuilder();
-    while (zeroIdx < ans.length) {
-      sb.append(ans[zeroIdx++]);
+    int resultIdx = 0;
+    while (resultIdx < result.length && result[resultIdx] == 0) {
+      resultIdx++;
+    }
+    while (resultIdx < result.length) {
+      sb.append(result[resultIdx++]);
     }
     return sb.length() == 0 ? "0" : sb.toString();
   }
