@@ -1,14 +1,11 @@
 class Solution {
   public int minStartValue(int[] nums) {
-    int startValue = 1;
-    int currSum = startValue;
+    int minPrefixSum = 0;
+    int currSum = 0;
     for (int num : nums) {
       currSum += num;
-      if (currSum < 1) {
-        startValue += 1 - currSum;
-        currSum += 1 - currSum;
-      }
+      minPrefixSum = Math.min(minPrefixSum, currSum);
     }
-    return startValue;
+    return -1 * minPrefixSum + 1;
   }
 }
