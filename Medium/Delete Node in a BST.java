@@ -20,16 +20,13 @@ class Solution {
     }
     if (root.val > key) {
       root.left = deleteNode(root.left, key);
-    }
-    else if (root.val < key) {
+    } else if (root.val < key) {
       root.right = deleteNode(root.right, key);
-    }
-    else {
+    } else {
       if (root.left == null || root.right == null) {
         TreeNode temp = root.left == null ? root.right : root.left;
         return temp;
-      }
-      else {
+      } else {
         TreeNode inorderSuccessor = root.right;
         while (inorderSuccessor.left != null) {
           inorderSuccessor = inorderSuccessor.left;
