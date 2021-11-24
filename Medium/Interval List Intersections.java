@@ -1,22 +1,21 @@
 class Solution {
-  public int[][] intervalIntersection(int[][] A, int[][] B) {
+  public int[][] intervalIntersection(int[][] firstList, int[][] secondList) {
     List<int[]> list = new ArrayList<>();
-    int startA = 0;
-    int startB = 0;
-    while (startA < A.length && startB < B.length) {
-      int intervalStart = Math.max(A[startA][0], B[startB][0]);
-      int intervalEnd = Math.min(A[startA][1], B[startB][1]);
-      if (intervalStart <= intervalEnd) {
-        list.add(new int[]{intervalStart, intervalEnd});
+    int idxOne = 0;
+    int idxTwo = 0;
+    while (idxOne < firstList.length && idxTwo < secondList.length) {
+      int maxStart = Math.max(firstList[idxOne][0], secondList[idxTwo][0]);
+      int minEnd = Math.min(firstList[idxOne][1], secondList[idxTwo][1]);
+      if (maxStart <= minEnd) {
+        list.add(new int[]{maxStart, minEnd});
       }
-      if (A[startA][1] < B[startB][1]) {
-        startA++;
-      }
-      else {
-        startB++;
+      if (minEnd == firstList[idxOne][1]) {
+        idxOne++;
+      } else {
+        idxTwo++;
       }
     }
-    int[][] ans = new int[list.size()][2];
-    return list.toArray(ans);
+    int[][] result = new int[list.size()][2];
+    return list.toArray(result);
   }
 }
