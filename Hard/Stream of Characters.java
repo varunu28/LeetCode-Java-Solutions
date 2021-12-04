@@ -1,19 +1,23 @@
 class StreamChecker {
-  TrieNode root;
+  
   Deque<Character> stream;
+  TrieNode root;
   public StreamChecker(String[] words) {
     root = new TrieNode('-');
-    stream = new ArrayDeque();
-    for (String word : words) {
-      TrieNode curr = root;
-      for (int i = word.length() - 1; i >= 0; i--) {
-        if (!curr.map.containsKey(word.charAt(i))) {
-          curr.map.put(word.charAt(i), new TrieNode(word.charAt(i)));
-        }
-        curr = curr.map.get(word.charAt(i));
+    stream = new ArrayDeque<>();
+    Arrays.stream(words).forEach(word -> addWord(word));
+  }
+  
+  public void addWord(String word) {
+    TrieNode curr = root;
+    for (int i = word.length() - 1; i >= 0; i--) {
+      char c = word.charAt(i);
+      if (curr.children[c - 'a'] == null) {
+        curr.children[c - 'a'] = new TrieNode(c);
       }
-      curr.isWord = true;
+      curr = curr.children[c - 'a'];
     }
+    curr.isWord = true;
   }
 
   public boolean query(char letter) {
@@ -23,25 +27,24 @@ class StreamChecker {
       if (curr.isWord) {
         return true;
       }
-      if (!curr.map.containsKey(c)) {
+      if (curr.children[c - 'a'] == null) {
         return false;
       }
-      curr = curr.map.get(c);
+      curr = curr.children[c - 'a'];
     }
     return curr.isWord;
   }
-}
-
-
-class TrieNode {
-  char c;
-  Map<Character, TrieNode> map;
-  boolean isWord;
   
-  public TrieNode(char c) {
-    this.c = c;
-    map = new HashMap<>();
-    isWord = false;
+  
+  class TrieNode {
+    char c;
+    TrieNode[] children;
+    boolean isWord;
+    
+    public TrieNode(char c) {
+      this.c = c;
+      children = new TrieNode[26];
+    }
   }
 }
 
