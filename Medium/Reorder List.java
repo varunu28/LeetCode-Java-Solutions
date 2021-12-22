@@ -10,34 +10,35 @@
  */
 class Solution {
   public void reorderList(ListNode head) {
-    if (head == null || head.next == null) {
+    if (head.next == null) {
       return;
     }
-    ListNode fast = head;
+    // Find mid point
     ListNode slow = head;
+    ListNode fast = head;
     while (fast != null && fast.next != null) {
       fast = fast.next.next;
       slow = slow.next;
     }
+    // Reverse the second half & break the two halves
     ListNode secondHalf = reverse(slow.next);
     slow.next = null;
     ListNode firstHalf = head;
-    ListNode firstNext = null;
-    ListNode secondNext = null;
+    // Merge first half and second half
     while (firstHalf != null && secondHalf != null) {
-      firstNext = firstHalf.next;
-      secondNext = secondHalf.next;
+      ListNode firstHalfNext = firstHalf.next;
+      ListNode secondHalfNext = secondHalf.next;
       firstHalf.next = secondHalf;
-      secondHalf.next = firstNext;
-      firstHalf = firstNext;
-      secondHalf = secondNext;
+      secondHalf.next = firstHalfNext;
+      firstHalf = firstHalfNext;
+      secondHalf = secondHalfNext;
     }
   }
   
-  private ListNode reverse(ListNode node) {
-    ListNode curr = node;
-    ListNode prev = null;
+  private ListNode reverse(ListNode head) {
+    ListNode curr = head;
     ListNode next = null;
+    ListNode prev = null;
     while (curr != null) {
       next = curr.next;
       curr.next = prev;
