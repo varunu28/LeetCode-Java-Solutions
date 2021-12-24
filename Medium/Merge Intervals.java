@@ -1,44 +1,22 @@
 class Solution {
   public int[][] merge(int[][] intervals) {
-    Arrays.sort(intervals, new Comparator<int[]>(){
-      public int compare(int[] o1, int[] o2) {
-        int c = o1[0] - o2[0];
-        if (c != 0) {
-          return c;
-        }
-        return o1[1] - o2[1];
+    Arrays.sort(intervals, Comparator.comparingInt((int[] o) -> o[0]).thenComparingInt(o -> o[1]));
+    List<int[]> mergedIntervals = new ArrayList<>();
+    int idx = 0;
+    while (idx < intervals.length) {
+      int currentStart = intervals[idx][0];
+      int currentEnd = intervals[idx][1];
+      idx++;
+      while (idx < intervals.length && intervals[idx][0] <= currentEnd) {
+        currentEnd = Math.max(intervals[idx][1], currentEnd);
+        idx++;
       }
-    });
-    List<int[]> intervalList = new ArrayList<>();
-    int end = 0;
-    int n = intervals.length;
-    int currStart = -1;
-    int currEnd = -1;
-    while (end < n) {
-      if (currStart == -1 && currEnd == -1) {
-        currStart = intervals[end][0];
-        currEnd = intervals[end][1];
-        end++;
-      }
-      if (end < n) {
-        if (currEnd >= intervals[end][0]) {
-          currEnd = Math.max(intervals[end][1], currEnd);
-          end++;
-        }
-        else {
-          intervalList.add(new int[]{currStart, currEnd});
-          currStart = -1;
-          currEnd = -1;
-        }
-      }
-      if (end == n && currStart != -1 && currEnd != -1) {
-        intervalList.add(new int[]{currStart, currEnd});
-      }
+      mergedIntervals.add(new int[]{currentStart, currentEnd});
     }
-    int[][] ans = new int[intervalList.size()][2];
-    for (int i = 0; i < intervalList.size(); i++) {
-      ans[i] = intervalList.get(i);
+    int[][] result = new int[mergedIntervals.size()][2];
+    for (int i = 0; i < mergedIntervals.size(); i++) {
+      result[i] = mergedIntervals.get(i);
     }
-    return ans;
+    return result;
   }
 }
