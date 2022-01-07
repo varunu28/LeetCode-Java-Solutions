@@ -1,42 +1,31 @@
 class RLEIterator {
-    int[] arr;
-    int idx;
-    int len;
-    public RLEIterator(int[] A) {
-        arr = A;
-        idx = 0;
-        len = A.length;
-    }
-    
-    public int next(int n) {
-        while (idx < len - 1 && (arr[idx] - n) < 0) {
-            n -= arr[idx] > 0 ? arr[idx] : 0;
-            updateIdx();
-            
-            if (idx >= len - 1) {
-                return -1;
-            }
-        }
-        
-        if (idx < len - 1 && arr[idx] > 0) {
-            if (arr[idx] - n >= 0) {
-                int temp = arr[idx+1];
-                arr[idx] -= n;
-                
-                return temp;
-            }
-        }
-        
+  
+  int[] encoding;
+  int currCounterIdx;
+
+  public RLEIterator(int[] encoding) {
+    this.encoding = encoding;
+    this.currCounterIdx = 0;
+  }
+
+  public int next(int n) {
+    while (n > 0) {
+      while (this.encoding[this.currCounterIdx] == 0 && this.currCounterIdx + 2 < this.encoding.length) {
+        this.currCounterIdx += 2;
+      }
+      if (this.encoding[this.currCounterIdx] == 0) {
         return -1;
+      }
+      int diff = Math.min(this.encoding[this.currCounterIdx], n);
+      this.encoding[this.currCounterIdx] -= diff;
+      n -= diff;
     }
-    
-    private void updateIdx() {
-       idx += 2;
-    }
+    return this.encoding[this.currCounterIdx + 1];
+  }
 }
 
 /**
  * Your RLEIterator object will be instantiated and called as such:
- * RLEIterator obj = new RLEIterator(A);
+ * RLEIterator obj = new RLEIterator(encoding);
  * int param_1 = obj.next(n);
  */
