@@ -4,32 +4,34 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-    public TreeNode pruneTree(TreeNode root) {
-        return checker(root);   
+  public TreeNode pruneTree(TreeNode root) {
+    boolean isRootOne = helper(root);
+    return isRootOne ? root : null;
+  }
+  
+  private boolean helper(TreeNode root) {
+    if (root == null) {
+      return false;
     }
-    
-// A checker method which checks every node and makes it null if it doesn't contain a 1
-    public TreeNode checker(TreeNode root) {
-        if (!checkForOnes(root)) {
-            root = null;
-            return root;
-        }
-        
-        root.left = checker(root.left);
-        root.right = checker(root.right);
-        
-        return root;
+    boolean selfOne = root.val == 1;
+    boolean leftContainsOne = helper(root.left);
+    boolean rightContainsOne = helper(root.right);
+    if (!leftContainsOne) {
+      root.left = null;
     }
-
-// Checks for a 1 in the node
-    public boolean checkForOnes(TreeNode root) {
-        if (root == null) return false;
-        if (root.val == 1) return true;
-        
-        return checkForOnes(root.left) || checkForOnes(root.right);
+    if (!rightContainsOne) {
+      root.right = null;
     }
+    return selfOne || leftContainsOne || rightContainsOne;
+  }
 }
