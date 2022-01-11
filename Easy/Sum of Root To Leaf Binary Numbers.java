@@ -15,32 +15,30 @@
  */
 class Solution {
   public int sumRootToLeaf(TreeNode root) {
-    int[] sum = {0};
-    helper(root, new StringBuilder(), sum);
-    return sum[0];
+    int[] result = {0};
+    helper(root, new StringBuilder(), result);
+    return result[0];
   }
   
-  private void helper(TreeNode root, StringBuilder sb, int[] sum) {
+  private void helper(TreeNode root, StringBuilder sb, int[] result) {
     if (root == null) {
       return;
     }
     sb.append(root.val);
     if (root.left == null && root.right == null) {
-      sum[0] += getDecimalValue(sb.toString());
+      result[0] += getDecimalValue(sb.toString());
+      return;
     }
-    else {
-      helper(root.left, new StringBuilder(sb.toString()), sum);
-      helper(root.right, new StringBuilder(sb.toString()), sum);
-    }
+    helper(root.left, new StringBuilder(sb.toString()), result);
+    helper(root.right, new StringBuilder(sb.toString()), result);
   }
   
   private int getDecimalValue(String s) {
-    int val = 0;
-    int mul = 1;
+    int value = 0;
+    int powerOfTwo = 0;
     for (int i = s.length() - 1; i >= 0; i--) {
-      val += mul * (s.charAt(i) == '1' ? 1 : 0);
-      mul *= 2;
+      value += ((int) Math.pow(2, powerOfTwo++)) * Character.getNumericValue(s.charAt(i));
     }
-    return val;
+    return value;
   }
 }
