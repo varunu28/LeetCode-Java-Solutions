@@ -1,16 +1,18 @@
 class Solution {
-    public boolean checkPerfectNumber(int num) {
-        if (num == 1) return false;
-        int sum = 0;
-        int i = 2;
-        while (i <= Math.sqrt(num)) {
-            if (num%i == 0) {
-                sum += i + num/i;
-            }
-            i++;
-        }
-        sum++;
-        
-        return sum == num;
+  public boolean checkPerfectNumber(int num) {
+    if (num == 1) {
+      return false;
+    } 
+    return getDivisorSum(num) == num;
+  }
+
+  private int getDivisorSum(int num) {
+    int sum = 0;
+    for (int i = 2; i <= Math.sqrt(num); i++) {
+      if (num % i == 0) {
+        sum += i + num / i;
+      }
     }
+    return sum + 1;
+  }
 }
