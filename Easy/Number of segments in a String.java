@@ -1,14 +1,11 @@
 class Solution {
-    public int countSegments(String str) {
-        String[] arr = str.split("\\s+");
-        
-        int count = 0;
-        for (String s : arr) {
-            if ((!s.equals("\\s+")) && s.length() > 0) {
-                count++;
-            }
-        }
-        
-        return count;
+  public int countSegments(String s) {
+    int count = 0;
+    for (int i = 0; i < s.length(); i++) {
+      if (s.charAt(i) != ' ' && (i == 0 || s.charAt(i - 1) == ' ')) {
+        count++;
+      }
     }
+    return count;
+  }
 }
