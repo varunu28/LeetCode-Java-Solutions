@@ -6,7 +6,6 @@ class Solution {
       if (seq.charAt(i) == '(') {
         currDepth++;
       }
-      System.out.println(i + " " + seq.charAt(i) + " " + currDepth);
       maxDepth[i] = currDepth % 2;
       if (seq.charAt(i) != '(') {
         currDepth--;
