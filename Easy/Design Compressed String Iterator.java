@@ -1,60 +1,48 @@
 class StringIterator {
-    int letterPointer = 0;
-    int numberPointer = letterPointer + 1;
-    int counter;
-    char c;
-    String s;
-    StringBuilder num;
 
-    public StringIterator(String compressedString) {
-        s = compressedString;
-        c = s.charAt(letterPointer);
-        
-        num = new StringBuilder();
-        while (numberPointer<s.length() && Character.isDigit(s.charAt(numberPointer))) {
-            num.append(s.charAt(numberPointer));
-            numberPointer++;
-        }
-        counter = Integer.parseInt(num.toString());
+  private Integer charIdx;
+  private Integer currCount;
+  private Integer counterIdx;
+  private String s;
 
-        letterPointer = numberPointer;
-        numberPointer = letterPointer + 1;
+  public StringIterator(String compressedString) {
+    this.s = compressedString;
+    updateCurrCount();
+  }
+
+  public char next() {
+    if (!hasNext()) {
+      return ' ';
     }
+    this.currCount--;
+    return s.charAt(this.charIdx);
+  }
 
-    public char next() {
-        if (counter == 0) {
-            if (numberPointer <= s.length()-1) {
-                c = s.charAt(letterPointer);
-                num = new StringBuilder();
-                while (numberPointer<s.length() && Character.isDigit(s.charAt(numberPointer))) {
-                    num.append(s.charAt(numberPointer));
-                    numberPointer++;
-                }
-                counter = Integer.parseInt(num.toString()) - 1;
-
-                letterPointer = numberPointer;
-                numberPointer = letterPointer + 1;
-            }
-            else {
-                c = ' ';
-            }
-        }
-        else {
-            counter--;
-        }
-
-        return c;
+  public boolean hasNext() {
+    updateCurrCount();
+    return this.currCount > 0;
+  }
+  
+  private void updateCurrCount() {
+    if (this.currCount != null && this.currCount == 0) {
+      this.charIdx = this.counterIdx;
+      this.counterIdx = this.charIdx + 1;
     }
-
-    public boolean hasNext() {
-        if (counter == 0) {
-            if (numberPointer > s.length()-1) {
-                return false;
-            }
-        }
-        return true;
+    if (this.currCount == null) {
+      this.charIdx = 0;
+      this.counterIdx = this.charIdx + 1;
+      this.currCount = 0;
     }
+    if (this.currCount == 0) {
+      while (this.counterIdx < this.s.length()
+          && Character.isDigit(this.s.charAt(this.counterIdx))) {
+        this.currCount =
+            this.currCount * 10 + Character.getNumericValue(this.s.charAt(this.counterIdx++));
+      }
+    }
+  }
 }
+
 
 /**
  * Your StringIterator object will be instantiated and called as such:
