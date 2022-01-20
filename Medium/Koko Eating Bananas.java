@@ -1,33 +1,33 @@
 class Solution {
-  public int minEatingSpeed(int[] piles, int H) {
-    int maxSize = piles[0];
-    for (int pile : piles) {
-      maxSize = Math.max(pile, maxSize);
-    }
-    return helper(piles, H, 1, maxSize);
-  }
-  
-  private int helper(int[] piles, int H, int start, int end) {
-    while (start < end) {
-      int mid = (start + end) / 2;
-      if (isPossible(piles, H, mid)) {
-        end = mid; 
-      }
-      else {
-        start = mid + 1;
+  public int minEatingSpeed(int[] piles, int h) {
+    int minBananaCount = 1;
+    int maxBananaCount = maxFromPile(piles);
+    while (minBananaCount < maxBananaCount) {
+      int mid = (minBananaCount + maxBananaCount) / 2;
+      if (canFinishPile(piles, mid, h)) {
+        maxBananaCount = mid;
+      } else {
+        minBananaCount = mid + 1;
       }
     }
-    return start;
+    return minBananaCount;
   }
   
-  private boolean isPossible(int[] piles, int H, int check) {
-    int numOfHours = 0;
+  private boolean canFinishPile(int[] piles, int bananaPerHour, int totalHours) {
+    int totalTime = 0;
     for (int pile : piles) {
-      int quot = pile / check; 
-      numOfHours += quot == 0 ? 1 : quot;
-      numOfHours += quot > 0 && pile % check != 0 ? 1 : 0;
+      int numOfHours = pile / bananaPerHour; 
+      totalTime += numOfHours == 0 ? 1 : numOfHours;
+      totalTime += numOfHours > 0 && pile % bananaPerHour != 0 ? 1 : 0;
     }
-    return numOfHours <= H;
+    return totalTime <= totalHours;
+  }
+  
+  private int maxFromPile(int[] piles) {
+    int maxCount = piles[0];
+    for (int i = 1; i < piles.length; i++) {
+      maxCount = Math.max(maxCount, piles[i]);
+    }
+    return maxCount;
   }
 }
-
