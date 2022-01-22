@@ -14,22 +14,15 @@
  * }
  */
 class Solution {
-  public TreeNode findNeartestRightNode(TreeNode root, TreeNode u) {
-    if (root == null) {
-      return null;
-    }
+  public TreeNode findNearestRightNode(TreeNode root, TreeNode u) {
     Queue<TreeNode> queue = new LinkedList<>();
     queue.add(root);
-    boolean found = false;
     while (!queue.isEmpty()) {
       int size = queue.size();
-      while (size-- > 0) {
+      while (size > 0) {
         TreeNode removed = queue.remove();
-        if (found) {
-          return removed;
-        }
-        if (removed == u) {
-          found = true;
+        if (removed.equals(u)) {
+          return size == 1 ? null : queue.peek();
         }
         if (removed.left != null) {
           queue.add(removed.left);
@@ -37,9 +30,7 @@ class Solution {
         if (removed.right != null) {
           queue.add(removed.right);
         }
-      }
-      if (found) {
-        break;
+        size--;
       }
     }
     return null;
