@@ -1,57 +1,51 @@
 class FileSystem {
-  FileNode root;
+
+  private FileNode root;
+
   public FileSystem() {
-    root = new FileNode("-");
+    this.root = new FileNode();
   }
 
   public boolean createPath(String path, int value) {
-    FileNode curr = root;
-    String[] directories = path.split("/");
-    for (int i = 0; i < directories.length; i++) {
-      if (directories[i].equals("")) {
-        continue;
+    String[] split = path.split("/");
+    FileNode node = root;
+    for (int i = 1; i < split.length - 1; i++) {
+      if (!node.children.containsKey(split[i])) {
+        return false;
       }
-      if (!curr.children.containsKey(directories[i])) {
-        if (i != directories.length - 1) {
-          return false;
-        }
-        curr.children.put(directories[i], new FileNode(directories[i]));
-      }
-      curr = curr.children.get(directories[i]);
+      node = node.children.get(split[i]);
     }
-    if (curr.val != -1) {
+    if (node.children.containsKey(split[split.length - 1])) {
       return false;
     }
-    curr.val = value;
+    node.children.put(split[split.length - 1], new FileNode(value));
     return true;
   }
 
   public int get(String path) {
-    FileNode curr = root;
-    String[] directories = path.split("/");
-    for (int i = 0; i < directories.length; i++) {
-      if (directories[i].equals("")) {
-        continue;
-      }
-      if (!curr.children.containsKey(directories[i])) {
+    String[] split = path.split("/");
+    FileNode node = root;
+    for (int i = 1; i < split.length; i++) {
+      if (!node.children.containsKey(split[i])) {
         return -1;
       }
-      curr = curr.children.get(directories[i]);
+      node = node.children.get(split[i]);
     }
-    return curr.val;
+    return node.value == null ? -1 : node.value;
   }
-}
 
+  private static class FileNode {
+    private final Map<String, FileNode> children;
+    private Integer value;
 
-class FileNode {
-  String fileName;
-  int val;
-  Map<String, FileNode> children;
-  
-  public FileNode(String fileName) {
-    this.fileName = fileName;
-    val = -1;
-    children = new HashMap<>();
+    public FileNode() {
+      this.children = new HashMap<>();
+    }
+
+    public FileNode(Integer value) {
+      this.children = new HashMap<>();
+      this.value = value;
+    }
   }
 }
 
