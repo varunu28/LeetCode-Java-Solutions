@@ -1,22 +1,22 @@
 class MovingAverage {
-
-  /** Initialize your data structure here. */
-  Queue<Integer> queue;
-  int size;
-  double sum;
+  
+  private int currSum;
+  private Queue<Integer> queue;
+  private int size;
+  
   public MovingAverage(int size) {
-    sum = 0;
+    this.currSum = 0;
     this.size = size;
-    queue = new LinkedList<>();
+    this.queue = new LinkedList<>();
   }
 
   public double next(int val) {
-    queue.add(val);
-    sum += val;
-    if (queue.size() > size) {
-      sum -= queue.remove();
+    this.queue.add(val);
+    this.currSum += val;
+    if (this.queue.size() > this.size) {
+      this.currSum -= this.queue.remove();
     }
-    return sum / queue.size();
+    return ((double) this.currSum) / this.queue.size();
   }
 }
 
