@@ -15,33 +15,36 @@
  */
 class Solution {
   public List<Integer> getAllElements(TreeNode root1, TreeNode root2) {
-    Stack<TreeNode> stack1 = new Stack<>();
-    Stack<TreeNode> stack2 = new Stack<>();
-    updateStack(stack1, root1);
-    updateStack(stack2, root2);
+    Stack<TreeNode> stackOne = new Stack<>();
+    Stack<TreeNode> stackTwo = new Stack<>();
+    while (root1 != null) {
+      stackOne.push(root1);
+      root1 = root1.left;
+    }
+    while (root2 != null) {
+      stackTwo.push(root2);
+      root2 = root2.left;
+    }
     List<Integer> list = new ArrayList<>();
-    while (!stack1.isEmpty() || !stack2.isEmpty()) {
-      if (!stack1.isEmpty() && !stack2.isEmpty()) {
-        if (stack1.peek().val < stack2.peek().val) {
-          TreeNode popped = stack1.pop();
+    while (!stackOne.isEmpty() || !stackTwo.isEmpty()) {
+      if (!stackOne.isEmpty() && !stackTwo.isEmpty()) {
+        if (stackOne.peek().val < stackTwo.peek().val) {
+          TreeNode popped = stackOne.pop();
           list.add(popped.val);
-          updateStack(stack1, popped.right);
-        }
-        else {
-          TreeNode popped = stack2.pop();
+          updateStack(stackOne, popped.right);
+        } else {
+          TreeNode popped = stackTwo.pop();
           list.add(popped.val);
-          updateStack(stack2, popped.right);
+          updateStack(stackTwo, popped.right);
         }
-      }
-      else if (!stack1.isEmpty() && stack2.isEmpty()) {
-        TreeNode popped = stack1.pop();
+      } else if (!stackOne.isEmpty() && stackTwo.isEmpty()) {
+        TreeNode popped = stackOne.pop();
         list.add(popped.val);
-        updateStack(stack1, popped.right);
-      }
-      else {
-        TreeNode popped = stack2.pop();
+        updateStack(stackOne, popped.right);
+      } else {
+        TreeNode popped = stackTwo.pop();
         list.add(popped.val);
-        updateStack(stack2, popped.right);
+        updateStack(stackTwo, popped.right);
       }
     }
     return list;
