@@ -1,21 +1,22 @@
 class Solution {
-  public boolean areSentencesSimilar(String[] words1, String[] words2, List<List<String>> pairs) {
-    if (words1.length != words2.length) {
+  public boolean areSentencesSimilar(
+      String[] sentence1, String[] sentence2, List<List<String>> similarPairs) {
+    if (sentence1.length != sentence2.length) {
       return false;
     }
-    Set<String> set = new HashSet<>();
-    for (List<String> pair : pairs) {
-      String word1 = pair.get(0);
-      String word2 = pair.get(1);
-      set.add(word1 + "|" + word2);
+    Map<String, Set<String>> similarWords = new HashMap<>();
+    for (List<String> pair : similarPairs) {
+      similarWords.computeIfAbsent(pair.get(0), k -> new HashSet<>()).add(pair.get(1));
+      similarWords.computeIfAbsent(pair.get(1), k -> new HashSet<>()).add(pair.get(0));
     }
-    for (int i = 0; i < words1.length; i++) {
-      String word1 = words1[i];
-      String word2 = words2[i];
-      if (!(word1.equals(word2) || set.contains(word1 + "|" + word2) || set.contains(word2 + "|" + word1))) {
-        return false;
+    for (int i = 0; i < sentence1.length; i++) {
+      if (sentence1[i].equals(sentence2[i])
+          || similarWords.getOrDefault(sentence1[i], new HashSet<>()).contains(sentence2[i])
+          || similarWords.getOrDefault(sentence2[i], new HashSet<>()).contains(sentence1[1])) {
+        continue;
       }
+      return false;
     }
-    return true;
+    return sentence1.length != sentence2.length;
   }
 }
