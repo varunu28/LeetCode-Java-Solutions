@@ -1,48 +1,54 @@
 class Solution {
-    public int earliestAcq(int[][] logs, int N) {
-        Arrays.sort(logs, Comparator.comparingInt(o -> o[0]));
-        Map<Integer, Set<Integer>> map = new HashMap<>();
+  public int earliestAcq(int[][] logs, int n) {
+    Arrays.sort(logs, Comparator.comparingInt(o -> o[0]));
+    DisjointSet disjointSet = new DisjointSet(n);
+    for (int[] log : logs) {
+      disjointSet.union(log[1], log[2]);
+      if (disjointSet.unionCount == 1) {
+        return log[0];
+      }
+    }
+    return -1;
+  }
 
-        for (int[] log : logs) {
-            boolean[] allDone = {false};
-            map.computeIfAbsent(log[1], k -> new HashSet<>()).add(log[2]);
-            dfs(map, log[1], log[2], allDone, N);
+  private static final class DisjointSet {
 
-            map.computeIfAbsent(log[2], k -> new HashSet<>()).add(log[1]);
-            dfs(map, log[2], log[1], allDone, N);
+    private final int[] root;
+    private final int[] rank;
+    public int unionCount;
 
-
-            if (allDone[0]) {
-                return log[0];
-            }
-        }
-
-        return -1;
+    public DisjointSet(int size) {
+      this.root = new int[size];
+      this.rank = new int[size];
+      for (int i = 0; i < size; i++) {
+        this.root[i] = i;
+        this.rank[i] = 1;
+      }
+      this.unionCount = size;
     }
 
-    private void dfs(Map<Integer, Set<Integer>> map, int f1, int f2, boolean[] allDone, int N) {
-        Set<Integer> visited = new HashSet<>();
-        Queue<Integer> queue = new LinkedList<>();
-        queue.add(f1);
-        visited.add(f1);
-
-        while (!queue.isEmpty()) {
-            int removed = queue.poll();
-            Iterator<Integer> iterator = map.getOrDefault(removed, new HashSet<>()).iterator();
-            while (iterator.hasNext()) {
-                int friend = iterator.next();
-                if (!visited.contains(friend)) {
-                    queue.add(friend);
-                    map.computeIfAbsent(friend, k -> new HashSet<>()).add(f2);
-                    map.computeIfAbsent(f2, k -> new HashSet<>()).add(friend);
-
-                    if (map.get(f2).size() == N || map.get(friend).size() == N) {
-                        allDone[0] = true;
-                    }
-
-                    visited.add(friend);
-                }
-            }
+    public void union(int nodeOne, int nodeTwo) {
+      int rootOne = find(nodeOne);
+      int rootTwo = find(nodeTwo);
+      if (rootOne != rootTwo) {
+        if (this.rank[rootOne] > this.rank[rootTwo]) {
+          this.root[rootTwo] = rootOne;
+        } else if (this.rank[rootOne] < this.rank[rootTwo]) {
+          this.root[rootOne] = rootTwo;
+        } else {
+          this.root[rootTwo] = rootOne;
+          this.rank[rootOne]++;
         }
+        this.unionCount--;
+      }
     }
+
+
+    public int find(int node) {
+      if (node == root[node]) {
+        return node;
+      }
+      return root[node] = find(root[node]);
+    }
+  }
 }
