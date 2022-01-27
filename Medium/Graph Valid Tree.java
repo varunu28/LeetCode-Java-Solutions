@@ -1,32 +1,19 @@
 class Solution {
   public boolean validTree(int n, int[][] edges) {
-    Map<Integer, Set<Integer>> map = new HashMap<>();
+    int[] nums = new int[n];
+    Arrays.fill(nums, -1);
     for (int[] edge : edges) {
-      map.computeIfAbsent(edge[1], k -> new HashSet<>()).add(edge[0]);
-      map.computeIfAbsent(edge[0], k -> new HashSet<>()).add(edge[1]);
-    }
-    Queue<Integer> queue = new LinkedList<>();
-    int[] visited = new int[n];
-    queue.add(0);
-    visited[0] = 1;
-    while (!queue.isEmpty()) {
-      Integer removed = queue.remove();
-      for (Integer connection : map.getOrDefault(removed, new HashSet<>())) {
-        if (visited[connection] == 1) {
-          return false;
-        }
-        if (visited[connection] == 0) {
-          visited[connection] = 1;
-          queue.add(connection);
-        }
-      }
-      visited[removed] = 2;
-    }
-    for (int node : visited) {
-      if (node == 0) {
+      int rootOne = find(nums, edge[0]);
+      int rootTwo = find(nums, edge[1]);
+      if (rootOne == rootTwo) {
         return false;
       }
+      nums[rootOne] = rootTwo;
     }
-    return true;
+    return edges.length == n - 1;
+  }
+  
+  private int find(int[] nums, int n) {
+    return nums[n] == -1 ? n : find(nums, nums[n]);
   }
 }
