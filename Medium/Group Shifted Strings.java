@@ -1,19 +1,17 @@
 class Solution {
   public List<List<String>> groupStrings(String[] strings) {
     Map<String, List<String>> map = new HashMap<>();
-    for (String str : strings) {
-      map.computeIfAbsent(getKey(str), k -> new ArrayList<>()).add(str);
+    for (String s : strings) {
+      map.computeIfAbsent(getShiftedCode(s), k -> new ArrayList<>()).add(s);
     }
     return new ArrayList<>(map.values());
   }
-  
-  private String getKey(String s) {
-    StringBuilder sb = new StringBuilder();
+
+  private String getShiftedCode(String s) {
+    StringBuilder key = new StringBuilder();
     for (int i = 1; i < s.length(); i++) {
-      int diff = s.charAt(i) - s.charAt(i - 1);
-      diff = diff < 0 ? diff + 26 : diff;
-      sb.append(diff);
+      key.append(String.format("%2d", (s.charAt(i) - s.charAt(i-1) + 26) % 26));
     }
-    return sb.toString();
+    return key.toString();
   }
 }
