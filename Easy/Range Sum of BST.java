@@ -15,23 +15,21 @@
  */
 class Solution {
   public int rangeSumBST(TreeNode root, int low, int high) {
-    int[] rangeSum = {0};
-    helper(root, low, high, rangeSum);
-    return rangeSum[0];
-  }
-  
-  private void helper(TreeNode root, int low, int high, int[] rangeSum) {
-    if (root == null) {
-      return;
+    Stack<TreeNode> stack = new Stack<>();
+    stack.push(root);
+    int sum = 0;
+    while (!stack.isEmpty()) {
+        TreeNode removed = stack.pop();
+        if (removed.val > low && removed.left != null) { 
+          stack.push(removed.left); 
+        } 
+        if (removed.val < high && removed.right != null) { 
+          stack.push(removed.right); 
+        }
+        if (low <= removed.val && removed.val <= high) {
+          sum += removed.val; 
+        }
     }
-    if (root.val >= low && root.val <= high) {
-      rangeSum[0] += root.val;
-    }
-    if (root.val >= low) {
-      helper(root.left, low, high, rangeSum);
-    }
-    if (root.val <= high) {
-      helper(root.right, low, high, rangeSum);
-    }
+    return sum;
   }
 }
