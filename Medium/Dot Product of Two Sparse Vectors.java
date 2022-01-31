@@ -1,42 +1,29 @@
 class SparseVector {
-  Map<Integer, Integer> map;
-  int[] nums;
+
+  private Map<Integer, Integer> map;
+
   SparseVector(int[] nums) {
-    this.nums = nums;
-  }
-  
-  private Map<Integer, Integer> getMap() {
-    if (map != null) {
-      return map;
-    }
-    map = new HashMap<>();
+    this.map = new HashMap<>();
     for (int i = 0; i < nums.length; i++) {
       if (nums[i] != 0) {
-        map.put(i, nums[i]);
+        this.map.put(i, nums[i]);
       }
     }
-    return map;
   }
 
   // Return the dotProduct of two sparse vectors
   public int dotProduct(SparseVector vec) {
-    Map<Integer, Integer> vecMap = vec.getMap();
-    Map<Integer, Integer> map = getMap();
-    return map.size() > vecMap.size() ? helper(vecMap, map) : helper(map, vecMap);
+    return vec.map.size() > this.map.size() ? dotProductHelper(this.map, vec.map)
+        : dotProductHelper(vec.map, this.map);
   }
-  
-  private int helper(Map<Integer, Integer> map1, Map<Integer, Integer> map2) {
-    int val = 0;
-    for (Integer key : map1.keySet()) {
-      if (map2.containsKey(key)) {
-        val += map1.get(key) * map2.get(key);
+
+  private int dotProductHelper(Map<Integer, Integer> mapOne, Map<Integer, Integer> mapTwo) {
+    int product = 0;
+    for (Integer key : mapOne.keySet()) {
+      if (mapTwo.containsKey(key)) {
+        product += mapOne.get(key) * mapTwo.get(key);
       }
     }
-    return val;
+    return product;
   }
 }
-
-// Your SparseVector object will be instantiated and called as such:
-// SparseVector v1 = new SparseVector(nums1);
-// SparseVector v2 = new SparseVector(nums2);
-// int ans = v1.dotProduct(v2);
