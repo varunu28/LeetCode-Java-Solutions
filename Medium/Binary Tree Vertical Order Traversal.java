@@ -36,15 +36,15 @@ class Solution {
     }
     return new ArrayList<>(map.values());
   }
-}
-
-
-class TreeLevel {
-  TreeNode node;
-  int level;
   
-  public TreeLevel(TreeNode node, int level) {
-    this.node = node;
-    this.level = level;
+
+  private class TreeLevel {
+    TreeNode node;
+    int level;
+
+    public TreeLevel(TreeNode node, int level) {
+      this.node = node;
+      this.level = level;
+    }
   }
 }
