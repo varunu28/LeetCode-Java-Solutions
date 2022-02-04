@@ -22,34 +22,33 @@
  *     public void add(NestedInteger ni);
  *
  *     // @return the nested list that this NestedInteger holds, if it holds a nested list
- *     // Return null if this NestedInteger holds a single integer
+ *     // Return empty list if this NestedInteger holds a single integer
  *     public List<NestedInteger> getList();
  * }
  */
 class Solution {
   public int depthSum(List<NestedInteger> nestedList) {
-    int level = 1;
     Queue<NestedInteger> queue = new LinkedList<>();
-    int sum = 0;
+    int currLevel = 1;
     for (NestedInteger nestedInteger : nestedList) {
       queue.add(nestedInteger);
     }
+    int totalSum = 0;
     while (!queue.isEmpty()) {
       int size = queue.size();
       while (size-- > 0) {
-        NestedInteger nestedInteger = queue.remove();
-        if (nestedInteger.isInteger()) {
-          sum += nestedInteger.getInteger() * level;
-        }
-        else {
-          List<NestedInteger> nList = nestedInteger.getList();
-          for (NestedInteger nInteger : nList) {
-            queue.add(nInteger);
+        NestedInteger removed = queue.remove();
+        if (removed.isInteger()) {
+          totalSum += currLevel * removed.getInteger();
+        } else {
+          List<NestedInteger> nestedIntegers = removed.getList();
+          for (NestedInteger nestedInteger : nestedIntegers) {
+            queue.add(nestedInteger);
           }
         }
       }
-      level++;
+      currLevel++;
     }
-    return sum;
+    return totalSum;
   }
 }
