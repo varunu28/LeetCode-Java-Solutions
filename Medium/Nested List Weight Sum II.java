@@ -22,36 +22,33 @@
  *     public void add(NestedInteger ni);
  *
  *     // @return the nested list that this NestedInteger holds, if it holds a nested list
- *     // Return null if this NestedInteger holds a single integer
+ *     // Return empty list if this NestedInteger holds a single integer
  *     public List<NestedInteger> getList();
  * }
  */
+import java.util.Map.Entry;
+
+
 class Solution {
   public int depthSumInverse(List<NestedInteger> nestedList) {
     Queue<NestedInteger> queue = new LinkedList<>();
-    int prevSum = 0;
+    queue.addAll(nestedList);
+    int totalSum = 0;
     int currSum = 0;
-    for (NestedInteger nestedInteger : nestedList) {
-      queue.add(nestedInteger);
-    }
     while (!queue.isEmpty()) {
       int size = queue.size();
       int levelSum = 0;
       while (size-- > 0) {
-        NestedInteger removed = queue.remove();
-        if (removed.isInteger()) {
-          levelSum += removed.getInteger();
-        }
-        else {
-          List<NestedInteger> nList = removed.getList();
-          for (NestedInteger nInteger : nList) {
-            queue.add(nInteger);
-          }
+        NestedInteger nestedInteger = queue.remove();
+        if (nestedInteger.isInteger()) {
+          levelSum += nestedInteger.getInteger();
+        } else {
+          queue.addAll(nestedInteger.getList());
         }
       }
-      prevSum += levelSum;
-      currSum += prevSum;
+      currSum += levelSum;
+      totalSum += currSum;
     }
-    return currSum;
+    return totalSum;
   }
 }
