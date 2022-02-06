@@ -1,20 +1,19 @@
 class Solution {
   public int removeDuplicates(int[] nums) {
-    int slow = 0;
-    int fast = 0;
+    int startIdx = 0;
     int n = nums.length;
-    while (fast < n) {
-      int currNum = nums[fast];
+    int currIdx = 0;
+    while (currIdx < n) {
+      int currValue = nums[currIdx];
       int count = 0;
-      while (fast < n && currNum == nums[fast]) {
-        fast++;
+      while (currIdx < n && nums[currIdx] == currValue) {
+        currIdx++;
         count++;
       }
-      int frequency = Math.min(count, 2);
-      while (frequency-- > 0) {
-        nums[slow++] = currNum;
+      for (int i = 0; i < Math.min(2, count); i++) {
+        nums[startIdx++] = currValue;
       }
     }
-    return slow;
+    return startIdx;
   }
 }
