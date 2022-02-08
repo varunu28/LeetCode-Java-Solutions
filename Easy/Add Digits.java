@@ -1,17 +1,13 @@
 class Solution {
   public int addDigits(int num) {
-    while (String.valueOf(num).length() > 1) {
-      num = getDigitSum(num);
+    if (num / 10 == 0) {
+      return num;
     }
-    return num;
-  }
-  
-  private int getDigitSum(int n) {
-    int newNum = 0;
-    while (n > 0) {
-      newNum += n % 10;
-      n /= 10;
+    int digitSum = 0;
+    while (num > 0) {
+      digitSum += num % 10;
+      num /= 10;
     }
-    return newNum;
+    return addDigits(digitSum);
   }
 }
