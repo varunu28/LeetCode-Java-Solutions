@@ -1,29 +1,28 @@
 class Solution {
   public int coinChange(int[] coins, int amount) {
-    if (amount < 1) {
-      return 0;
-    }
-    return coinChange(coins, amount, new int[amount]);
+    Integer[] memo = new Integer[amount + 1];
+    return coinChangeMemoization(coins, amount, memo);
   }
-  
-  private int coinChange(int[] coins, int amount, int[] memo) {
+
+  private int coinChangeMemoization(int[] coins, int amount, Integer[] memo) {
     if (amount < 0) {
       return -1;
     }
     if (amount == 0) {
       return 0;
     }
-    if (memo[amount - 1] != 0) {
-      return memo[amount - 1];
+    if (memo[amount] != null) {
+      return memo[amount];
     }
-    int min = Integer.MAX_VALUE;
+    int minCount = Integer.MAX_VALUE;
     for (int coin : coins) {
-      int res = coinChange(coins, amount - coin, memo);
-      if (res >= 0 && res < min) {
-        min = 1 + res;
+      int count = coinChangeMemoization(coins, amount - coin, memo);
+      if (count == -1) {
+        continue;
       }
+      minCount = Math.min(minCount, count + 1);
     }
-    memo[amount - 1] = min == Integer.MAX_VALUE ? -1 : min;
-    return memo[amount - 1];
+    memo[amount] = minCount == Integer.MAX_VALUE ? -1 : minCount;
+    return memo[amount];
   }
 }
