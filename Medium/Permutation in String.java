@@ -1,25 +1,32 @@
 class Solution {
   public boolean checkInclusion(String s1, String s2) {
-    if (s1.length() > s2.length()) {
+    if (s2.length() < s1.length()) {
       return false;
     }
-    int[] counter = new int[26];
-    for (char c : s1.toCharArray()) {
-      counter[c - 'a']++;
+    int[] frequency = new int[26];
+    for (int i = 0; i < s1.length(); i++) {
+      frequency[s1.charAt(i) - 'a']++;
+      frequency[s2.charAt(i) - 'a']--;
     }
-    String targetStr = Arrays.toString(counter);
-    int[] targetCounter = new int[26];
-    for (int i = 0; i < s1.length() - 1; i++) {
-      targetCounter[s2.charAt(i) - 'a']++;
+    if (allZeroArray(frequency)) {
+      return true;
     }
-    int start = 0;
-    for (int i = s1.length() - 1; i < s2.length(); i++) {
-      targetCounter[s2.charAt(i) - 'a']++;
-      if (Arrays.toString(targetCounter).equals(targetStr)) {
+    for (int i = s1.length(); i < s2.length(); i++) {
+      frequency[s2.charAt(i) - 'a']--;
+      frequency[s2.charAt(i - s1.length()) - 'a']++;
+      if (allZeroArray(frequency)) {
         return true;
       }
-      targetCounter[s2.charAt(start++) - 'a']--;
     }
     return false;
+  }
+
+  private boolean allZeroArray(int[] frequency) {
+    for (int count : frequency) {
+      if (count != 0) {
+        return false;
+      }
+    }
+    return true;
   }
 }
