@@ -1,39 +1,43 @@
 class Leaderboard {
-    Map<Integer, Integer> scoreMap;
-    Map<Integer, Set<Integer>> playerMap;
-    public Leaderboard() {
-        scoreMap = new HashMap<>();
-        playerMap = new TreeMap<>(Collections.reverseOrder());
-    }
 
-    public void addScore(int playerId, int score) {
-        if (scoreMap.containsKey(playerId)) {
-            int prevScore = scoreMap.get(playerId);
-            playerMap.get(prevScore).remove(playerId);
-        }
-        scoreMap.put(playerId, scoreMap.getOrDefault(playerId, 0) + score);
-        playerMap.computeIfAbsent(scoreMap.get(playerId), k -> new HashSet<>()).add(playerId);
-    }
+  private Map<Integer, Integer> playerToScoreMapping;
+  private Map<Integer, Set<Integer>> scoreToPlayerMapping;
 
-    public int top(int K) {
-        int sum = 0;
-        for (Integer key : playerMap.keySet()) {
-            int count = Math.min(K, playerMap.get(key).size());
-            sum += key * count;
-            K -= count;
-            if (K == 0) {
-                break;
-            }
-        }
-        return sum;
-    }
+  public Leaderboard() {
+    this.playerToScoreMapping = new HashMap<>();
+    this.scoreToPlayerMapping = new TreeMap<>(Collections.reverseOrder());
+  }
 
-    public void reset(int playerId) {
-        int prevScore = scoreMap.get(playerId);
-        playerMap.get(prevScore).remove(playerId);
-        scoreMap.put(playerId, 0);
-        playerMap.computeIfAbsent(0, k -> new HashSet<>()).add(playerId);
+  public void addScore(int playerId, int score) {
+    if (playerToScoreMapping.containsKey(playerId)) {
+      int previousScore = playerToScoreMapping.get(playerId);
+      if (scoreToPlayerMapping.getOrDefault(previousScore, new HashSet<>()).contains(playerId)) {
+        scoreToPlayerMapping.get(previousScore).remove(playerId);
+      }
+      score += previousScore;
     }
+    playerToScoreMapping.put(playerId, score);
+    scoreToPlayerMapping.computeIfAbsent(score, k -> new HashSet<>()).add(playerId);
+  }
+
+  public int top(int K) {
+    int totalScore = 0;
+    for (Integer currScore : scoreToPlayerMapping.keySet()) {
+      int totalPlayersWithScore = scoreToPlayerMapping.get(currScore).size();
+      int playersRemaining = Math.min(K, totalPlayersWithScore);
+      totalScore += playersRemaining * currScore;
+      K -= playersRemaining;
+      if (K == 0) {
+        break;
+      }
+    }
+    return totalScore;
+  }
+
+  public void reset(int playerId) {
+    scoreToPlayerMapping.get(playerToScoreMapping.get(playerId)).remove(playerId);
+    playerToScoreMapping.put(playerId, 0);
+  }
 }
 
 /**
