@@ -1,49 +1,32 @@
 class Solution {
-  public int networkDelayTime(int[][] times, int N, int K) {
-    Map<Integer, List<Connection>> map = new HashMap<>();
+  public int networkDelayTime(int[][] times, int n, int k) {
+    // Mapping from node to all outgoing edges alongside weight of each edge
+    Map<Integer, List<int[]>> map = new HashMap<>();
     for (int[] time : times) {
-      map.computeIfAbsent(time[0], k -> new ArrayList<>()).add(new Connection(time[1], time[2]));
+      map.computeIfAbsent(time[0], j -> new ArrayList<>()).add(new int[] {time[1], time[2]});
     }
-    Map<Integer, Integer> dist = new HashMap<>();
-    for (int node = 1; node <= N; node++) {
-      dist.put(node, Integer.MAX_VALUE);
-    }
-    dist.put(K, 0);
-    boolean[] seen = new boolean[N + 1];
-    while (true) {
-      int candNode = -1;
-      int candDist = Integer.MAX_VALUE;
-      for (int i = 1; i <= N; ++i) {
-        if (!seen[i] && dist.get(i) < candDist) {
-          candDist = dist.get(i);
-          candNode = i;
+    // Min heap in order of edge weight
+    PriorityQueue<int[]> priorityQueue = new PriorityQueue<>(Comparator.comparingInt(o -> o[0]));
+    priorityQueue.add(new int[] {0, k});
+    Set<Integer> visited = new HashSet<>();
+    int totalTime = 0;
+    while (!priorityQueue.isEmpty()) {
+      int[] removed = priorityQueue.poll();
+      int currNode = removed[1];
+      int edgeWeight = removed[0];
+      if (visited.contains(currNode)) {
+        continue;
+      }
+      visited.add(currNode);
+      totalTime = Math.max(totalTime, edgeWeight);
+      for (int[] neighbor : map.getOrDefault(removed[1], new ArrayList<>())) {
+        int neighborNode = neighbor[0];
+        int neighborEdgeWeight = neighbor[1];
+        if (!visited.contains(neighborNode)) {
+          priorityQueue.add(new int[] {neighborEdgeWeight + edgeWeight, neighborNode});
         }
       }
-      if (candNode < 0) {
-        break;
-      }
-      seen[candNode] = true;
-      for (Connection con: map.getOrDefault(candNode, new ArrayList<>())) {
-        dist.put(con.val, Math.min(dist.get(con.val), dist.get(candNode) + con.time));
-      }
     }
-    int ans = 0;
-    for (int cand: dist.values()) {
-      if (cand == Integer.MAX_VALUE) {
-        return -1;
-      }
-      ans = Math.max(ans, cand);
-    }
-    return ans;
-  }
-}
-
-class Connection {
-  int val;
-  int time;
-  
-  public Connection(int val, int time) {
-    this.val = val;
-    this.time = time;
+    return visited.size() == n ? totalTime : -1;
   }
 }
