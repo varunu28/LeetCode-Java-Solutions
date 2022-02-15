@@ -1,33 +1,40 @@
 class Vector2D {
-  int vectorIdx;
-  int currIdx;
-  int[][] v;
-  public Vector2D(int[][] v) {
-    vectorIdx = 0;
-    currIdx = 0;
-    this.v = v;
+
+  private int[][] vec;
+  private int vecIdx;
+  private int idx;
+
+  public Vector2D(int[][] vec) {
+    this.vec = vec;
+    this.idx = 0;
+    this.vecIdx = 0;
+    updateIdx();
+  }
+
+  private void updateIdx() {
+    if (this.vecIdx < this.vec.length && this.idx == this.vec[this.vecIdx].length) {
+      this.idx = 0;
+      this.vecIdx++;
+    }
+    while (this.vecIdx < this.vec.length && this.vec[this.vecIdx].length == 0) {
+      this.vecIdx++;
+    }
   }
 
   public int next() {
-    hasNext();
-    return v[vectorIdx][currIdx++];
+    int result = this.vec[this.vecIdx][this.idx++];
+    updateIdx();
+    return result;
   }
 
   public boolean hasNext() {
-    while (vectorIdx < v.length) {
-      if (currIdx < v[vectorIdx].length) {
-        return true;
-      }
-      vectorIdx++;
-      currIdx = 0;
-    }
-    return false;
+    return this.vecIdx < this.vec.length;
   }
 }
 
 /**
  * Your Vector2D object will be instantiated and called as such:
- * Vector2D obj = new Vector2D(v);
+ * Vector2D obj = new Vector2D(vec);
  * int param_1 = obj.next();
  * boolean param_2 = obj.hasNext();
  */
