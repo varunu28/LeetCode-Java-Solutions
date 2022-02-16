@@ -1,28 +1,33 @@
 class Solution {
-    public int[] exclusiveTime(int n, List<String> logs) {
-        int[] timer = new int[n];
-        Stack<Integer> stack = new Stack<>();
-        int lastTime = 0;;
-
-        for (String log : logs) {
-            String[] strs = log.split(":");
-            int id = Integer.parseInt(strs[0]);
-            String status = strs[1];
-            int time = Integer.parseInt(strs[2]);
-
-            if (!stack.isEmpty()) {
-                timer[stack.peek()] += time - lastTime;
-            }
-            lastTime = time;
-            if (status.equals("start")) {
-                stack.push(id);
-            }
-            else {
-                timer[stack.pop()]++;
-                lastTime++;
-            }
+  public int[] exclusiveTime(int n, List<String> logs) {
+    int[] result = new int[n];
+    Stack<Log> stack = new Stack<>();
+    for (String log : logs) {
+      Log currentLog = new Log(log);
+      if (currentLog.isStart) {
+        stack.push(currentLog);
+      } else {
+        Log topLog = stack.pop();
+        result[topLog.id] += currentLog.time - topLog.time + 1 - topLog.overLappingTime;
+        if (!stack.isEmpty()) {
+          stack.peek().overLappingTime += currentLog.time - topLog.time + 1;
         }
-
-        return timer;
+      }
     }
+    return result;
+  }
+
+  private static class Log {
+    public int id;
+    public boolean isStart;
+    public int time;
+    public int overLappingTime;
+
+    public Log(String log) {
+      String[] split = log.split(":");
+      this.id = Integer.parseInt(split[0]);
+      this.isStart = split[1].equals("start");
+      this.time = Integer.parseInt(split[2]);
+    }
+  }
 }
