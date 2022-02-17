@@ -1,25 +1,18 @@
 class Solution {
   public int findPeakElement(int[] nums) {
-    int[] index = {-1};
-    helper(nums, 0, nums.length - 1, index);
-    return index[0];
+    return helper(nums, 0, nums.length - 1);
   }
   
-  private void helper(int[] nums, int start, int end, int[] index) {
-    if (start <= end && index[0] == -1) {
-      int mid = (start + end) / 2;
-      boolean found = (
-          (mid + 1 < nums.length ? nums[mid] > nums[mid + 1] : true) &&
-          (mid - 1 >= 0 ? nums[mid] > nums[mid - 1] : true)
-        );
-      if (found) {
-        index[0] = mid;
-        return;
-      }
-      else {
-        helper(nums, start, mid - 1, index);
-        helper(nums, mid + 1, end, index);
-      }
+  private int helper(int[] nums, int startIdx, int endIdx) {
+    if (startIdx == endIdx) {
+      return startIdx;
+    }
+    int midIdx = (startIdx + endIdx) / 2;
+    int nextToMid = midIdx + 1;
+    if (nums[midIdx] > nums[nextToMid]) {
+      return helper(nums, startIdx, midIdx);
+    } else {
+      return helper(nums, nextToMid, endIdx);
     }
   }
 }
