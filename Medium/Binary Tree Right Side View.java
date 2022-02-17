@@ -18,26 +18,24 @@ class Solution {
     if (root == null) {
       return new ArrayList<>();
     }
-    List<Integer> list = new ArrayList<>();
+    List<Integer> result = new ArrayList<>();
     Queue<TreeNode> queue = new LinkedList<>();
     queue.add(root);
     while (!queue.isEmpty()) {
       int size = queue.size();
-      TreeNode rightMost = null;
+      int rightMostValue = -1;
       while (size-- > 0) {
         TreeNode removed = queue.remove();
-        if (rightMost == null) {
-          rightMost = removed;
+        rightMostValue = removed.val;
+        if (removed.left != null) {
+          queue.add(removed.left);
         }
         if (removed.right != null) {
           queue.add(removed.right);
         }
-        if (removed.left != null) {
-          queue.add(removed.left);
-        } 
       }
-      list.add(rightMost.val);
+      result.add(rightMostValue);
     }
-    return list;
+    return result;
   }
 }
