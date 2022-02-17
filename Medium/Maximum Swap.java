@@ -1,7 +1,7 @@
 class Solution {
   public int maximumSwap(int num) {
     String stringValue = Integer.toString(num);
-    Map<Integer, Integer> valToIndexMap = new TreeMap<>();
+    Map<Integer, Integer> valToIndexMap = new HashMap<>();
     int[] digits = new int[String.valueOf(num).length()];
     for (int i = digits.length - 1; i >= 0; i--) {
       int digit = num % 10;
