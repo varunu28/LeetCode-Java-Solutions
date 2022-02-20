@@ -7,18 +7,21 @@ class Solution {
       }
       return o2[1] - o1[1];
     });
-    int count = 0;
-    int idx = 0;
+    int currIdx = 0;
     int n = intervals.length;
-    while (idx < n) {
-      int start = intervals[idx][0];
-      int end = intervals[idx][1];
-      idx++;
-      while (idx < n && intervals[idx][1] <= end) {
-        idx++;
+    int intervalCount = 0;
+    while (currIdx < n) {
+      int[] currInterval = intervals[currIdx];
+      int currIntervalStart = currInterval[0];
+      int currIntervalEnd = currInterval[1];
+      currIdx++;
+      while (currIdx < n &&
+          intervals[currIdx][0] >= currIntervalStart &&
+          intervals[currIdx][1] <= currIntervalEnd) {
+        currIdx++;
       }
-      count++;
+      intervalCount++;
     }
-    return count;
-  }
+    return intervalCount;
+  }   
 }
