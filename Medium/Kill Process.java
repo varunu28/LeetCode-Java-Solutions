@@ -1,25 +1,21 @@
 class Solution {
   public List<Integer> killProcess(List<Integer> pid, List<Integer> ppid, int kill) {
-    Map<Integer, List<Integer>> map = new HashMap<>();
+    Map<Integer, Set<Integer>> map = new HashMap<>();
     for (int i = 0; i < pid.size(); i++) {
-      if (ppid.get(i) != 0) {
-        map.computeIfAbsent(ppid.get(i), k -> new ArrayList<>()).add(pid.get(i));
-      }
+      map.computeIfAbsent(ppid.get(i), k -> new HashSet<>()).add(pid.get(i));
     }
-    Set<Integer> set = new HashSet<>();
-    Queue<Integer> queue = new LinkedList<>();
-    queue.add(kill);
-    set.add(kill);
-    while (!queue.isEmpty()) {
-      int removed = queue.remove();
-      set.add(removed);
-      for (Integer child : map.getOrDefault(removed, new ArrayList<>())) {
-        if (!set.contains(child)) {
-          queue.add(child);
-          set.add(child);
+    Stack<Integer> stack = new Stack<>();
+    stack.push(kill);
+    Set<Integer> tasksKilled = new HashSet<>();
+    while (!stack.isEmpty()) {
+      int removedTask = stack.pop();
+      tasksKilled.add(removedTask);
+      for (Integer childTask : map.getOrDefault(removedTask, new HashSet<>())) {
+        if (!tasksKilled.contains(childTask)) {
+          stack.push(childTask);
         }
       }
     }
-    return new ArrayList<>(set);
+    return new ArrayList<>(tasksKilled);
   }
 }
