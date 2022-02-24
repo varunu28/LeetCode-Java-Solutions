@@ -13,38 +13,41 @@ class Solution {
     if (head == null || head.next == null) {
       return head;
     }
-    ListNode mid = getMid(head);
-    ListNode left = sortList(head);
-    ListNode right = sortList(mid);
-    return merge(left, right);
+    ListNode firstHalfTail = head;
+    ListNode secondHalfHead = head;
+    ListNode secondHalfTail = head;
+    while (secondHalfTail != null && secondHalfTail.next != null) {
+      firstHalfTail = secondHalfHead;
+      secondHalfHead = secondHalfHead.next;
+      secondHalfTail = secondHalfTail.next.next;
+    }
+    firstHalfTail.next = null;
+    ListNode leftHalf = sortList(head);
+    ListNode rightHalf = sortList(secondHalfHead);
+    return merge(leftHalf, rightHalf);
   }
   
-  private ListNode getMid(ListNode head) {
-    ListNode prev = null;
-    while (head != null && head.next != null) {
-      prev = prev == null ? head : prev.next;
-      head = head.next.next;
-    }
-    ListNode mid = prev.next;
-    prev.next = null;
-    return mid;
-  }
-  
-  private ListNode merge(ListNode l1, ListNode l2) {
-    ListNode dummyHead = new ListNode();
-    ListNode tail = dummyHead;
-    while (l1 != null && l2 != null) {
-      if (l1.val < l2.val) {
-        tail.next = l1;
-        l1 = l1.next;
+  private ListNode merge(ListNode leftHalf, ListNode rightHalf) {
+    ListNode dummyNode = new ListNode(-1);
+    ListNode currNode = dummyNode;
+    while (leftHalf != null || rightHalf != null) {
+      if (leftHalf != null && rightHalf != null) {
+        if (leftHalf.val < rightHalf.val) {
+          currNode.next = new ListNode(leftHalf.val);
+          leftHalf = leftHalf.next;
+        } else {
+          currNode.next = new ListNode(rightHalf.val);
+          rightHalf = rightHalf.next;
+        }
+      } else if (leftHalf != null && rightHalf == null) {
+        currNode.next = new ListNode(leftHalf.val);
+        leftHalf = leftHalf.next;
+      } else {
+        currNode.next = new ListNode(rightHalf.val);
+        rightHalf = rightHalf.next;
       }
-      else {
-        tail.next = l2;
-        l2 = l2.next;
-      }
-      tail = tail.next;
+      currNode = currNode.next;
     }
-    tail.next = l1 != null ? l1 : l2;
-    return dummyHead.next;
+    return dummyNode.next;
   }
 }
