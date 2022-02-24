@@ -4,37 +4,44 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-    public int longestConsecutive(TreeNode root) {
-        if (root == null) {
-            return 0;
-        }
-        
-        int[] ans = {1};
-        helper(root, ans, null, 1);
-        
-        return ans[0];
+  public int longestConsecutive(TreeNode root) {
+    int maxLength = 0;
+    Queue<NodePair> queue = new LinkedList<>();
+    queue.add(new NodePair(root, 1));
+    while (!queue.isEmpty()) {
+      NodePair removed = queue.remove();
+      maxLength = Math.max(maxLength, removed.currLength);
+      if (removed.node.left != null) {
+        int sequenceLength = (removed.node.left.val == removed.node.val + 1 
+                              ? removed.currLength + 1 : 1);
+        queue.add(new NodePair(removed.node.left, sequenceLength));
+      }
+      if (removed.node.right != null) {
+        int sequenceLength = (removed.node.right.val == removed.node.val + 1 
+                              ? removed.currLength + 1 : 1);
+        queue.add(new NodePair(removed.node.right, sequenceLength));
+      }
     }
+    return maxLength;
+  }
+  
+  private class NodePair {
+    TreeNode node;
+    int currLength;
     
-    private void helper(TreeNode root, int[] ans, TreeNode parent, int count) {
-        if (root == null) {
-            return;
-        }
-        
-        if (parent != null) {
-            if (root.val == parent.val + 1) {
-                count++;
-                ans[0] = Math.max(ans[0], count);
-            }
-            else {
-                count = 1;
-            }
-        }
-        
-        helper(root.left, ans, root, count);
-        helper(root.right, ans, root, count);
+    public NodePair(TreeNode node, int currLength) {
+      this.node = node;
+      this.currLength = currLength;
     }
+  }
 }
