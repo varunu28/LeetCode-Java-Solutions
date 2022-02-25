@@ -1,20 +1,31 @@
 class Solution {
-    public int[][] dirs = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
-    public int[][] floodFill(int[][] image, int sr, int sc, int newColor) {
-        dfs(image, sr, sc, newColor, image[sr][sc]);
-        return image;
+  private static final int[][] DIRS = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+  
+  public int[][] floodFill(int[][] image, int sr, int sc, int newColor) {
+    int numOfRows = image.length;
+    int numOfCols = image[0].length;
+    int originalColor = image[sr][sc];
+    if (newColor == originalColor) {
+      return image;
     }
-    
-    private void dfs(int[][] image, int x, int y, int newColor, int oldColor) {
-        if(x < 0 || x >= image.length || y < 0 || y >= image[0].length || image[x][y] == newColor) {
-            return;
+    Queue<int[]> queue = new LinkedList<>();
+    queue.add(new int[]{sr, sc});
+    while (!queue.isEmpty()) {
+      int size = queue.size();
+      while (size-- > 0) {
+        int[] coordinate = queue.remove();
+        int xPoint = coordinate[0];
+        int yPoint = coordinate[1];
+        image[xPoint][yPoint] = newColor;
+        for (int[] dir : DIRS) {
+          int newXPoint = xPoint + dir[0];
+          int newYPoint = yPoint + dir[1];
+          if (newXPoint >= 0 && newYPoint >= 0 && newXPoint < numOfRows && newYPoint < numOfCols && image[newXPoint][newYPoint] == originalColor) {
+            queue.add(new int[]{newXPoint, newYPoint});
+          }
         }
-        
-        if (image[x][y] == oldColor) {
-            image[x][y] = newColor;
-            for (int[] dir : dirs) {
-                dfs(image, x + dir[0], y + dir[1], newColor, oldColor);
-            }
-        }
+      }
     }
+    return image;
+  }
 }
