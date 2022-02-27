@@ -4,24 +4,45 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
   public int widthOfBinaryTree(TreeNode root) {
-    int[] ans = {0};
-    Map<Integer, Integer> map = new HashMap<>();
-    dfs(root, 0, 0, ans, map);
-    return ans[0];
-  }
-  
-  private void dfs(TreeNode root, int depth, int pos, int[] ans, Map<Integer, Integer> map) {
-    if (root == null) {
-      return;
+    int maxWidth = 0;
+    Queue<TreeNode> queue = new LinkedList<>();
+    Map<TreeNode, Integer> map = new HashMap<>();
+    map.put(root, 1);
+    queue.add(root);
+    while (!queue.isEmpty()) {
+      int size = queue.size();
+      int start = 0;
+      int end = 0;
+      for (int i = 0; i < size; i++) {
+        TreeNode node = queue.poll();
+        if (i == 0) {
+          start = map.get(node);
+        }
+        if (i == size - 1) {
+          end = map.get(node);
+        }
+        if (node.left != null) {
+          map.put(node.left, map.get(node) * 2);
+          queue.add(node.left);
+        }
+        if (node.right != null) {
+          map.put(node.right, map.get(node) * 2 + 1);
+          queue.add(node.right);
+        }
+      }
+      maxWidth = Math.max(maxWidth, end - start + 1);
     }
-    map.putIfAbsent(depth, pos);
-    ans[0] = Math.max(ans[0], pos - map.get(depth) + 1);
-    dfs(root.left, depth + 1, 2 * pos, ans, map);
-    dfs(root.right, depth + 1, 2 * pos + 1, ans, map);
+    return maxWidth;
   }
 }
