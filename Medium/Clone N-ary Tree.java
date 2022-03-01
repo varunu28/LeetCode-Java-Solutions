@@ -24,43 +24,23 @@ class Node {
 class Solution {
   public Node cloneTree(Node root) {
     if (root == null) {
-      return null;
+      return root;
     }
-    Node copy = new Node(root.val);
-    for (Node child : root.children) {
-      copy.children.add(cloneTree(child));
-    }
-    return copy;
-  }
-
-  Map<Node, Node> map;
-  public Node cloneTreeDetailed(Node root) {
-    if (root == null) {
-      return null;
-    }
-    map = new HashMap<>();
-    copyTree(root);
     Queue<Node> queue = new LinkedList<>();
+    Map<Node, Node> map = new HashMap<>();
     queue.add(root);
+    map.put(root, new Node(root.val));
     while (!queue.isEmpty()) {
-      Node removed = queue.remove();
-      Node copy = map.get(removed);
-      List<Node> children = removed.children;
-      for (Node child : children) {
-        copy.children.add(map.get(child));
-        queue.add(child);
+      int size = queue.size();
+      while (size-- > 0) {
+        Node removed = queue.remove();
+        for (Node child : removed.children) {
+          queue.add(child);
+          map.put(child, new Node(child.val));
+          map.get(removed).children.add(map.get(child));
+        }
       }
     }
     return map.get(root);
-  }
-  
-  private void copyTree(Node root) {
-    if (root == null) {
-      return;
-    }
-    map.put(root, new Node(root.val));
-    for (Node child : root.children) {
-      copyTree(child);
-    }
   }
 }
