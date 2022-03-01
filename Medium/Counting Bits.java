@@ -1,13 +1,9 @@
 class Solution {
-    public int[] countBits(int num) {
-        int result[] = new int[num + 1];
-        int offset = 1;
-        for (int index = 1; index < num + 1; ++index){
-            if (offset * 2 == index){
-                offset *= 2;
-            }
-            result[index] = result[index - offset] + 1;
-        }
-        return result;
+  public int[] countBits(int n) {
+    int[] numofOnes = new int[n + 1];
+    for (int i = 1; i <= n; i++) {
+      numofOnes[i] = numofOnes[i / 2] + i % 2;
     }
+    return numofOnes;
+  }
 }
