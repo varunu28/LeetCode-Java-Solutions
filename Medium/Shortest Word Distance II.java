@@ -1,33 +1,36 @@
 class WordDistance {
-  Map<String, List<Integer>> map;
-  public WordDistance(String[] words) {
-    map = new HashMap<>();
-    for (int i = 0; i < words.length; i++) {
-      map.computeIfAbsent(words[i], k -> new ArrayList<>()).add(i);
+  
+  private Map<String, List<Integer>> locations;
+
+  public WordDistance(String[] wordsDict) {
+    this.locations = new HashMap<>();
+    for (int i = 0; i < wordsDict.length; i++) {
+      this.locations.computeIfAbsent(wordsDict[i], k -> new ArrayList<>()).add(i);
     }
   }
 
   public int shortest(String word1, String word2) {
-    List<Integer> idxList1 = map.get(word1);
-    List<Integer> idxList2 = map.get(word2);
-    int idx1 = 0;
-    int idx2 = 0;
-    int minDiff = Math.abs(idxList1.get(idx1) - idxList2.get(idx2));
-    while (idx1 < idxList1.size() && idx2 < idxList2.size()) {
-      minDiff = Math.min(minDiff, Math.abs(idxList1.get(idx1) - idxList2.get(idx2)));
-      if (idxList1.get(idx1) < idxList2.get(idx2)) {
-        idx1++;
-      }
-      else {
-        idx2++;
+    List<Integer> indicesOne = this.locations.get(word1);
+    List<Integer> indicesTwo = this.locations.get(word2);
+    int idxOne = 0;
+    int idxTwo = 0;
+    int minimumIndexDifference = Integer.MAX_VALUE;
+    while (idxOne < indicesOne.size() && idxTwo < indicesTwo.size()) {
+      minimumIndexDifference = Math.min(
+        minimumIndexDifference, 
+        Math.abs(indicesOne.get(idxOne) - indicesTwo.get(idxTwo)));
+      if (indicesOne.get(idxOne) < indicesTwo.get(idxTwo)) {
+        idxOne++;
+      } else {
+        idxTwo++;
       }
     }
-    return minDiff;
+    return minimumIndexDifference;
   }
 }
 
 /**
  * Your WordDistance object will be instantiated and called as such:
- * WordDistance obj = new WordDistance(words);
+ * WordDistance obj = new WordDistance(wordsDict);
  * int param_1 = obj.shortest(word1,word2);
  */
