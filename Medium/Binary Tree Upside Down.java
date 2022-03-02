@@ -4,35 +4,35 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-    public TreeNode upsideDownBinaryTree(TreeNode root) {
-        if (root == null || root.left == null) {
-            return root;
-        }
-        
-        TreeNode left = root.left;
-        TreeNode right = root.right;
-        
-        root.left = null;
-        root.right = null;
-        
-        return helper(left, root, right);
+  public TreeNode upsideDownBinaryTree(TreeNode root) {
+    if (root == null || root.left == null) {
+      return root;
     }
-    
-    private TreeNode helper(TreeNode rootLeft, TreeNode root, TreeNode rootRight) {
-        if (rootLeft == null) {
-            return root;
-        }
-        
-        TreeNode rootLeftLeft = rootLeft.left;
-        TreeNode rootLeftRight = rootLeft.right;
-        
-        rootLeft.left = rootRight;
-        rootLeft.right = root;
-        
-        return helper(rootLeftLeft, rootLeft, rootLeftRight);
+    TreeNode rightNode = root.right;
+    TreeNode leftNode = root.left;
+    root.left = null;
+    root.right = null;
+    return helper(root, leftNode, rightNode);
+  }
+  
+  private TreeNode helper(TreeNode root, TreeNode leftNode, TreeNode rightNode) {
+    if (leftNode == null) {
+      return root;
     }
+    TreeNode leftNodeLeft = leftNode.left;
+    TreeNode leftNodeRight = leftNode.right;
+    leftNode.left = rightNode;
+    leftNode.right = root;
+    return helper(leftNode, leftNodeLeft, leftNodeRight);
+  }
 }
