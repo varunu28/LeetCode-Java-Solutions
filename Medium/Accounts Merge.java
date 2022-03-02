@@ -1,38 +1,38 @@
 class Solution {
   public List<List<String>> accountsMerge(List<List<String>> accounts) {
-    Map<String, String> emailToNameMap = new HashMap<>();
-    Map<String, Set<String>> graph = new HashMap<>();
+    Map<String, List<String>> adjacencyList = new HashMap<>();
     for (List<String> account : accounts) {
-      String name = account.get(0);
-      for (int i = 1; i < account.size(); i++) {
-        emailToNameMap.put(account.get(i), name);
-        graph.computeIfAbsent(account.get(i), k -> new HashSet<>()).add(account.get(1));
-        graph.computeIfAbsent(account.get(1), k -> new HashSet<>()).add(account.get(i));
+      String firstEmail = account.get(1);
+      for (int i = 2; i < account.size(); i++) {
+        adjacencyList.computeIfAbsent(firstEmail, k -> new ArrayList<>()).add(account.get(i));
+        adjacencyList.computeIfAbsent(account.get(i), k -> new ArrayList<>()).add(firstEmail);
       }
     }
-    Set<String> seen = new HashSet<>();
-    List<List<String>> ans = new ArrayList<>();
-    for (String email : graph.keySet()) {
-      if (!seen.contains(email)) {
-        seen.add(email);
+    Set<String> visited = new HashSet<>();
+    List<List<String>> mergedAccounts = new ArrayList<>();
+    for (List<String> account : accounts) {
+      String name = account.get(0);
+      String firstEmail = account.get(1);
+      if (!visited.contains(firstEmail)) {
         Stack<String> stack = new Stack<>();
-        stack.push(email);
-        List<String> component = new ArrayList<>();
+        stack.push(firstEmail);
+        List<String> mergedAccount = new ArrayList<>();
+        mergedAccount.add(name);
         while (!stack.isEmpty()) {
-          String node = stack.pop();
-          component.add(node);
-          for (String neighbour : graph.get(node)) {
-            if (!seen.contains(neighbour)) {
-              seen.add(neighbour);
-              stack.push(neighbour);
+          String removedEmail = stack.pop();
+          visited.add(removedEmail);
+          mergedAccount.add(removedEmail);
+          for (String neighbor : adjacencyList.getOrDefault(removedEmail, new ArrayList<>())) {
+            if (!visited.contains(neighbor)) {
+              visited.add(neighbor);
+              stack.push(neighbor);
             }
           }
         }
-        Collections.sort(component);
-        component.add(0, emailToNameMap.get(email));
-        ans.add(component);
+        Collections.sort(mergedAccount.subList(1, mergedAccount.size()));
+        mergedAccounts.add(mergedAccount);
       }
     }
-    return ans;
+    return mergedAccounts;
   }
 }
