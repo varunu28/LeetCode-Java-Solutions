@@ -1,24 +1,30 @@
 class Solution {
-  int[] arr;
-  int counter = 0;
-  Random r = new Random();
+  private int[] prefixSum;
+  private int totalPrefixSum;
+  
   public Solution(int[] w) {
-    arr = new int[w.length];
-    counter += w[0];
-    arr[0] = w[0];
-    for (int i = 1; i < w.length; i++) {
-      arr[i] = arr[i - 1] + w[i];
-      counter += w[i];
+    this.prefixSum = new int[w.length];
+    int currPrefixSum = 0;
+    for (int i = 0; i < w.length; i++) {
+      currPrefixSum += w[i];
+      this.prefixSum[i] = currPrefixSum;
     }
+    this.totalPrefixSum = currPrefixSum;
   }
 
   public int pickIndex() {
-    int idx = r.nextInt(counter) + 1;
-    int ret = Arrays.binarySearch(arr, idx); 
-    if(ret < 0) {
-      ret = -ret - 1;
+    double randomTarget = this.totalPrefixSum * Math.random();
+    int left = 0;
+    int right = this.prefixSum.length;
+    while (left < right) {
+      int mid = left + (right - left) / 2;
+      if (randomTarget > this.prefixSum[mid]) {
+        left = mid + 1;
+      } else {
+        right = mid;
+      }
     }
-    return ret;
+    return left;
   }
 }
 
