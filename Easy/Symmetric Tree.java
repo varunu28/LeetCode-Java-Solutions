@@ -4,27 +4,27 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
- */
+*/
 class Solution {
   public boolean isSymmetric(TreeNode root) {
-    if (root == null) {
-      return true;
-    }
     return helper(root.left, root.right);
   }
   
-  private boolean helper(TreeNode r, TreeNode l) {
-    if (r == null && l == null) {
+  private boolean helper(TreeNode leftNode, TreeNode rightNode) {
+    if (leftNode == null && rightNode == null) {
       return true;
     }
-    if (r == null || l == null) {
+    if ((leftNode == null || rightNode == null) || leftNode.val != rightNode.val) {
       return false;
     }
-    if (r.val != l.val) {
-      return false;
-    }
-    return helper(l.left, r.right) && helper(l.right, r.left);
+    return helper(leftNode.left, rightNode.right) && helper(leftNode.right, rightNode.left);
   }
 }
