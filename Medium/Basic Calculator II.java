@@ -1,25 +1,16 @@
 class Solution {
   public int calculate(String s) {
-    int num = 0;
     char sign = '+';
+    int currNum = 0;
     Stack<Integer> stack = new Stack<>();
     for (int i = 0; i < s.length(); i++) {
-      char c = s.charAt(i);
-      if (Character.isDigit(c)) {
-        num = num * 10 + Character.getNumericValue(c);
+      if (Character.isDigit(s.charAt(i))) {
+        currNum = currNum * 10 + Character.getNumericValue(s.charAt(i));
       } 
-      if (!Character.isDigit(c) && c != ' ' || i == s.length() - 1) {
-        if (sign == '+') {
-          stack.push(num);
-        } else if (sign == '-') {
-          stack.push(-num);
-        } else if (sign == '*') {
-          stack.push(stack.pop() * num);
-        } else {
-          stack.push(stack.pop() / num);
-        }
-        sign = c;
-        num = 0;
+      if ((!Character.isDigit(s.charAt(i)) && s.charAt(i) != ' ') || i == s.length() - 1) {
+        updateStackForPreviousSign(sign, stack, currNum);
+        currNum = 0;
+        sign = s.charAt(i);
       }
     }
     int result = 0;
@@ -27,5 +18,24 @@ class Solution {
       result += stack.pop();
     }
     return result;
+  }
+
+  private void updateStackForPreviousSign(char sign, Stack<Integer> stack, int currNum) {
+    switch (sign) {
+      case '+':
+        stack.push(currNum);
+        break;
+      case '-':
+        stack.push(-1 * currNum);
+        break;
+      case '/':
+        stack.push(stack.pop() / currNum);
+        break;
+      case '*':
+        stack.push(stack.pop() * currNum);
+        break;
+      default:
+        break;
+    }
   }
 }
