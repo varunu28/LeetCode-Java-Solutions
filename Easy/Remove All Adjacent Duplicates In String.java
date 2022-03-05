@@ -1,22 +1,20 @@
 class Solution {
-  public String removeDuplicates(String S) {
-    Stack<Integer> stack = new Stack<>();
-    char[] chars = S.toCharArray();
-    for (int i = 0; i < S.length(); i++) {
-      if (stack.isEmpty() || chars[stack.peek()] != chars[i]) {
-        stack.push(i);
+  public String removeDuplicates(String s) {
+    Stack<Character> stack = new Stack<>();
+    int idx = 0;
+    while (idx < s.length()) {
+      char c = s.charAt(idx);
+      if (!stack.isEmpty() && stack.peek() == c) {
+        stack.pop();
+      } else {
+        stack.push(c);
       }
-      else {
-        chars[i] = '-';
-        chars[stack.pop()] = '-';
-      }
+      idx++;
     }
     StringBuilder sb = new StringBuilder();
-    for (char c : chars) {
-      if (c != '-') {
-        sb.append(c);
-      }
+    while (!stack.isEmpty()) {
+      sb.append(stack.pop());
     }
-    return sb.toString();
+    return sb.reverse().toString();
   }
 }
