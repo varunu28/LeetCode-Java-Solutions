@@ -16,21 +16,20 @@
 class Solution {
   public int sumNumbers(TreeNode root) {
     int[] sum = {0};
-    helper(root, sum, 0);
+    helper(root, 0, sum);
     return sum[0];
   }
   
-  private void helper(TreeNode node, int[] sum, int currVal) {
-    if (node == null) {
+  private void helper(TreeNode root, int currValue, int[] sum) {
+    if (root == null) {
       return;
     }
-    currVal = currVal * 10 + node.val;
-    if (node.left == null && node.right == null) {
-      sum[0] += currVal;
+    currValue = currValue * 10 + root.val;
+    if (root.left == null && root.right == null) {
+      sum[0] += currValue;
+      return;
     }
-    else {
-      helper(node.left, sum, currVal);
-      helper(node.right, sum, currVal);
-    }
+    helper(root.left, currValue, sum);
+    helper(root.right, currValue, sum);
   }
 }
