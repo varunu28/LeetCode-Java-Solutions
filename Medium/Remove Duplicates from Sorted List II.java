@@ -3,27 +3,27 @@
  * public class ListNode {
  *     int val;
  *     ListNode next;
- *     ListNode(int x) { val = x; }
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
 class Solution {
   public ListNode deleteDuplicates(ListNode head) {
-    ListNode curr = head;
     ListNode prev = null;
+    ListNode curr = head;
     while (curr != null) {
-      if (curr.next != null && curr.val == curr.next.val) {
+      if (curr.next != null && curr.next.val == curr.val) {
         int currVal = curr.val;
         while (curr != null && curr.val == currVal) {
           curr = curr.next;
         }
         if (prev == null) {
           head = curr;
-        }
-        else {
+        } else {
           prev.next = curr;
         }
-      }
-      else {
+      } else {
         prev = curr;
         curr = curr.next;
       }
