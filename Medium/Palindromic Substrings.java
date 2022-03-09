@@ -1,16 +1,18 @@
 class Solution {
   public int countSubstrings(String s) {
-    int N = s.length();
-    int ans = 0;
-    for (int center = 0; center <= 2 * N - 1; ++center) {
-        int left = center / 2;
-        int right = left + center % 2;
-        while (left >= 0 && right < N && s.charAt(left) == s.charAt(right)) {
-            ans++;
-            left--;
-            right++;
-        }
+    int[] palindromeCount = {0};
+    for (int i = 0; i < s.length(); i++) {
+      checkPalindrome(s, i, i, palindromeCount);
+      checkPalindrome(s, i, i + 1, palindromeCount);
+    }    
+    return palindromeCount[0];
+  }
+  
+  private void checkPalindrome(String s, int leftIdx, int rightIdx, int[] palindromeCount) {
+    while (leftIdx >= 0 && rightIdx < s.length() && s.charAt(leftIdx) == s.charAt(rightIdx)) {
+      palindromeCount[0]++;
+      leftIdx--;
+      rightIdx++;
     }
-    return ans;
   }
 }
