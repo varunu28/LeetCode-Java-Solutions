@@ -4,46 +4,43 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
   public List<TreeNode> delNodes(TreeNode root, int[] to_delete) {
-    List<TreeNode> forest = new ArrayList<>();
-    Set<Integer> set = new HashSet<>();
-    for (int num : to_delete) {
-      set.add(num);
-    }
-    helper(root, set, forest, null, 0);
-    return forest;
+    List<TreeNode> result = new ArrayList<>();
+    Set<Integer> deleteSet = Arrays.stream(to_delete).boxed().collect(Collectors.toSet());
+    helper(root, deleteSet, result, null);
+    return result;
   }
   
-  private void helper(TreeNode root, Set<Integer> set, List<TreeNode> forest, TreeNode parent, int side) {
-    if (root == null) {
+  private void helper(TreeNode node, Set<Integer> deleteSet, List<TreeNode> result, TreeNode parent) {
+    if (node == null) {
       return;
     }
-    // Deletion 
-    if (set.contains(root.val)) {
-      if (parent != null) { 
-        // Decide which node we want to make null based on side
-        if (side == -1) {
+    TreeNode nextParent = null;
+    if (deleteSet.contains(node.val)) {
+      if (parent != null) {
+        if (parent.left == node) {
           parent.left = null;
-        }
-        else {
+        } else {
           parent.right = null;
         }
-      } 
-      // Call the recursive function for left & right with parent as null as we deleted the node
-      helper(root.left, set, forest, null, 0);
-      helper(root.right, set, forest, null, 0);
+      }
+    } else {
+      if (parent == null) {
+        result.add(node); 
+      }
+      nextParent = node;
     }
-    // No Deletion
-    else {
-      if (parent == null) { // Don't add if we have already added the parent and this is a child node
-        forest.add(root);
-      }  
-      helper(root.left, set, forest, root, -1);
-      helper(root.right, set, forest, root, 1);
-    }
+    helper(node.left, deleteSet, result, nextParent);
+    helper(node.right, deleteSet, result, nextParent);
   }
 }
