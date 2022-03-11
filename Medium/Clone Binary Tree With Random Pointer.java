@@ -1,5 +1,5 @@
 /**
- * Definition for a binary tree node.
+ * Definition for Node.
  * public class Node {
  *     int val;
  *     Node left;
@@ -15,33 +15,46 @@
  *     }
  * }
  */
+
 class Solution {
-  Map<Node, NodeCopy> copyMap;
   public NodeCopy copyRandomBinaryTree(Node root) {
-    copyMap = new HashMap<>();
-    fillMapTraverse(root);
-    cloneMapTraverse(root);
-    return copyMap.get(root);
-  }
-  
-  private void cloneMapTraverse(Node root) {
     if (root == null) {
-      return;
+      return null;
     }
-    NodeCopy copy = copyMap.get(root);
-    copy.left = copyMap.get(root.left);
-    copy.right = copyMap.get(root.right);
-    copy.random = copyMap.get(root.random);
-    cloneMapTraverse(root.left);
-    cloneMapTraverse(root.right);
-  }
-  
-  private void fillMapTraverse(Node root) {
-    if (root == null) {
-      return;
+    Queue<Node> queue = new LinkedList<>();
+    Map<Node, NodeCopy> map = new HashMap<>();
+    queue.add(root);
+    while (!queue.isEmpty()) {
+      int size = queue.size();
+      while (size-- > 0) {
+        Node removed = queue.remove();
+        map.put(removed, new NodeCopy(removed.val));
+        if (removed.left != null) {
+          queue.add(removed.left);
+        }
+        if (removed.right != null) {
+          queue.add(removed.right);
+        }
+      }
     }
-    copyMap.put(root, new NodeCopy(root.val));
-    fillMapTraverse(root.left);
-    fillMapTraverse(root.right);
+    queue.add(root);
+    while (!queue.isEmpty()) {
+      int size = queue.size();
+      while (size-- > 0) {
+        Node removed = queue.remove();
+        if (removed.left != null) {
+          queue.add(removed.left);
+          map.get(removed).left = map.get(removed.left);
+        }
+        if (removed.right != null) {
+          queue.add(removed.right);
+          map.get(removed).right = map.get(removed.right);
+        }
+        if (removed.random != null) {
+          map.get(removed).random = map.get(removed.random);
+        }
+      }
+    }
+    return map.get(root);
   }
 }
