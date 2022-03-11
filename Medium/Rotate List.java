@@ -13,17 +13,17 @@ class Solution {
     if (head == null || k == 0) {
       return head;
     }
-    int listSize = 0;
+    int n = 0;
     ListNode curr = head;
     while (curr != null) {
+      n++;
       curr = curr.next;
-      listSize++;
     }
-    k = k % listSize;
+    k = k % n;
     if (k == 0) {
       return head;
     }
-    k = listSize - k;
+    k = n - k;
     curr = head;
     while (k-- > 1) {
       curr = curr.next;
