@@ -1,15 +1,20 @@
 class Solution {
   public boolean isValid(String s) {
-    String starting = "({[";
-    String ending = ")}]";
     Stack<Character> stack = new Stack<>();
     for (char c : s.toCharArray()) {
-      if (starting.indexOf(c) != -1) {
+      if (c == '[' || c == '{' || c == '(') {
         stack.push(c);
       } else {
-        if (stack.isEmpty() || starting.indexOf(stack.pop()) != ending.indexOf(c)) {
+        if (stack.isEmpty()) {
           return false;
         }
+        char popped = stack.pop();
+        if ((c == ')' && popped == '(') || 
+            (c == ']' && popped == '[') ||
+            (c == '}' && popped == '{')) {
+          continue;
+        }
+        return false;
       }
     }
     return stack.isEmpty();
