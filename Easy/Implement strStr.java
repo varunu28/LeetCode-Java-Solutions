@@ -1,14 +1,10 @@
 class Solution {
   public int strStr(String haystack, String needle) {
-    int hayLength = haystack.length();
-    int needleLength = needle.length();
-    int idx = 0;
-    while (idx + needleLength <= hayLength) {
-      if (haystack.substring(idx, idx + needleLength).equals(needle)) {
-        return idx;
+    for (int i = 0; i < haystack.length() - needle.length() + 1; i++) {
+      if (haystack.substring(i, i + needle.length()).equals(needle)) {
+        return i;
       }
-      idx++;
     }
     return -1;
-  }
+  } 
 }
