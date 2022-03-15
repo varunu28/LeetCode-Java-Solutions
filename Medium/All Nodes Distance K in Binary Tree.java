@@ -8,61 +8,49 @@
  * }
  */
 class Solution {
-  List<Integer> list;
-  TreeNode target;
-  int K;
-  public List<Integer> distanceK(TreeNode root, TreeNode target, int K) {
-    list = new ArrayList<>();
-    this.target = target;
-    this.K = K;
-    dfs(root);
-    return list;
+  public List<Integer> distanceK(TreeNode root, TreeNode target, int k) {
+    List<Integer> result = new ArrayList<>();
+    dfs(root, target, k, result);
+    return new ArrayList<>(result);
   }
-
-  private int dfs(TreeNode node) {
+  
+  private int dfs(TreeNode node, TreeNode target, int k, List<Integer> result) {
     if (node == null) {
       return -1;
     }
-    else if (node == target) {
-      subtreeDfs(node, 0);
+    if (node == target) {
+      addToResult(node, 0, result, k);
       return 1;
-    }
-    else {
-      int L = dfs(node.left);
-      int R = -1;
-      if (L != -1) {
-        if (L == K) {
-          list.add(node.val);
+    } else {
+      int left = dfs(node.left, target, k, result);
+      int right = dfs(node.right, target, k, result);
+      if (left != -1) {
+        if (left == k) {
+          result.add(node.val);
         }
-        subtreeDfs(node.right, L + 1);
-        return L + 1;
-      }
-      else if ((R = dfs(node.right)) != -1) {
-        if (R == K) {
-          list.add(node.val);
+        addToResult(node.right, left + 1, result, k);
+        return left + 1;
+      } else if (right != -1) {
+        if (right == k) {
+          result.add(node.val);
         }
-        subtreeDfs(node.left, R + 1);
-        return R + 1;
-      }
-      else {
+        addToResult(node.left, right + 1, result, k);
+        return right + 1;
+      } else {
         return -1;
       }
     }
   }
   
-  private void subtreeDfs(TreeNode node, int dist) {
-    if (node == null) {
+  private void addToResult(TreeNode node, int dist, List<Integer> result, int k) {
+    if (node == null || dist > k) {
       return;
     }
-    if (dist == K) {
-      list.add(node.val);
-    }
-    else if (dist > K) {
-      return;
-    }
-    else {
-      subtreeDfs(node.left, dist + 1);
-      subtreeDfs(node.right, dist + 1);
+    if (dist == k) {
+      result.add(node.val);
+    } else {
+      addToResult(node.left, dist + 1, result, k);
+      addToResult(node.right, dist + 1, result, k);
     }
   }
 }
