@@ -13,26 +13,22 @@
  *     }
  * }
  */
-class Solution {  
-  Integer minimum;
-  long secondMinimum;
+class Solution {
   public int findSecondMinimumValue(TreeNode root) {
-    minimum = root.val;
-    secondMinimum = Long.MAX_VALUE;
-    helper(root);
-    return secondMinimum == Long.MAX_VALUE ? -1 : (int) secondMinimum;
+    long[] topTwo = {root.val, Long.MAX_VALUE};
+    helper(root, topTwo);
+    return topTwo[1] == Long.MAX_VALUE ? -1 : (int) topTwo[1];
   }
   
-  private void helper(TreeNode root) {
+  private void helper(TreeNode root, long[] topTwo) {
     if (root == null) {
       return;
     }
-    if (minimum < root.val && root.val < secondMinimum) {
-      secondMinimum = root.val;
-    }
-    else if (root.val == minimum) {
-      helper(root.left);
-      helper(root.right);
+    if (topTwo[0] < root.val && root.val < topTwo[1]) {
+      topTwo[1] = root.val;
+    } else {
+      helper(root.left, topTwo);
+      helper(root.right, topTwo);
     }
   }
 }
