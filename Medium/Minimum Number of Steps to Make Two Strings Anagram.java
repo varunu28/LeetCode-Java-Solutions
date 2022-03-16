@@ -1,21 +1,16 @@
 class Solution {
   public int minSteps(String s, String t) {
-    int[] counterS = getFreqCounter(s);
-    int[] counterT = getFreqCounter(t);
-    int count = 0;
+    int[] frequency = new int[26];
+    for (int i = 0; i < s.length(); i++) {
+      frequency[s.charAt(i) - 'a']++;
+      frequency[t.charAt(i) - 'a']--;
+    }
+    int steps = 0;
     for (int i = 0; i < 26; i++) {
-      if (counterT[i] < counterS[i]) {
-        count += counterS[i] - counterT[i];
+      if (frequency[i] > 0) {
+        steps += frequency[i];
       }
     }
-    return count;
-  }
-  
-  private int[] getFreqCounter(String s) {
-    int[] counter = new int[26];
-    for (char c : s.toCharArray()) {
-      counter[c - 'a']++;
-    }
-    return counter;
+    return steps;
   }
 }
