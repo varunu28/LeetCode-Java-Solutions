@@ -1,24 +1,27 @@
 class FreqStack {
-  Map<Integer, Integer> valueToCurrentFrequency;
-  Map<Integer, Stack<Integer>> frequencyToValues;
-  int maxFrequency;
+  
+  private Map<Integer, Integer> frequencyMap;
+  private Map<Integer, Stack<Integer>> frequencyGroup;
+  private int maxFrequency;
+  
   public FreqStack() {
-    valueToCurrentFrequency = new HashMap<>();
-    frequencyToValues = new HashMap<>();
-    maxFrequency = 1;
+    this.frequencyMap = new HashMap<>();
+    this.frequencyGroup = new HashMap<>();
+    this.maxFrequency = 0;
   }
 
-  public void push(int x) {
-    valueToCurrentFrequency.put(x, valueToCurrentFrequency.getOrDefault(x, 0) + 1);
-    frequencyToValues.computeIfAbsent(valueToCurrentFrequency.get(x), k -> new Stack<>()).add(x);
-    maxFrequency = Math.max(maxFrequency, valueToCurrentFrequency.get(x));
+  public void push(int val) {
+    int newFrequency = this.frequencyMap.getOrDefault(val, 0) + 1;
+    this.frequencyMap.put(val, newFrequency);
+    this.maxFrequency = Math.max(this.maxFrequency, newFrequency);
+    this.frequencyGroup.computeIfAbsent(newFrequency, k -> new Stack<>()).push(val);
   }
 
   public int pop() {
-    int val = frequencyToValues.get(maxFrequency).pop();
-    valueToCurrentFrequency.put(val, valueToCurrentFrequency.getOrDefault(val, 0) - 1);
-    if (frequencyToValues.get(maxFrequency).isEmpty()) {
-      maxFrequency--;
+    int val = this.frequencyGroup.get(this.maxFrequency).pop();
+    this.frequencyMap.put(val, this.frequencyMap.get(val) - 1);
+    if (this.frequencyGroup.get(this.maxFrequency).isEmpty()) {
+      this.maxFrequency--;
     }
     return val;
   }
@@ -27,6 +30,6 @@ class FreqStack {
 /**
  * Your FreqStack object will be instantiated and called as such:
  * FreqStack obj = new FreqStack();
- * obj.push(x);
+ * obj.push(val);
  * int param_2 = obj.pop();
  */
