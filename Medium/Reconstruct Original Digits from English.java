@@ -1,31 +1,30 @@
 class Solution {
-    public String originalDigits(String s) {
-        int[] count = new int[26];
-        for (char c : s.toCharArray()) {
-            count[c - 'a']++;
-        }
-        
-        int[] out = new int[10];
-        
-        out[0] = count['z' - 'a'];
-        out[2] = count['w' - 'a'];
-        out[4] = count['u' - 'a'];
-        out[6] = count['x' - 'a'];
-        out[8] = count['g' - 'a'];
-        out[3] = count['h' - 'a'] - out[8];
-        out[5] = count['f' - 'a'] - out[4];
-        out[7] = count['s' - 'a'] - out[6];
-        out[9] = count['i' - 'a'] - out[5] - out[6] - out[8];
-        out[1] = count['n' - 'a'] - out[7] - 2 * out[9];
-        
-        StringBuilder sb = new StringBuilder();
-        
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < out[i]; j++) {
-                sb.append(i);        
-            }
-        }
-        
-        return sb.toString();
+  public String originalDigits(String s) {
+    int[] count = new int[10];
+    for (int i = 0; i < s.length(); i++){
+      char c = s.charAt(i);
+      if (c == 'z') count[0]++;
+      if (c == 'w') count[2]++;
+      if (c == 'x') count[6]++;
+      if (c == 's') count[7]++; //7-6
+      if (c == 'g') count[8]++;
+      if (c == 'u') count[4]++; 
+      if (c == 'f') count[5]++; //5-4
+      if (c == 'h') count[3]++; //3-8
+      if (c == 'i') count[9]++; //9-8-5-6
+      if (c == 'o') count[1]++; //1-0-2-4
     }
+    count[7] -= count[6];
+    count[5] -= count[4];
+    count[3] -= count[8];
+    count[9] = count[9] - count[8] - count[5] - count[6];
+    count[1] = count[1] - count[0] - count[2] - count[4];
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i <= 9; i++){
+      for (int j = 0; j < count[i]; j++){
+          sb.append(i);
+      }
+    }
+    return sb.toString();
+  }
 }
