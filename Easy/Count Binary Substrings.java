@@ -1,19 +1,19 @@
 class Solution {
   public int countBinarySubstrings(String s) {
-    int currValueCount = 1;
-    int prevValueCount = 0;
-    int count = 0;
-    for (int i = 1; i < s.length(); i++) {
-      if (s.charAt(i) == s.charAt(i - 1)) {
-        currValueCount++;
+    int totalCount = 0;
+    int currCount = 0;
+    int oppositeCount = 0;
+    char currChar = s.charAt(0);
+    for (int i = 0; i < s.length(); i++) {
+      if (s.charAt(i) == currChar) {
+        currCount++;
       } else {
-        prevValueCount = currValueCount;
-        currValueCount = 1;
-      }
-      if (prevValueCount >= currValueCount) {
-        count++;
+        totalCount += Math.min(currCount, oppositeCount);
+        oppositeCount = currCount;
+        currCount = 1;
+        currChar = s.charAt(i);
       }
     }
-    return count;
+    return totalCount + Math.min(currCount, oppositeCount);
   }
 }
