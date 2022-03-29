@@ -1,34 +1,27 @@
 class Solution {
-  int[][] dirs = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
-  public int maximumMinimumPath(int[][] A) {
-    int rows = A.length;
-    int cols = A[0].length;
-    boolean[][] visited = new boolean[rows][cols];
-    PriorityQueue<int[]> pq = new PriorityQueue<>(new Comparator<int[]>(){
-      public int compare(int[] p1, int[] p2) {
-        return p2[0] - p1[0];
-      }
-    });
-    int maxVal = A[0][0];
-    pq.add(new int[]{A[0][0], 0, 0});
-    visited[0][0] = true;
+  
+  private static final int[][] DIRS = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+
+  public int maximumMinimumPath(int[][] grid) {
+    PriorityQueue<int[]> pq = new PriorityQueue<>((o1, o2) -> o2[2] - o1[2]);
+    pq.add(new int[]{0, 0, grid[0][0]});
+    int numRows = grid.length;
+    int numCols = grid[0].length;
+    boolean[][] visited = new boolean[numRows][numCols];
     while (!pq.isEmpty()) {
       int[] removed = pq.poll();
-      int x = removed[1];
-      int y = removed[2];
-      maxVal = Math.min(maxVal, removed[0]);
-      if (x == rows - 1 && y == cols - 1) {
-        break;
+      if (removed[0] == numRows - 1 && removed[1] == numCols - 1) {
+        return removed[2];
       }
-      for (int[] dir : dirs) {
-        int newX = x + dir[0];
-        int newY = y + dir[1];
-        if (newX >= 0 && newY >= 0 && newX < rows && newY < cols && !visited[newX][newY]) {
-          pq.add(new int[]{A[newX][newY], newX, newY});
-          visited[newX][newY] = true;
+      visited[removed[0]][removed[1]] = true;
+      for (int[] dir : DIRS) {
+        int newX = removed[0] + dir[0];
+        int newY = removed[1] + dir[1];
+        if (newX >= 0 && newY >= 0 && newX < numRows && newY < numCols && !visited[newX][newY]) {
+          pq.add(new int[]{newX, newY, Math.min(removed[2], grid[newX][newY])});
         }
       }
     }
-    return maxVal;
+    return -1;
   }
 }
