@@ -1,45 +1,83 @@
 class MaxStack {
 
-  /** initialize your data structure here. */
-  Stack<Integer> stack;
-  Stack<Integer> max;
+  private Node stackHead;
+  private Node stackTail;
+  private PriorityQueue<Integer> maxValues;
+  private Map<Integer, Stack<Node>> valToNodeMapping;
+
   public MaxStack() {
-    stack = new Stack<>();
-    max = new Stack<>();
+    this.stackHead = new Node(Integer.MIN_VALUE);
+    this.stackTail = new Node(Integer.MAX_VALUE);
+    this.stackTail.prev = this.stackHead;
+    this.stackHead.next = this.stackTail;
+    this.maxValues = new PriorityQueue<>((o1, o2) -> o2 - o1);
+    this.valToNodeMapping = new HashMap<>();
   }
 
   public void push(int x) {
-    stack.push(x);
-    max.push(max.isEmpty() ? x : Math.max(x, max.peek()));
+    Node node = new Node(x);
+    if (!this.valToNodeMapping.containsKey(x)) {
+      this.maxValues.add(x);
+    }
+    addNodeToStack(node);
+    this.valToNodeMapping.computeIfAbsent(x, k -> new Stack<>()).push(node);
   }
 
   public int pop() {
-    max.pop();
-    return stack.pop();
+    Node toRemove = this.stackHead.next;
+    this.valToNodeMapping.get(toRemove.val).pop();
+    removeNodeFromStack(toRemove);
+    return toRemove.val;
   }
 
   public int top() {
-    return stack.peek();
+    return this.stackHead.next.val;
   }
 
   public int peekMax() {
-    return max.peek();
+    moveToMaxValue();
+    int maxVal = this.maxValues.peek();
+    return this.valToNodeMapping.get(maxVal).peek().val;
   }
 
   public int popMax() {
-    int num = max.peek();
-    Stack<Integer> temp = new Stack<>();
-    while (stack.peek() != num) {
-      temp.push(stack.pop());
-      max.pop();
+    moveToMaxValue();
+    int maxVal = this.maxValues.peek();
+    Node toRemove = this.valToNodeMapping.get(maxVal).pop();
+    removeNodeFromStack(toRemove);
+    return toRemove.val;
+  }
+  
+  private void moveToMaxValue() {
+    while (this.valToNodeMapping.get(this.maxValues.peek()).isEmpty()) {
+      this.valToNodeMapping.remove(this.maxValues.poll());
     }
-    max.pop();
-    stack.pop();
-    while (!temp.isEmpty()) {
-      push(temp.pop());
+  }
+
+  private void addNodeToStack(Node node) {
+    Node nextToHead = this.stackHead.next;
+    nextToHead.prev = node;
+    node.next = nextToHead;
+    this.stackHead.next = node;
+    node.prev = this.stackHead;
+  }
+
+  private void removeNodeFromStack(Node node) {
+    Node nextNode = node.next;
+    Node prevNode = node.prev;
+    prevNode.next = nextNode;
+    nextNode.prev = prevNode;
+  }
+
+  private static class Node {
+    int val;
+    Node next;
+    Node prev;
+
+    public Node(int val) {
+      this.val = val;
     }
-    return num;
-  } 
+  }
 }
 
 /**
