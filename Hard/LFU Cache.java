@@ -1,78 +1,112 @@
 class LFUCache {
 
-    private Map<Integer, Integer> valMap;
-    private Map<Integer, Integer> freqMap;
-    private Map<Integer, LinkedHashSet<Integer>> freqCountMap;
-    private int capacity;
-    private int minValue;
+  private final Map<Integer, Node> keyToNodeMap;
+  private final Map<Integer, Node[]> frequencyToNodeMap;
+  private final Map<Integer, Integer> keyToFrequencyMap;
+  private int capacity;
+  private int currentCapacity;
 
-    public LFUCache(int capacity) {
-        valMap = new HashMap<>();
-        freqMap = new HashMap<>();
-        freqCountMap = new HashMap<>();
-        this.capacity = capacity;
-        minValue = 0;
+  public LFUCache(int capacity) {
+    this.capacity = capacity;
+    this.currentCapacity = 0;
+    this.keyToNodeMap = new HashMap<>();
+    this.frequencyToNodeMap = new TreeMap<>();
+    this.keyToFrequencyMap = new HashMap<>();
+  }
+
+  public int get(int key) {
+    if (!keyToNodeMap.containsKey(key)) {
+      return -1;
     }
+    Node node = keyToNodeMap.get(key);
+    removeNode(node);
+    int currentFrequency = keyToFrequencyMap.get(key);
+    int newFrequency = currentFrequency + 1;
+    keyToFrequencyMap.put(key, newFrequency);
+    addNodeToFrequencyHead(node, newFrequency);
+    return node.val;
+  }
 
-    public int get(int key) {
-        if (!valMap.containsKey(key)) {
-            return -1;
-        }
-
-        // Updating frequency
-        int oldFreq = freqMap.get(key);
-        freqMap.put(key, oldFreq + 1);
-        int newFreq = freqMap.get(key);
-
-        // Removing from old frequency set
-        LinkedHashSet<Integer> set = freqCountMap.get(oldFreq);
-        set.remove(key);
-        if (set.isEmpty()) {
-            // As this was the only key with min freq so minimum frequency should be updated
-            if (minValue == oldFreq) {
-                minValue = oldFreq + 1;
-            }
-            freqCountMap.remove(oldFreq);
-        }
-        else {
-            freqCountMap.put(oldFreq, set);
-        }
-
-        // Updating new frequency set
-        freqCountMap.computeIfAbsent(newFreq, k -> new LinkedHashSet<>()).add(key);
-
-        return valMap.get(key);
+  public void put(int key, int value) {
+    if (this.capacity == 0) {
+      return;
     }
-
-    public void put(int key, int value) {
-        if (capacity == 0) {
-            return;
-        }
-        
-        if (get(key) != -1) {
-            valMap.put(key, value);
-            return;
-        }
-
-        if (valMap.size() == capacity) {
-            LinkedHashSet<Integer> set = freqCountMap.get(minValue);
-            int keyToBeDeleted = set.iterator().next();
-            valMap.remove(keyToBeDeleted);
-            freqMap.remove(keyToBeDeleted);
-            set.remove(keyToBeDeleted);
-
-            if (set.isEmpty()) {
-                freqCountMap.remove(minValue);
-            }
-        }
-
-        valMap.put(key, value);
-        freqMap.put(key, 1);
-        freqCountMap.computeIfAbsent(1, k -> new LinkedHashSet<>()).add(key);
-        minValue = 1;
+    removeNodeIfCapacityReached(key);
+    Node node = getNode(key, value);
+    int newFrequency = keyToFrequencyMap.getOrDefault(key, 0) + 1;
+    keyToFrequencyMap.put(key, newFrequency);
+    keyToNodeMap.put(key, node);
+    if (newFrequency > 1) {
+      removeNode(node);
     }
+    addNodeToFrequencyHead(node, newFrequency);
+  }
+
+  private void removeNodeIfCapacityReached(int key) {
+    if (!keyToNodeMap.containsKey(key) && this.currentCapacity == capacity) {
+      for (Integer freq : frequencyToNodeMap.keySet()) {
+        Node[] nodes = frequencyToNodeMap.get(freq);
+        if (nodes[1].prev.val == -1) {
+          continue;
+        }
+        Node toRemove = nodes[1].prev;
+        removeNode(toRemove);
+        keyToNodeMap.remove(toRemove.key);
+        keyToFrequencyMap.remove(toRemove.key);
+        this.currentCapacity--;
+        break;
+      }
+    }
+  }
+
+  private Node getNode(int key, int value) {
+    Node node;
+    if (keyToNodeMap.containsKey(key)) {
+      node = keyToNodeMap.get(key);
+      removeNode(node);
+      node.val = value;
+    } else {
+      this.currentCapacity++;
+      node = new Node(value, key);
+    }
+    return node;
+  }
+
+  private void addNodeToFrequencyHead(Node node, int newFrequency) {
+    if (!frequencyToNodeMap.containsKey(newFrequency)) {
+      Node head = new Node(-1, Integer.MIN_VALUE);
+      Node tail = new Node(-1, Integer.MAX_VALUE);
+      head.next = tail;
+      tail.prev = head;
+      frequencyToNodeMap.put(newFrequency, new Node[]{head, tail});
+    }
+    Node headNode = frequencyToNodeMap.get(newFrequency)[0];
+    Node nextToHead = headNode.next;
+    nextToHead.prev = node;
+    node.next = nextToHead;
+    headNode.next = node;
+    node.prev = headNode;
+  }
+  
+  private void removeNode(Node node) {
+    Node prevNode = node.prev;
+    Node nextNode = node.next;
+    prevNode.next = nextNode;
+    nextNode.prev = prevNode;
+  }
+
+  private static class Node {
+    int val;
+    int key;
+    Node next;
+    Node prev;
+
+    public Node(int val, int key) {
+      this.val = val;
+      this.key = key;
+    }
+  }
 }
-
 /**
  * Your LFUCache object will be instantiated and called as such:
  * LFUCache obj = new LFUCache(capacity);
