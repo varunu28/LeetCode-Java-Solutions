@@ -23,28 +23,28 @@ class Node {
 
 class Solution {
   public int diameter(Node root) {
-    int[] max = {0};
-    helper(root, max);
-    return max[0];
+    int[] diameter = {0};
+    getHeight(root, diameter);
+    return diameter[0];
   }
   
-  private int helper(Node root, int[] max) {
-    if (root == null) {
+  private int getHeight(Node node, int[] diameter) {
+    if (node.children.size() == 0) {
       return 0;
     }
-    int max1 = 0;
-    int max2 = 0;
-    for (Node child : root.children) {
-      int height = helper(child, max);
-      if (max1 < height) {
-        max2 = max1;
-        max1 = height;
+    int maxHeightOne = 0;
+    int maxHeightTwo = 0;
+    for (Node child : node.children) {
+      int parentHeight = getHeight(child, diameter) + 1;
+      if (parentHeight > maxHeightOne) {
+        maxHeightTwo = maxHeightOne;
+        maxHeightOne = parentHeight;
+      } else if (parentHeight > maxHeightTwo) {
+        maxHeightTwo = parentHeight;
       }
-      else if (max2 < height) {
-        max2 = height;
-      }
+      int currentDiameter = maxHeightOne + maxHeightTwo;
+      diameter[0] = Math.max(diameter[0], currentDiameter);
     }
-    max[0] = Math.max(max[0], max1 + max2);
-    return max1 + 1;
+    return maxHeightOne;
   }
 }
