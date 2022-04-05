@@ -20,27 +20,35 @@ class Node {
 */
 
 class Solution {
-  Node prev;
   public Node treeToDoublyList(Node root) {
     if (root == null) {
       return root;
     }
-    Node dummy = new Node(0);
-    prev = dummy;
-    helper(root);
-    prev.right = dummy.right;
-    dummy.right.left = prev;
-    return dummy.right;
-  }
-  
-  private void helper(Node root) {
-    if (root == null) {
-      return;
+    Stack<Node> stack = new Stack<>();
+    while (root != null) {
+      stack.push(root);
+      root = root.left;
     }
-    helper(root.left);
-    prev.right = root;
-    root.left = prev;
-    prev = root;
-    helper(root.right); 
+    Node head = null;
+    Node prev = null;
+    while (!stack.isEmpty()) {
+      Node removed = stack.pop();
+      Node rightNode = removed.right;
+      while (rightNode != null) {
+        stack.push(rightNode);
+        rightNode = rightNode.left;
+      }
+      if (head == null) {
+        head = removed;
+      }
+      if (prev != null) {
+        prev.right = removed;
+      }
+      removed.left = prev;
+      prev = removed;
+    }
+    head.left = prev;
+    prev.right = head;
+    return head;
   }
 }
