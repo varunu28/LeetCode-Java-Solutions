@@ -14,22 +14,26 @@
  * }
  */
 class Solution {
-  TreeNode curr;
   public TreeNode increasingBST(TreeNode root) {
-    TreeNode ans = new TreeNode(-1);
-    curr = ans;
-    inorder(root);
-    return ans.right;
-  }
-  
-  private void inorder(TreeNode node) {
-    if (node == null) {
-      return;
+    Stack<TreeNode> stack = new Stack<>();
+    while (root != null) {
+      stack.push(root);
+      root = root.left;
     }
-    inorder(node.left);
-    node.left = null;
-    curr.right = node;
-    curr = node;
-    inorder(node.right);
+    TreeNode newHead = null;
+    while (!stack.isEmpty()) {
+      TreeNode removed = stack.pop();
+      if (newHead == null) {
+        newHead = removed;
+      }
+      TreeNode rightNode = removed.right;
+      while (rightNode != null) {
+        stack.push(rightNode);
+        rightNode = rightNode.left;
+      }
+      removed.right = stack.isEmpty() ? null : stack.peek();
+      removed.left = null;
+    }
+    return newHead;
   }
 }
