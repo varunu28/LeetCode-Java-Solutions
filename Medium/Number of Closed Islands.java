@@ -2,31 +2,39 @@ class Solution {
   private static final int[][] DIRS = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
   
   public int closedIsland(int[][] grid) {
-    int numberOfClosedIslands = 0;
-    for(int i = 0; i < grid.length; i++){
-      for(int j = 0; j < grid[0].length; j++){
-        if(grid[i][j] == 0){
-          if(surroundsSuccessfully(grid, i, j)) {
-            numberOfClosedIslands++;
-          }
+    int closedIslandCount = 0;
+    for (int i = 0; i < grid.length; i++) {
+      for (int j = 0; j < grid[0].length; j++) {
+        if (grid[i][j] == 0 && isSurroundedSuccessfully(grid, i, j)) {
+          closedIslandCount++;
         }
       }
     }
-    return numberOfClosedIslands;
+    return closedIslandCount;
   }
-
-  private boolean surroundsSuccessfully(int[][] grid, int x, int y) {
-    if(x < 0 || x >= grid.length || y < 0 || y >= grid[0].length) {
-      return false;
+  
+  private boolean isSurroundedSuccessfully(int[][] grid, int i, int j) {
+    Queue<int[]> queue = new LinkedList<>();
+    queue.add(new int[]{i, j});
+    boolean surroundingCheck = true;
+    while (!queue.isEmpty()) {
+      int[] removed = queue.remove();
+      int x = removed[0];
+      int y = removed[1];
+      if (x < 0 || y < 0 || x >= grid.length || y >= grid[0].length) {
+        surroundingCheck = false;
+        continue;
+      }
+      if (grid[x][y] == 1) {
+        continue;
+      }
+      grid[x][y] = 1;
+      for (int[] dir : DIRS) {
+        int newX = x + dir[0];
+        int newY = y + dir[1];
+        queue.add(new int[]{newX, newY});
+      }
     }
-    if(grid[x][y] == 1) {
-      return true;
-    }
-    grid[x][y] = 1;
-    boolean result = true;
-    for(int[] dir : DIRS){
-      result = result & surroundsSuccessfully(grid, x + dir[0], y + dir[1]);
-    }
-    return result;
+    return surroundingCheck;
   }
 }
