@@ -10,19 +10,17 @@ class Solution {
           if (stack.peek() == Math.abs(asteroid)) {
             stack.pop();
           }
-        }
-        else {
+        } else {
           stack.push(asteroid);
         }
-      }
-      else {
+      } else {
         stack.push(asteroid);
       }
     }
-    int[] state = new int[stack.size()];
-    for (int i = state.length - 1; i >= 0; i--) {
-      state[i] = stack.pop();
+    int[] result = new int[stack.size()];
+    for (int i = result.length - 1; i >= 0; i--) {
+      result[i] = stack.pop();
     }
-    return state;
+    return result;
   }
 }
