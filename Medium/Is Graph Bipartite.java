@@ -4,23 +4,35 @@ class Solution {
     int[] color = new int[n];
     Arrays.fill(color, -1);
     for (int i = 0; i < n; i++) {
-      if (color[i] == -1) {
-        Stack<Integer> stack = new Stack<>();
-        stack.push(i);
-        color[i] = 0;
-        while (!stack.isEmpty()) {
-          Integer node = stack.pop();
-          for (Integer neighbor : graph[node]) {
-            if (color[neighbor] == -1) {
-              stack.push(neighbor);
-              color[neighbor] = color[node] ^ 1;
-            }
-            else if (color[neighbor] == color[node]) {
-              return false;
-            }
+      if (color[i] == -1 && !bipartiteCheck(graph, i, color)) {
+        return false;
+      }
+    }
+    return true;
+  }
+  
+  private boolean bipartiteCheck(int[][] graph, int node, int[] color) {
+    Queue<Integer> queue = new LinkedList<>();
+    queue.add(node);
+    int currColor = 0;
+    while (!queue.isEmpty()) {
+      int size = queue.size();
+      while (size-- > 0) {
+        int removed = queue.remove();
+        if (color[removed] != -1) {
+          if (color[removed] != currColor) {
+            return false;
+          }
+          continue;
+        }
+        color[removed] = currColor;
+        for (int conn : graph[removed]) {
+          if (color[conn] == -1) {
+            queue.add(conn);
           }
         }
       }
+      currColor = currColor == 1 ? 0 : 1;
     }
     return true;
   }
