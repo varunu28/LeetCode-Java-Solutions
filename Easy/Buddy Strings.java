@@ -1,44 +1,36 @@
 class Solution {
-  public boolean buddyStrings(String A, String B) {
-    if (A.length() != B.length()) {
+  public boolean buddyStrings(String s, String goal) {
+    if (s.length() != goal.length()) {
       return false;
     }
-    char requiredChar = '-';
-    char mismatchChar = '-';
-    int[] counter = new int[26];
-    for (int i = 0; i < A.length(); i++) {
-      if (A.charAt(i) != B.charAt(i)) {
-	      // Already done one swap hence cannot do any more swaps
-        if (requiredChar == '_') {
+    if (s.equals(goal)) {
+      Set<Character> set = new HashSet<>();
+      for (char c : s.toCharArray()) {
+        if (set.contains(c)) {
+          return true;
+        }
+        set.add(c);
+      }
+      return false;
+    }
+    char[] mismatch = {'-', '-'};
+    for (int i = 0; i < s.length(); i++) {
+      if (s.charAt(i) != goal.charAt(i)) {
+        if (mismatch[0] == '|') {
           return false;
         }
-        if (requiredChar == '-') {
-          requiredChar = B.charAt(i);
-          mismatchChar = A.charAt(i);
-        }
-        else {
-		      // Check if swap is possible from previous mismatch
-          if (B.charAt(i) == mismatchChar && A.charAt(i) == requiredChar) {
-            requiredChar = '_';
+        if (mismatch[0] == '-') {
+          mismatch[0] = s.charAt(i);
+          mismatch[1] = goal.charAt(i);
+        } else {
+          if (goal.charAt(i) == mismatch[0] && s.charAt(i) == mismatch[1]) {
+            mismatch[0] = '|';
+            continue;
           }
-          else {
-            return false;
-          }
+          return false;
         }
       }
-      else {
-        counter[A.charAt(i) - 'a']++;
-      }
     }
-    if (mismatchChar != '-') {
-      return requiredChar == '_';
-    }
-    // Check if we have more than 1 occurrence of same characters. We can swap them to fulfil the condition
-    for (int i = 0; i < 26; i++) {
-      if (counter[i] > 1) {
-        return true;
-      }
-    }
-    return false;
+    return mismatch[0] == '|';
   }
 }
