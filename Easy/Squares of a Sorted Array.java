@@ -1,27 +1,32 @@
 class Solution {
   public int[] sortedSquares(int[] nums) {
-    int n = nums.length;
-    int[] squareSorted = new int[n];
-    int start = 0;
-    while (start < n && nums[start] < 0) {
-      start++;
-    }
-    int end = start;
-    start -= 1;
-    int idx = 0;
-    while (start >= 0 || end < n) {
-      if (start >= 0 && end < n) {
-        if (nums[start] * nums[start] > nums[end] * nums[end]) {
-          squareSorted[idx++] = nums[end] * nums[end++];
+    int firstNegativeIdx = nums[0] < 0 ? 0 : nums.length;
+    int lastPositiveIdx = nums[nums.length - 1] >= 0 ? nums.length - 1 : -1;
+    int[] result = new int[nums.length];
+    int idx = result.length - 1;
+    while (idx >= 0) {
+      if (firstNegativeIdx < nums.length && lastPositiveIdx >= 0) {
+        if (Math.abs(nums[firstNegativeIdx]) > nums[lastPositiveIdx]) {
+          result[idx--] = nums[firstNegativeIdx] * nums[firstNegativeIdx];
+          firstNegativeIdx++;
+          if (firstNegativeIdx < nums.length && nums[firstNegativeIdx] >= 0) {
+            firstNegativeIdx = nums.length;
+          }
         } else {
-          squareSorted[idx++] = nums[start] * nums[start--];
+          result[idx--] = nums[lastPositiveIdx] * nums[lastPositiveIdx];
+          lastPositiveIdx--;
+          if (lastPositiveIdx >= 0 && nums[lastPositiveIdx] < 0) {
+            lastPositiveIdx = -1;
+          }
         }
-      } else if (start >= 0) {
-        squareSorted[idx++] = nums[start] * nums[start--];
+      } else if (firstNegativeIdx < nums.length && lastPositiveIdx < 0) {
+          result[idx--] = nums[firstNegativeIdx] * nums[firstNegativeIdx];
+          firstNegativeIdx++;
       } else {
-          squareSorted[idx++] = nums[end] * nums[end++];
+          result[idx--] = nums[lastPositiveIdx] * nums[lastPositiveIdx];
+          lastPositiveIdx--;
       }
     }
-    return squareSorted;
+    return result;
   }
 }
