@@ -4,30 +4,35 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
   public int closestValue(TreeNode root, double target) {
-    int[] ans = {0};
-    double minDiff = Double.MAX_VALUE;
-    helper(root, target, ans, minDiff);
-    return ans[0];
-  }
+    double[] result = {Double.MAX_VALUE, -1};
+    helper(root, target, result);
+    return (int) result[1];
+  }   
   
-  private void helper(TreeNode root, double target, int[] ans, double minDiff) {
+  private void helper(TreeNode root, double target, double[] result) {
     if (root == null) {
       return;
     }
-    if (Math.abs(root.val - target) < minDiff) {
-      minDiff = Math.abs(root.val - target);
-      ans[0] = root.val;
+    double diff = Math.abs(root.val - target);
+    if (diff <= result[0]) {
+      result[0] = diff;
+      result[1] = root.val; 
     }
-    if (root.val < target) {
-      helper(root.right, target, ans, minDiff);
-    }
-    else {
-      helper(root.left, target, ans, minDiff);
+    if (root.val > target) {
+      helper(root.left, target, result);
+    } else {
+      helper(root.right, target, result); 
     }
   }
 }
