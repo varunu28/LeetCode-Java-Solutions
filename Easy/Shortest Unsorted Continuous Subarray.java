@@ -1,33 +1,21 @@
 class Solution {
-    public int findUnsortedSubarray(int[] nums) {
-        
-        int[] copy = new int[nums.length];
-        for (int i=0;i<nums.length;i++) {
-            copy[i] = nums[i];
-        }
-        
-        Arrays.sort(nums);
-        int start = 0;
-        int end = nums.length-1;
-        int ans = 0;
-        
-        while(start<end) {
-            if (nums[start] != copy[start] && nums[end] != copy[end]) {
-                ans = end-start+1;
-                break;
-            }
-            else if (nums[start] == copy[start] && nums[end] != copy[end]) {
-                start++;
-            }
-            else if (nums[start] != copy[start] && nums[end] == copy[end]) {
-                end--;
-            }
-            else if (nums[start] == copy[start] && nums[end] == copy[end]) {
-                end--;
-                start++;
-            }
-        }
-        
-        return ans;
+  public int findUnsortedSubarray(int[] nums) {
+    Stack<Integer> stack = new Stack<>();
+    int start = nums.length;
+    for (int i = 0; i < nums.length; i++) {
+      while (!stack.isEmpty() && nums[stack.peek()] > nums[i]) {
+        start = Math.min(start, stack.pop());
+      }
+      stack.push(i);
     }
+    stack.clear();
+    int end = 0;
+    for (int i = nums.length - 1; i >= 0; i--) {
+      while (!stack.isEmpty() && nums[stack.peek()] < nums[i]) {
+        end = Math.max(end, stack.pop());
+      }
+      stack.push(i);
+    }
+    return end - start > 0 ? end - start + 1 : 0;
+  }
 }
