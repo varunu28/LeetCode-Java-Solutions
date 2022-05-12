@@ -1,34 +1,25 @@
 class Solution {
   public List<List<Integer>> permuteUnique(int[] nums) {
-    List<List<Integer>> ans = new ArrayList<>();
-    if (nums.length == 0) {
-      return ans;
-    }
-    List<Integer> curr = new ArrayList<>();
+    List<List<Integer>> result = new ArrayList<>();
     Arrays.sort(nums);
-    helper(nums, ans, curr, new boolean[nums.length]);
-    return ans;
+    helper(nums, result, new ArrayList<>(), new boolean[nums.length]);
+    return result;
   }
-  
-  private void helper(int[] nums, List<List<Integer>> ans, List<Integer> curr, boolean[] used) {
+    
+  private void helper(int[] nums, List<List<Integer>> result, List<Integer> curr, boolean[] visited) {
     if (curr.size() == nums.length) {
-      ans.add(new ArrayList<>(curr));
+      result.add(new ArrayList<>(curr));
+      return;
     }
-    else {
-      for (int i = 0; i < nums.length; i++) {
-        if (used[i]) {
-          continue;
-        }
-        if (i > 0 && nums[i - 1] == nums[i] && !used[i - 1]) {
-          continue;
-        }
-        used[i] = true;
-        curr.add(nums[i]);
-        helper(nums, ans, curr, used);
-        curr.remove(curr.size() - 1);
-        used[i] = false;
+    for (int i = 0; i < nums.length; i++) {
+      if (visited[i] || (i > 0 && nums[i] == nums[i - 1] && !visited[i - 1])) {
+        continue;
       }
+      curr.add(nums[i]);
+      visited[i] = true;
+      helper(nums, result, curr, visited);
+      curr.remove(curr.size() - 1);
+      visited[i] = false;
     }
   }
 }
-
