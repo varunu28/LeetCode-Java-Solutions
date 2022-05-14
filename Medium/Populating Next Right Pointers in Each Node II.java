@@ -23,13 +23,10 @@ class Node {
 
 class Solution {
   public Node connect(Node root) {
-    if (root == null) {
-      return null;
-    }
     Queue<Node> queue = new LinkedList<>();
     queue.add(root);
     queue.add(null);
-    while (!queue.isEmpty() && queue.peek() != null) {
+    while (queue.peek() != null) {
       int size = queue.size() - 1;
       while (size-- > 0) {
         Node removed = queue.remove();
