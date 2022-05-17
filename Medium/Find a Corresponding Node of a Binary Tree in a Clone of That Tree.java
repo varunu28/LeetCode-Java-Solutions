@@ -10,13 +10,25 @@
 
 class Solution {
   public final TreeNode getTargetCopy(final TreeNode original, final TreeNode cloned, final TreeNode target) {
-    if (original == null || original == target) {
-      return cloned;
+    Deque<TreeNode> stackOriginal = new ArrayDeque<>();
+    Deque<TreeNode> stackCloned = new ArrayDeque<>();
+    TreeNode nodeOriginal = original;
+    TreeNode nodeCloned = cloned;
+    while (!stackOriginal.isEmpty() || nodeOriginal != null) {
+      while (nodeOriginal != null) {
+        stackOriginal.add(nodeOriginal);
+        stackCloned.add(nodeCloned);
+        nodeOriginal = nodeOriginal.left;
+        nodeCloned = nodeCloned.left;
+      }
+      nodeOriginal = stackOriginal.removeLast();
+      nodeCloned = stackCloned.removeLast();
+      if (nodeOriginal == target) {
+        return nodeCloned;
+      }
+      nodeOriginal = nodeOriginal.right;
+      nodeCloned = nodeCloned.right;
     }
-    TreeNode leftResult = getTargetCopy(original.left, cloned.left, target);
-    if (leftResult != null) {
-      return leftResult;
-    }
-    return getTargetCopy(original.right, cloned.right, target);
+    return null;
   }
 }
