@@ -1,6 +1,12 @@
 class Solution {
   public int arraySign(int[] nums) {
-    return Arrays.stream(nums).filter(num -> num == 0).map(e -> 0).findAny()
-        .orElse(Arrays.stream(nums).filter(num -> num < 0).count() % 2 == 0 ? 1 : -1);
+    int negativeCount = 0;
+    for (int num : nums) {
+      if (num == 0) {
+        return 0;
+      }
+      negativeCount += num < 0 ? 1 : 0;
+    }
+    return negativeCount % 2 == 0 ? 1 : -1;
   }
 }
