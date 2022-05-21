@@ -1,20 +1,14 @@
 class Solution {
   public int uniquePaths(int m, int n) {
-    Integer[][] dp = new Integer[m][n];
-    return helper(0, 0, m, n, dp);
-  }
-  
-  private int helper(int currX, int currY, int m, int n, Integer[][] dp) {
-    if (currX == m - 1 && currY == n - 1) {
-      return 1;
+    int[][] dp = new int[m][n];
+    for (int[] arr : dp) {
+      Arrays.fill(arr, 1);
     }
-    if (currX >= m || currY >= n) {
-      return 0;
+    for (int i = 1; i < m; i++) {
+      for (int j = 1; j < n; j++) {
+        dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+      }
     }
-    if (dp[currX][currY] != null) {
-      return dp[currX][currY];
-    }
-    dp[currX][currY] = helper(currX + 1, currY, m, n, dp) + helper(currX, currY + 1, m, n, dp);
-    return dp[currX][currY];
+    return dp[m - 1][n - 1];
   }
 }
