@@ -1,25 +1,21 @@
 class Solution {
   public List<Integer> majorityElement(int[] nums) {
+    Integer majorityElementOne = null;
+    Integer majorityElementTwo = null;
     int countOne = 0;
     int countTwo = 0;
-    Integer candidateOne = null;
-    Integer candidateTwo = null;
     for (int num : nums) {
-      if (candidateOne != null && candidateOne == num) {
+      if (majorityElementOne != null && num == majorityElementOne) {
         countOne++;
-      }
-      else if (candidateTwo != null && candidateTwo == num) {
+      } else if (majorityElementTwo != null && num == majorityElementTwo) {
         countTwo++;
-      }
-      else if (countOne == 0) {
-        candidateOne = num;
+      } else if (countOne == 0) {
+        majorityElementOne = num;
         countOne = 1;
-      }
-      else if (countTwo == 0) {
-        candidateTwo = num;
+      } else if (countTwo == 0) {
+        majorityElementTwo = num;
         countTwo = 1;
-      }
-      else {
+      } else {
         countOne--;
         countTwo--;
       }
@@ -28,18 +24,18 @@ class Solution {
     countOne = 0;
     countTwo = 0;
     for (int num : nums) {
-      if (candidateOne != null && candidateOne == num) {
+      if (majorityElementOne != null && majorityElementOne == num) {
         countOne++;
       }
-      else if (candidateTwo != null && candidateTwo == num) {
+      if (majorityElementTwo != null && majorityElementTwo == num) {
         countTwo++;
       }
     }
     if (countOne > nums.length / 3) {
-      result.add(candidateOne);
+      result.add(majorityElementOne);
     }
     if (countTwo > nums.length / 3) {
-      result.add(candidateTwo);
+      result.add(majorityElementTwo);
     }
     return result;
   }
