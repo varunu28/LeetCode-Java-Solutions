@@ -3,15 +3,13 @@ class Solution {
     if (x < 0) {
       return false;
     }
-    return x - reverse(x) == 0;
-  }
-  
-  private int reverse(int n) {
-    int newNum = 0;
-    while (n > 0) {
-      newNum = newNum * 10 + n % 10;
-      n /= 10;
+    int reversedNum = 0;
+    int xCopy = x;
+    while (x > 0) {
+      int rem = x % 10;
+      reversedNum = reversedNum * 10 + rem;
+      x /= 10;
     }
-    return newNum;
+    return reversedNum == xCopy;
   }
 }
