@@ -15,27 +15,21 @@
  */
 class Solution {
   public boolean isCompleteTree(TreeNode root) {
-    List<HelperNode> nodes = new ArrayList<>();
-    nodes.add(new HelperNode(root, 1));
-    int idx = 0 ;
-    while (idx < nodes.size()) {
-      HelperNode hnode = nodes.get(idx++);
-      if (hnode.node != null) {
-        nodes.add(new HelperNode(hnode.node.left, 2 * hnode.level));
-        nodes.add(new HelperNode(hnode.node.right, 2 * hnode.level + 1));
+    Queue<TreeNode> queue = new LinkedList<>();
+    queue.add(root);
+    boolean end = false;
+    while (!queue.isEmpty()) {
+      TreeNode removed = queue.poll();
+      if (removed == null) {
+        end = true;
+      } else {
+        if (end) {
+          return false;
+        }
+        queue.add(removed.left);
+        queue.add(removed.right);
       }
     }
-    return nodes.get(idx - 1).level == nodes.size();
-  }
-}
-
-
-class HelperNode {
-  TreeNode node;
-  int level;
-  
-  public HelperNode(TreeNode node, int level) {
-    this.node = node;
-    this.level = level;
+    return true;
   }
 }
