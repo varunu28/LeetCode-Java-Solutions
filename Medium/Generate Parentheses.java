@@ -1,30 +1,28 @@
 class Solution {
-  Set<String> set;
   public List<String> generateParenthesis(int n) {
-    set = new HashSet<>();
-    StringBuilder sb = new StringBuilder();
-    helper(n, 0, 0, sb);
-    return new ArrayList<>(set);
+    List<String> result = new ArrayList<>();
+    helper(result, 0, 0, n, new StringBuilder());
+    return result;
   }
   
-  private void helper(int n, int open, int close, StringBuilder sb) {
-    if (sb.length() == 2 * n) {
-      set.add(sb.toString());
+  private void helper(List<String> result, int start, int end, int n, StringBuilder sb) {
+    if (start + end == 2 * n) {
+      if (start == end) {
+        result.add(new StringBuilder(sb.toString()).toString());
+      }
+      return;
     }
-    else {
-      if (open <= close) {
-        sb.append('(');
-        helper(n, open + 1, close, new StringBuilder(sb.toString()));
-      }
-      else {
-        sb.append(')');
-        helper(n, open, close + 1, new StringBuilder(sb.toString()));
-        sb.deleteCharAt(sb.length() - 1);
-        if (open < n) {
-          sb.append('(');
-          helper(n, open + 1, close, new StringBuilder(sb.toString())); 
-        }
-      }
+    if (start > end) {
+      sb.append('(');
+      helper(result, start + 1, end, n, sb);
+      sb.deleteCharAt(sb.length() - 1);
+      sb.append(')');
+      helper(result, start, end + 1, n, sb);
+      sb.deleteCharAt(sb.length() - 1);
+    } else if (start == end) {
+      sb.append('(');
+      helper(result, start + 1, end, n, sb);
+      sb.deleteCharAt(sb.length() - 1);
     }
   }
 }
