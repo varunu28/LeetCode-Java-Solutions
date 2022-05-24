@@ -10,16 +10,9 @@ class Solution {
         letterLogs.add(log);
       }
     }
-    letterLogs.sort((o1, o2) -> {
-      String contentOne = o1.substring(o1.indexOf(" ") + 1);
-      String contentTwo = o2.substring(o2.indexOf(" ") + 1);
-      int c = contentOne.compareTo(contentTwo);
-      if (c != 0) {
-        return c;
-      }
-      return o1.substring(0, o1.indexOf(" ")).compareTo(o2.substring(0, o2.indexOf(" ")));
-    });
+    letterLogs.sort(Comparator.comparing((String o) -> o.substring(o.indexOf(' ') + 1))
+        .thenComparing(o -> o.substring(0, o.indexOf(' '))));
     letterLogs.addAll(digitLogs);
-    return letterLogs.toArray(new String[0]);
-  }
+    return letterLogs.toArray(new String[]{});
+  } 
 }
