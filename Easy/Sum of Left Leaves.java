@@ -15,25 +15,26 @@
  */
 class Solution {
   public int sumOfLeftLeaves(TreeNode root) {
-    if (root == null) {
-      return 0;
-    }
     int sum = 0;
     Queue<TreeNode[]> queue = new LinkedList<>();
     queue.add(new TreeNode[]{root, null});
     while (!queue.isEmpty()) {
-      TreeNode[] removed = queue.remove();
-      if (removed[0].left == null && removed[0].right == null) {
-        if (removed[1] != null && removed[1].left == removed[0]) {
-          sum += removed[0].val;
-        }
-      }
-      else {
-        if (removed[0].left != null) {
-          queue.add(new TreeNode[]{removed[0].left, removed[0]});
-        }
-        if (removed[0].right != null) {
-          queue.add(new TreeNode[]{removed[0].right, removed[0]});
+      int size = queue.size();
+      while (size-- > 0) {
+        TreeNode[] removed = queue.remove();
+        TreeNode node = removed[0];
+        TreeNode parent = removed[1];
+        if (node.left == null && node.right == null) {
+          if (parent != null && parent.left == node) {
+            sum += node.val;
+          }
+        } else {
+          if (node.left != null) {
+            queue.add(new TreeNode[]{node.left, node});
+          }
+          if (node.right != null) {
+            queue.add(new TreeNode[]{node.right, node});
+          }
         }
       }
     }
