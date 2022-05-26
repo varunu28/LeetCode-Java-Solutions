@@ -15,30 +15,46 @@
  */
 class Solution {
   public int sumRootToLeaf(TreeNode root) {
-    int[] result = {0};
-    helper(root, new StringBuilder(), result);
-    return result[0];
+    Queue<NodeToBinaryRepresentation> queue = new LinkedList<>();
+    queue.add(new NodeToBinaryRepresentation(root, new StringBuilder()));
+    int sum = 0;
+    while (!queue.isEmpty()) {
+      int size = queue.size();
+      while (size-- > 0) {
+        NodeToBinaryRepresentation removed = queue.remove();
+        StringBuilder sb = new StringBuilder().append(removed.sb.toString()).append(removed.node.val);
+        if (removed.node.left == null && removed.node.right == null) {
+          sum += getIntegerValue(sb.toString());
+        } else {
+          if (removed.node.left != null) {
+            queue.add(new NodeToBinaryRepresentation(removed.node.left, sb));
+          }
+          if (removed.node.right != null) {
+            queue.add(new NodeToBinaryRepresentation(removed.node.right, sb));
+          }
+        }
+      }
+    }
+    return sum;
   }
   
-  private void helper(TreeNode root, StringBuilder sb, int[] result) {
-    if (root == null) {
-      return;
-    }
-    sb.append(root.val);
-    if (root.left == null && root.right == null) {
-      result[0] += getDecimalValue(sb.toString());
-      return;
-    }
-    helper(root.left, new StringBuilder(sb.toString()), result);
-    helper(root.right, new StringBuilder(sb.toString()), result);
-  }
-  
-  private int getDecimalValue(String s) {
+  private int getIntegerValue(String s) {
     int value = 0;
-    int powerOfTwo = 0;
+    int multiplier = 1;
     for (int i = s.length() - 1; i >= 0; i--) {
-      value += ((int) Math.pow(2, powerOfTwo++)) * Character.getNumericValue(s.charAt(i));
+      value += Character.getNumericValue(s.charAt(i)) * multiplier;
+      multiplier *= 2;
     }
     return value;
+  }
+  
+  private static class NodeToBinaryRepresentation {
+    TreeNode node;
+    StringBuilder sb;
+    
+    public NodeToBinaryRepresentation(TreeNode node, StringBuilder sb) {
+      this.node = node;
+      this.sb = sb;
+    }
   }
 }
