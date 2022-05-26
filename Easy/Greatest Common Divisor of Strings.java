@@ -1,36 +1,13 @@
 class Solution {
-    public String gcdOfStrings(String str1, String str2) {
-        return stringGcd(str1, str2);
+  public String gcdOfStrings(String str1, String str2) {
+    if (str1.length() < str2.length()) {  
+      return gcdOfStrings(str2, str1); 
+    } else if (!str1.startsWith(str2)) {
+      return "";
+    } else if (str2.isEmpty()) { 
+      return str1;
+    } else { 
+      return gcdOfStrings(str1.substring(str2.length()), str2); 
     }
-    
-    private String stringGcd(String s1, String s2) {
-        if (s1.length() == 0) {
-            return s2;
-        }
-        
-        if (s2.length() == 0) {
-            return s1;
-        }
-        
-        if (s1.equals(s2)) {
-            return s1;
-        }
-        
-        if (s1.length() > s2.length()) {
-            for (int i = 0; i < s2.length(); i++) {
-                if (s1.charAt(i) != s2.charAt(i)) {
-                    return "";
-                }
-            }
-            
-            String temp = s1.substring(s2.length());
-            return stringGcd(temp, s2);
-        }
-        
-        if (s2.length() > s1.length()) {
-            return stringGcd(s2, s1);
-        }
-        
-        return "";
-    }
+  }
 }
