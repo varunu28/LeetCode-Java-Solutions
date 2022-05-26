@@ -1,26 +1,15 @@
 class Solution {
   public String reverseStr(String s, int k) {
+    boolean reverse = true;
     StringBuilder sb = new StringBuilder();
-    boolean current = true;
-    int idx = 0;
-    int n = s.length();
-    while (idx < n) {
-      int endIdx = Math.min(idx + k - 1, n - 1);
-      if (current) {
-        int end = idx;
-        int start = endIdx;
-        for (int i = start; i >= end; i--) {
-          sb.append(s.charAt(i));
-        }
-        idx = endIdx + 1;
+    for (int i = 0; i < s.length(); i += k) {
+      String substring = s.substring(i, Math.min(i + k, s.length()));
+      if (reverse) {
+        sb.append(new StringBuilder().append(substring).reverse().toString());
+      } else {
+        sb.append(substring);
       }
-      else {
-        while (idx <= endIdx) {
-          sb.append(s.charAt(idx++));
-        }
-      }
-      current = !current;
-      System.out.println(idx);
+      reverse = !reverse;
     }
     return sb.toString();
   }
