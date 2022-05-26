@@ -1,18 +1,18 @@
 class Solution {
   public int arrayPairSum(int[] nums) {
-    int[] arr = new int[20001];
+    int[] counter = new int[20001];
     for (int num : nums) {
-      arr[num + 10000]++;
+      counter[num + 10000]++;
     }
     int sum = 0;
-    boolean odd = true;
-    for (int i = 0; i < arr.length; i++) {
-      while (arr[i] > 0) {
-        if (odd) {
+    boolean pickFirst = true;
+    for (int i = 0; i < counter.length; i++) {
+      while (counter[i] > 0) {
+        if (pickFirst) {
           sum += i - 10000;
         }
-        odd = !odd;
-        arr[i]--;
+        pickFirst = !pickFirst;
+        counter[i]--;
       }
     }
     return sum;
