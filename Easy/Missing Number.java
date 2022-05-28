@@ -1,6 +1,11 @@
 class Solution {
   public int missingNumber(int[] nums) {
-    return (nums.length * (nums.length + 1) / 2) - Arrays.stream(nums).boxed()
-        .reduce(0, Integer::sum);
+    int totalSum = 0;
+    for (int num : nums) {
+      totalSum += num;
+    }
+    int n = nums.length;
+    int expectedSum = (n * (n + 1)) / 2;
+    return expectedSum - totalSum;
   }
 }
