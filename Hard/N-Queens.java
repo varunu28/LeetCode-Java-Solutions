@@ -1,50 +1,45 @@
 class Solution {
   public List<List<String>> solveNQueens(int n) {
-    List<List<String>> ans = new ArrayList <>();
-    helper(n, 0, new ArrayList<>(), ans);
-    return ans;
+    List<List<String>> result = new ArrayList<>();
+    char[][] board = new char[n][n];
+    for (char[] row : board) {
+      Arrays.fill(row, '.');
+    }
+    backtrack(0, new HashSet<>(), new HashSet<>(), new HashSet<>(), board, result, n);
+    return result;
   }
-
-  private void helper(int n, int row, List<Integer> selections, List<List<String>> ans) {
+  
+  private void backtrack(int row, Set<Integer> diagonals, Set<Integer> antiDiagonals, Set<Integer> columns, char[][] board, List<List<String>> result, int n) {
     if (row == n) {
-      ans.add(convertToString(selections, n));
+      result.add(buildBoard(board, n));
+      return;
     }
-    else {
-      for (int i = 0; i < n; i++) {
-        selections.add(i);
-        if (isValid(selections)) {
-          helper(n, row + 1, selections, ans);
-        }
-        selections.remove(selections.size() - 1);
+    for (int col = 0; col < n; col++) {
+      int currDiagonal = row - col;
+      int currAntiDiagonal = row + col;
+      if (columns.contains(col) || diagonals.contains(currDiagonal) || antiDiagonals.contains(currAntiDiagonal)) {
+        continue;
       }
+      columns.add(col);
+      diagonals.add(currDiagonal);
+      antiDiagonals.add(currAntiDiagonal);
+      board[row][col] = 'Q';
+
+      backtrack(row + 1, diagonals, antiDiagonals, columns, board, result, n);
+      
+      columns.remove(col);
+      diagonals.remove(currDiagonal);
+      antiDiagonals.remove(currAntiDiagonal);
+      board[row][col] = '.';
     }
   }
-
-  private List <String> convertToString(List <Integer> selections, int n) {
-    List<String> ret = new ArrayList<>();
-    for (int i = 0; i < selections.size(); i++) {
-      StringBuilder sb = new StringBuilder();
-      for (int j = 0; j < n; j++) {
-        if (j == selections.get(i)) {
-          sb.append("Q");
-        }
-        else {
-          sb.append(".");
-        }
-      }
-      ret.add(sb.toString());
+  
+  private List<String> buildBoard(char[][] board, int n) {
+    List<String> resultBoard = new ArrayList<>();
+    for (int row = 0; row < n; row++) {
+      String currentRow = new String(board[row]);
+      resultBoard.add(currentRow);
     }
-    return ret;
-  }
-
-  private boolean isValid(List <Integer> selections) {
-    int row = selections.size() - 1;
-    for (int i = 0; i < row; i++) {
-      int diff = Math.abs(selections.get(i) - selections.get(row));
-      if (diff == 0 || diff == row - i) {
-        return false;
-      }
-    }
-    return true;
+    return resultBoard;
   }
 }
