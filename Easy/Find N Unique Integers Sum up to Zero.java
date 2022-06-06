@@ -1,20 +1,17 @@
 class Solution {
   public int[] sumZero(int n) {
-    int[] arr = new int[n];
+    int[] result = new int[n];
     int idx = 0;
-    int num = n / 2;
-    while (idx < n / 2) {
-      arr[idx++] = num * -1;
-      num--;
+    int half = n / 2;
+    for (int i = -1 * half; i < 0; i++) {
+      result[idx++] = i;
     }
     if (n % 2 != 0) {
-      arr[idx++] = 0;
+      result[idx++] = 0;
     }
-    num = n / 2;
-    while (idx < n) {
-      arr[idx++] = num;
-      num--;
+    for (int i = 1; i <= half; i++) {
+      result[idx++] = i;
     }
-    return arr;
+    return result;
   }
 }
