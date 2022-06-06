@@ -15,35 +15,27 @@
  */
 class Solution {
   public boolean twoSumBSTs(TreeNode root1, TreeNode root2, int target) {
-    if (root1 == null || root2 == null) {
-      return false;
-    }
+    ArrayDeque<TreeNode> stack = new ArrayDeque<>();
     Set<Integer> set = new HashSet<>();
-    Queue<TreeNode> queue = new LinkedList<>();
-    queue.add(root2);
-    while (!queue.isEmpty()) {
-      TreeNode removed = queue.remove();
-      set.add(removed.val);
-      if (removed.left != null) {
-        queue.add(removed.left);
+    while (!stack.isEmpty() || root1 != null) {
+      while (root1 != null) {
+        stack.push(root1);
+        root1 = root1.left;
       }
-      if (removed.right != null) {
-        queue.add(removed.right);
-      }
+      root1 = stack.pop();
+      set.add(target - root1.val);
+      root1 = root1.right;
     }
-    queue = new LinkedList<>();
-    queue.add(root1);
-    while (!queue.isEmpty()) {
-      TreeNode removed = queue.remove();
-      if (set.contains(target - removed.val)) {
+    while (!stack.isEmpty() || root2 != null) {
+      while (root2 != null) {
+        stack.push(root2);
+        root2 = root2.left;
+      }
+      root2 = stack.pop();
+      if (set.contains(root2.val)) {
         return true;
       }
-      if (removed.left != null) {
-        queue.add(removed.left);
-      }
-      if (removed.right != null) {
-        queue.add(removed.right);
-      }
+      root2 = root2.right;
     }
     return false;
   }
