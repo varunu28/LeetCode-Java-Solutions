@@ -1,20 +1,20 @@
 class Solution {
   public int[] arrayRankTransform(int[] arr) {
-    PriorityQueue<Integer> pq = Arrays.stream(arr).boxed()
-        .collect(Collectors.toCollection(PriorityQueue::new));
+    PriorityQueue<Integer> pq = new PriorityQueue<>();
+    for (int num : arr) {
+      pq.add(num);
+    }
     int rank = 1;
-    Map<Integer, Integer> rankMap = new HashMap<>();
+    Map<Integer, Integer> map = new HashMap<>();
     while (!pq.isEmpty()) {
-      int key = pq.poll();
-      rankMap.put(key, rank++);
-      while (!pq.isEmpty() && pq.peek() == key) {
-        pq.poll();
+      int removed = pq.poll();
+      if (!map.containsKey(removed)) {
+        map.put(removed, rank++);
       }
     }
-    int[] ans = new int[arr.length];
     for (int i = 0; i < arr.length; i++) {
-      ans[i] = rankMap.get(arr[i]);
+      arr[i] = map.get(arr[i]);
     }
-    return ans;
+    return arr;
   }
 }
