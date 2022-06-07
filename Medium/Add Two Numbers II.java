@@ -3,65 +3,46 @@
  * public class ListNode {
  *     int val;
  *     ListNode next;
- *     ListNode(int x) { val = x; }
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
 class Solution {
-    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
-        ListNode l1Rev = reverse(l1);
-        ListNode l2Rev = reverse(l2);
-        
-        ListNode ans = new ListNode(-1);
-        ListNode curr = ans;
-        int carry = 0;
-        
-        while (l1Rev != null || l2Rev != null) {
-            int temp = 0;
-            if (l1Rev != null && l2Rev != null) {
-                temp = l1Rev.val + l2Rev.val + carry;
-                l1Rev = l1Rev.next;
-                l2Rev = l2Rev.next;
-            }
-            else if(l1Rev != null) {
-                temp = l1Rev.val + carry;
-                l1Rev = l1Rev.next;
-            }
-            else {
-                temp = l2Rev.val + carry;
-                l2Rev = l2Rev.next;
-            }
-            
-            if (temp > 9) {
-                carry = temp/10;
-                temp = temp%10;
-            }
-            else {
-                carry = 0;
-            }
-            curr.next = new ListNode(temp);
-            curr = curr.next;
-        }
-        
-        if (carry != 0) {
-            curr.next = new ListNode(carry);
-            curr = curr.next;
-        }
-        
-        return reverse(ans.next);
+  public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+    ListNode revL1 = reverse(l1);
+    ListNode revL2 = reverse(l2);
+    ListNode dummy = new ListNode(0);
+    ListNode curr = dummy;
+    int carry = 0;
+    while (revL1 != null || revL2 != null || carry != 0) {
+      if (revL1 != null && revL2 != null) {
+        carry += revL1.val + revL2.val;
+        revL1 = revL1.next;
+        revL2 = revL2.next;
+      } else if (revL1 != null && revL2 == null) {
+        carry += revL1.val;
+        revL1 = revL1.next;
+      } else if (revL1 == null && revL2 != null) {
+        carry += revL2.val;
+        revL2 = revL2.next;
+      }
+      curr.next = new ListNode(carry % 10);
+      carry /= 10;
+      curr = curr.next;
     }
-    
-    private ListNode reverse(ListNode head) {
-        ListNode curr = head;
-        ListNode prev = null;
-        ListNode next = null;
-        
-        while (curr != null) {
-            next = curr.next;
-            curr.next = prev;
-            prev = curr;
-            curr = next;
-        }
-        
-        return prev;
+    return reverse(dummy.next);
+  }
+  
+  private ListNode reverse(ListNode root) {
+    ListNode curr = root;
+    ListNode prev = null;
+    while (curr != null) {
+      ListNode next = curr.next;
+      curr.next = prev;
+      prev = curr;
+      curr = next;
     }
+    return prev;
+  }
 }
