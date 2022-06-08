@@ -4,16 +4,15 @@ class Solution {
     for (char c : s.toCharArray()) {
       map.put(c, map.getOrDefault(c, 0) + 1);
     }
-    int count = 0;
+    int totalLength = 0;
     boolean oddTaken = false;
     for (Character key : map.keySet()) {
-      int val = map.get(key);
-      count += (val / 2) * 2;
-      if ((val == 1 || val % 2 != 0) && !oddTaken) {
-        oddTaken = true;
-        count++;
+      totalLength += (map.get(key) / 2) * 2;
+      if (!oddTaken && map.get(key) % 2 != 0) {
+        totalLength++;
+        oddTaken = !oddTaken;
       }
     }
-    return count;
+    return totalLength;
   }
 }
