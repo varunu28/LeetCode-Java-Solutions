@@ -1,29 +1,27 @@
 class Solution {
   public int countCharacters(String[] words, String chars) {
-    Map<Character, Integer> charFreq = getMap(chars);
-    int length = 0;
-    for (String word : words) {
-      if (canBeFormed(charFreq, getMap(word))) {
-        length += word.length();
-      }
-    }
-    return length;
+    Map<Character, Integer> frequency = getFrequencyMap(chars);
+    return Arrays.stream(words)
+      .filter(word -> canBeFormed(word, frequency))
+      .map(word -> word.length())
+      .reduce(0, Integer::sum);
   }
   
-  private Map<Character, Integer> getMap(String s) {
-    Map<Character, Integer> map = new HashMap<>();
-    for (char c : s.toCharArray()) {
-      map.put(c, map.getOrDefault(c, 0) + 1);
-    }
-    return map;
-  }
-  
-  private boolean canBeFormed(Map<Character, Integer> main, Map<Character, Integer> toBeChecked) {
-    for (Character key : toBeChecked.keySet()) {
-      if (main.getOrDefault(key, 0) < toBeChecked.get(key)) {
+  private boolean canBeFormed(String word, Map<Character, Integer> frequency) {
+    Map<Character, Integer> wordFrequency = getFrequencyMap(word);
+    for (Character key : wordFrequency.keySet()) {
+      if (frequency.getOrDefault(key, 0) < wordFrequency.get(key)) {
         return false;
       }
     }
     return true;
+  }
+  
+  private Map<Character, Integer> getFrequencyMap(String s) {
+    Map<Character, Integer> frequency = new HashMap<>();
+    for (char c : s.toCharArray()) {
+      frequency.put(c, frequency.getOrDefault(c, 0) + 1);
+    }
+    return frequency;
   }
 }
