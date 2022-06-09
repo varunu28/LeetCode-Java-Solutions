@@ -1,41 +1,37 @@
 class Solution {
-  private static final int[][] DIRS = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
-
+  private final int[][] DIRS = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+  
   public int orangesRotting(int[][] grid) {
-    Queue<int[]> infectedOranges = new LinkedList<>();
-    int numOfFreshOranges = 0;
-    for (int i = 0; i < grid.length; i++) {
-      for (int j = 0; j < grid[i].length; j++) {
+    Queue<int[]> queue = new LinkedList<>();
+    int nonRottenCount = 0;
+    int numRows = grid.length;
+    int numCols = grid[0].length;
+    for (int i = 0; i < numRows; i++) {
+      for (int j = 0; j < numCols; j++) {
         if (grid[i][j] == 2) {
-          infectedOranges.add(new int[]{i, j});
+          queue.add(new int[]{i, j});
+        } else if (grid[i][j] == 1) {
+          nonRottenCount++;
         }
-        numOfFreshOranges += grid[i][j] == 1 ? 1 : 0;
       }
     }
-    int numOfMinutes = 0;
-    while (!infectedOranges.isEmpty()) {
-      int infectedOrangeSize = infectedOranges.size();
-      boolean newInfected = false;
-      while (infectedOrangeSize-- > 0) {
-        int[] infectedOrangeCoordinate = infectedOranges.poll();
+    int totalTime = 0;
+    while (!queue.isEmpty() && nonRottenCount > 0) {
+      int size = queue.size();
+      while (size-- > 0) {
+        int[] removed = queue.remove();
         for (int[] dir : DIRS) {
-          int newRowCoordinate = infectedOrangeCoordinate[0] + dir[0];
-          int newColCoordinate = infectedOrangeCoordinate[1] + dir[1];
-          if (isValidInfection(grid, newRowCoordinate, newColCoordinate)) {
-            infectedOranges.add(new int[]{newRowCoordinate, newColCoordinate});
-            grid[newRowCoordinate][newColCoordinate] = 2;
-            newInfected = true;
-            numOfFreshOranges--;
+          int newX = removed[0] + dir[0];
+          int newY = removed[1] + dir[1];
+          if (newX >= 0 && newY >= 0 && newX < numRows && newY < numCols && grid[newX][newY] == 1) {
+            grid[newX][newY] = 2;
+            nonRottenCount--;
+            queue.add(new int[]{newX, newY});
           }
         }
       }
-      numOfMinutes += newInfected ? 1 : 0;
+      totalTime++;
     }
-    return numOfFreshOranges > 0 ? -1 : numOfMinutes;
-  }
-
-  private boolean isValidInfection(int[][] grid, int rowCoordinate, int colCoordinate) {
-    return rowCoordinate >= 0 && colCoordinate >= 0 && rowCoordinate < grid.length
-        && colCoordinate < grid[0].length && grid[rowCoordinate][colCoordinate] == 1;
+    return nonRottenCount == 0 ? totalTime : -1;
   }
 }
