@@ -1,46 +1,38 @@
 class Solution {
   public List<String> invalidTransactions(String[] transactions) {
-    Map<String, List<Transaction>> map = new HashMap<>();
-    Set<String> invalidTransactions = new HashSet<>();
-    for (int i = 0; i < transactions.length; i++) {
-      String[] details = transactions[i].split(",");
-      String name = details[0];
-      int time = Integer.parseInt(details[1]);
-      int amount = Integer.parseInt(details[2]);
-      String city = details[3];
+    Set<String> invalidTransactionSet = new HashSet<>();
+    Map<String, List<String>> map = new HashMap<>();
+    Map<String, Integer> transactionOccurenceCount = new HashMap<>();
+    for (String transactionString : transactions) {
+      transactionOccurenceCount.put(transactionString, transactionOccurenceCount.getOrDefault(transactionString, 0) + 1);
+      String[] transaction = transactionString.split(",");
+      String name = transaction[0];
+      int amount = Integer.parseInt(transaction[2]);
+      String city = transaction[3];
+      int time = Integer.parseInt(transaction[1]);
       if (amount > 1000) {
-        invalidTransactions.add(transactions[i]);
-      }
-      if (map.containsKey(name)) {
-        List<Transaction> otherTransactions = map.get(name);
-        for (Transaction transaction : otherTransactions) {
-          if (!transaction.city.equals(city) && Math.abs(transaction.time - time) <= 60) {
-            invalidTransactions.add(transactions[transaction.idx]);
-            invalidTransactions.add(transactions[i]);
-          }
+        invalidTransactionSet.add(transactionString);
+      } 
+      map.computeIfAbsent(name, k -> new ArrayList<>());
+      List<String> currentTransactions = map.get(name);
+      for (String currentTransaction : currentTransactions) {
+        String currentCity = currentTransaction.split(",")[3];
+        int currentTime = Integer.parseInt(currentTransaction.split(",")[1]);
+        if (!currentCity.equals(city) && Math.abs(time - currentTime) <= 60) {
+          invalidTransactionSet.add(currentTransaction);
+          invalidTransactionSet.add(transactionString);
         }
       }
-      map.computeIfAbsent(name, k -> new ArrayList<>()).add(
-        new Transaction(name, time, amount, city, i)
-      );
+      currentTransactions.add(transactionString);
+      map.put(name, currentTransactions);
     }
-    return new ArrayList<>(invalidTransactions);
-  }
-}
-
-
-class Transaction {
-  String name;
-  int time;
-  int amount;
-  String city;
-  int idx;
-  
-  public Transaction(String name, int time, int amount, String city, int idx) {
-    this.name = name;
-    this.time = time;
-    this.amount = amount;
-    this.city = city;
-    this.idx = idx;
+    List<String> result = new ArrayList<>();
+    for (String trs : invalidTransactionSet) {
+      int count = transactionOccurenceCount.get(trs);
+      while (count-- > 0) {
+        result.add(trs);
+      }
+    }
+    return result;
   }
 }
