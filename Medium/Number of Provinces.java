@@ -1,60 +1,34 @@
 class Solution {
   public int findCircleNum(int[][] isConnected) {
     int n = isConnected.length;
-    DisjointSet disjointSet = new DisjointSet(n);
+    Map<Integer, Set<Integer>> map = new HashMap<>();
     for (int i = 0; i < n; i++) {
       for (int j = 0; j < n; j++) {
-        if (isConnected[i][j] == 1) {
-          disjointSet.union(i, j);
+        if (i != j && isConnected[i][j] == 1) {
+          map.computeIfAbsent(i, k -> new HashSet<>()).add(j);
+          map.computeIfAbsent(j, k -> new HashSet<>()).add(i);
         }
       }
     }
-    Set<Integer> set = new HashSet<>();
+    Set<Integer> visited = new HashSet<>();
+    int provinceCount = 0;
     for (int i = 0; i < n; i++) {
-      set.add(disjointSet.find(i));
-    }
-    return set.size();
-  }
-
-  private static class DisjointSet {
-
-    private final int[] root;
-    private final int[] rank;
-
-    public DisjointSet(int size) {
-      this.root = new int[size];
-      this.rank = new int[size];
-      for (int i = 0; i < size; i++) {
-        this.root[i] = i;
-        this.rank[i] = 1;
-      }
-    }
-
-    public void union(int nodeOne, int nodeTwo) {
-      int rootOne = find(nodeOne);
-      int rootTwo = find(nodeTwo);
-      if (rootOne != rootTwo) {
-        if (this.rank[rootOne] > this.rank[rootTwo]) {
-          this.root[rootTwo] = rootOne;
-        } else if (this.rank[rootOne] < this.rank[rootTwo]) {
-          this.root[rootOne] = rootTwo;
-        } else {
-          this.root[rootTwo] = rootOne;
-          this.rank[rootOne]++;
+      if (!visited.contains(i)) {
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(i);
+        visited.add(i);
+        while (!queue.isEmpty()) {
+          int removed = queue.remove();
+          for (Integer connection : map.getOrDefault(removed, new HashSet<>())) {
+            if (!visited.contains(connection)) {
+              queue.add(connection);
+              visited.add(connection);
+            }
+          }
         }
+        provinceCount++;
       }
     }
-
-
-    public int find(int node) {
-      if (node == root[node]) {
-        return node;
-      }
-      return root[node] = find(root[node]);
-    }
-
-    public boolean connected(int nodeOne, int nodeTwo) {
-      return find(nodeOne) == find(nodeTwo);
-    }
+    return provinceCount;
   }
 }
