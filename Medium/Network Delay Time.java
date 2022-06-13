@@ -1,32 +1,35 @@
 class Solution {
   public int networkDelayTime(int[][] times, int n, int k) {
-    // Mapping from node to all outgoing edges alongside weight of each edge
-    Map<Integer, List<int[]>> map = new HashMap<>();
+    Map<Integer, List<TimeNode>> map = new HashMap<>();
     for (int[] time : times) {
-      map.computeIfAbsent(time[0], j -> new ArrayList<>()).add(new int[] {time[1], time[2]});
+      map.computeIfAbsent(time[0], j -> new ArrayList<>()).add(new TimeNode(time[1], time[2]));
     }
-    // Min heap in order of edge weight
-    PriorityQueue<int[]> priorityQueue = new PriorityQueue<>(Comparator.comparingInt(o -> o[0]));
-    priorityQueue.add(new int[] {0, k});
+    PriorityQueue<TimeNode> pq = new PriorityQueue<>(Comparator.comparingInt(o -> o.time));
+    pq.add(new TimeNode(k, 0));
+    int maxTime = 0;
     Set<Integer> visited = new HashSet<>();
-    int totalTime = 0;
-    while (!priorityQueue.isEmpty()) {
-      int[] removed = priorityQueue.poll();
-      int currNode = removed[1];
-      int edgeWeight = removed[0];
-      if (visited.contains(currNode)) {
-        continue;
-      }
-      visited.add(currNode);
-      totalTime = Math.max(totalTime, edgeWeight);
-      for (int[] neighbor : map.getOrDefault(removed[1], new ArrayList<>())) {
-        int neighborNode = neighbor[0];
-        int neighborEdgeWeight = neighbor[1];
-        if (!visited.contains(neighborNode)) {
-          priorityQueue.add(new int[] {neighborEdgeWeight + edgeWeight, neighborNode});
+    visited.add(k);
+    while (!pq.isEmpty() && visited.size() < n) {
+      TimeNode removed = pq.remove();
+      visited.add(removed.node);
+      maxTime = Math.max(maxTime, removed.time);
+      for (TimeNode conn : map.getOrDefault(removed.node, new ArrayList<>())) {
+        if (visited.contains(conn.node)) {
+          continue;
         }
+        pq.add(new TimeNode(conn.node, removed.time + conn.time));
       }
     }
-    return visited.size() == n ? totalTime : -1;
+    return visited.size() == n ? maxTime : -1;
+  }
+  
+  class TimeNode {
+    int node;
+    int time;
+    
+    public TimeNode(int node, int time) {
+      this.node = node;
+      this.time = time;
+    }
   }
 }
