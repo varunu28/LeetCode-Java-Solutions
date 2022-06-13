@@ -1,22 +1,27 @@
 class Solution {
   public boolean isLongPressedName(String name, String typed) {
-    int nameIdx = 0;
-    int typeIdx = 0;
-    int nameLen = name.length();
-    int typeLen = typed.length();
-    while (nameIdx < nameLen && typeIdx < typeLen) {
-      if (name.charAt(nameIdx) != typed.charAt(typeIdx)) {
+    int idxName = 0;
+    int idxTyped = 0;
+    while (idxName < name.length() && idxTyped < typed.length()) {
+      if (name.charAt(idxName) != typed.charAt(idxTyped)) {
         return false;
       }
-      while (nameIdx < nameLen && typeIdx < typeLen && name.charAt(nameIdx) == typed.charAt(typeIdx)) {
-        nameIdx++;
-        typeIdx++;
+      char c = name.charAt(idxName);
+      int nameFreq = 0;
+      while (idxName < name.length() && name.charAt(idxName) == c) {
+        idxName++;
+        nameFreq++;
       }
-      char prev = name.charAt(nameIdx - 1);
-      while (typeIdx < typeLen && typed.charAt(typeIdx) == prev) {
-        typeIdx++;
+      c = typed.charAt(idxTyped);
+      int typedFreq = 0;
+      while (idxTyped < typed.length() && typed.charAt(idxTyped) == c) {
+        idxTyped++;
+        typedFreq++;
+      }
+      if (nameFreq > typedFreq) {
+        return false;
       }
     }
-    return nameIdx == nameLen && typeIdx == typeLen;
+    return idxName == name.length() && idxTyped == typed.length();
   }
 }
