@@ -1,41 +1,34 @@
 class Solution {
-    public List<Integer> pancakeSort(int[] A) {
-        List<Integer> ans = new ArrayList<>();
-        int[] copy = Arrays.copyOf(A, A.length);
-        int n = A.length - 1;
-        Arrays.sort(A);
-        int greatest = A.length - 1;
-        for (int i = 0; i < A.length; i++) {
-            int idx = findIdx(copy, A[greatest]);
-            flip(copy, idx);
-            ans.add(idx + 1);
-            flip(copy, greatest);
-            ans.add(greatest + 1);
-            greatest--;
+  public List<Integer> pancakeSort(int[] arr) {
+    List<Integer> result = new ArrayList<>();
+    for (int i = arr.length; i > 0; i--) {
+      int idx = findIdx(arr, i);
+      if (idx != i - 1) {
+        if (idx != 0) {
+          result.add(idx + 1);
+          flip(arr, idx + 1);
         }
-
-        return ans;
+        result.add(i);
+        flip(arr, i);
+      }
     }
-
-    private void flip (int[] copy, int idx) {
-        int start = 0;
-        int end = idx;
-        while (start < end) {
-            int temp = copy[start];
-            copy[start] = copy[end];
-            copy[end] = temp;
-            start++;
-            end--;
-        }
+    return result;
+  }
+  
+  private void flip(int[] arr, int k) {
+    for (int i = 0; i < k / 2; i++) {
+      int temp = arr[i];
+      arr[i] = arr[k - i - 1];
+      arr[k - i - 1] = temp;
     }
-
-    private int findIdx (int[] arr, int target) {
-        for (int i = 0; i < arr.length; i++) {
-            if (arr[i] == target) {
-                return i;
-            }
-        }
-
-        return -1;
+  }
+  
+  private int findIdx(int[] arr, int target) {
+    for (int i = 0; i < arr.length; i++) {
+      if (arr[i] == target) {
+        return i;
+      }
     }
+    return -1;
+  }
 }
