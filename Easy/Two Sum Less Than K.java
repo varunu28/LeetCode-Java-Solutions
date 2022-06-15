@@ -1,17 +1,22 @@
 class Solution {
-  public int twoSumLessThanK(int[] A, int K) {
-    int maxSum = -1;
-    TreeSet<Integer> set = new TreeSet<>();
-    for (int i = 0; i < A.length; i++) {
-      int diff = K - A[i];
-      if (diff > 0) {
-        Integer half = set.lower(diff);
-        if (half != null) {
-          maxSum = Math.max(maxSum, A[i] + half);
-        }
-      }
-      set.add(A[i]);
+  public int twoSumLessThanK(int[] nums, int k) {
+    int[] counter = new int[1001];
+    for (int num : nums) {
+      counter[num]++;
     }
-    return maxSum;
+    int result = -1;
+    int left = 1;
+    int right = 1000;
+    while (left <= right) {
+      if (left + right >= k || counter[right] == 0) {
+        right--;
+      } else {
+        if (counter[left] > (left == right ? 1 : 0)) {
+          result = Math.max(result, left + right);
+        }
+        left++;
+      }
+    }
+    return result;
   }
 }
