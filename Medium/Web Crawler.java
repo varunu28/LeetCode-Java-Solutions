@@ -5,27 +5,29 @@
  *     public List<String> getUrls(String url) {}
  * }
  */
+
 class Solution {
-    public List<String> crawl(String startUrl, HtmlParser htmlParser) {
-        Set<String> visited = new HashSet<>();
-        Stack<String> stack = new Stack<>();
-        stack.push(startUrl);
-        String hostname = getHostname(startUrl);
-        while(!stack.isEmpty()) {
-            String popped = stack.pop();
-            visited.add(popped);
-            List<String> connectedUrls = htmlParser.getUrls(popped);
-            for (String url : connectedUrls) {
-                if (!visited.contains(url) && url.contains(hostname)) {
-                    stack.push(url);
-                }
-            }
+  public List<String> crawl(String startUrl, HtmlParser htmlParser) {
+    int startIdx = startUrl.indexOf("//") + 2;
+    int endIdx = startUrl.indexOf("/", startIdx) == -1 ? startUrl.length() : startUrl.indexOf("/", startIdx);
+    String domain = startUrl.substring(0, endIdx);
+    Set<String> visitedUrls = new HashSet<>();
+    Queue<String> queue = new LinkedList<>();
+    queue.add(startUrl);
+    while (!queue.isEmpty()) {
+      int size = queue.size();
+      while (size-- > 0) {
+        String removed = queue.remove();
+        visitedUrls.add(removed);
+        List<String> urls = htmlParser.getUrls(removed);
+        for (String url : urls) {
+          if (url.startsWith(domain) && !visitedUrls.contains(url)) {
+            visitedUrls.add(url);
+            queue.add(url);
+          }
         }
-        return new ArrayList<>(visited);
+      }
     }
-    
-    private String getHostname(String url) {
-        String[] splits = url.split("/");
-        return splits[2];
-    }
+    return new ArrayList<>(visitedUrls);
+  }
 }
