@@ -1,34 +1,34 @@
 class Solution {
-  public static final int[][] DIRS = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+  
+  private final int[][] DIRS = {{1, 0}, {0, 1}, {0, -1}, {-1, 0}};
   
   public boolean exist(char[][] board, String word) {
-    char[] letters = word.toCharArray();
+    int m = board.length;
+    int n = board[0].length;
     for (int i = 0; i < board.length; i++) {
       for (int j = 0; j < board[0].length; j++) {
-        if (dfs(board, 0, letters, i, j)) {
+        if (found(board, i, j, word, 0, m, n)) {
           return true;
         }
       }
     }
     return false;
   }
-
-  private boolean dfs(char[][] board, int idx, char[] letters, int i, int j) {
-    if (idx == letters.length) {
+  
+  private boolean found(char[][] board, int x, int y, String word, int idx, int m, int n) {
+    if (idx == word.length()) {
       return true;
     }
-    if (i < 0 || i >= board.length || j < 0 || j >= board[0].length) {
+    if (x < 0 || x == m || y < 0 || y == n || board[x][y] != word.charAt(idx)) {
       return false;
     }
-    if (board[i][j] != letters[idx]) {
-      return false;
-    }
-    board[i][j] ^= 256;
-    boolean exists = false;
+    board[x][y] = '#';
     for (int[] dir : DIRS) {
-      exists = exists || dfs(board, idx + 1, letters, i + dir[0], j + dir[1]);
+      if (found(board, x + dir[0], y + dir[1], word, idx + 1, m, n)) {
+        return true;
+      }
     }
-    board[i][j] ^= 256;
-    return exists;
+    board[x][y] = word.charAt(idx);
+    return false;
   }
 }
