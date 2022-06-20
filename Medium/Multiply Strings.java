@@ -1,33 +1,30 @@
 class Solution {
-    public String multiply(String num1, String num2) {
-    int[] result = new int[num1.length() + num2.length() + 1];
-    int idx = result.length - 1;
-    for (int i = num1.length() - 1; i >= 0; i--) {
-      int currIdx = idx;
+  public String multiply(String num1, String num2) {
+    int m = num1.length();
+    int n = num2.length();
+    int[] result = new int[m + n];
+    int endIdx = m + n - 1;
+    for (int i = m - 1; i >= 0; i--) {
+      int resultIdx = endIdx;
       int carry = 0;
-      for (int j = num2.length() - 1; j >= 0; j--) {
-        int currValue =
-            carry + Character.getNumericValue(num1.charAt(i)) * Character.getNumericValue(
-                num2.charAt(j)) + result[currIdx];
+      for (int j = n - 1; j >= 0; j--) {
+        int currValue = result[resultIdx] + carry + Character.getNumericValue(num1.charAt(i)) * Character.getNumericValue(num2.charAt(j));
         carry = currValue / 10;
-        currValue = currValue % 10;
-        result[currIdx--] = currValue;
+        result[resultIdx--] = currValue % 10;
       }
       while (carry > 0) {
-        int currValue = carry + result[currIdx];
-        carry = currValue / 10;
-        currValue = currValue % 10;
-        result[currIdx--] = currValue;
+        result[resultIdx--] = carry % 10;
+        carry /= 10;
       }
-      idx--;
+      endIdx--;
+    }
+    int idx = 0;
+    while (idx < result.length && result[idx] == 0) {
+      idx++;
     }
     StringBuilder sb = new StringBuilder();
-    int resultIdx = 0;
-    while (resultIdx < result.length && result[resultIdx] == 0) {
-      resultIdx++;
-    }
-    while (resultIdx < result.length) {
-      sb.append(result[resultIdx++]);
+    for (int i = idx; i < result.length; i++) {
+      sb.append(result[i]);
     }
     return sb.length() == 0 ? "0" : sb.toString();
   }
