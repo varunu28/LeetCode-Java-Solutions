@@ -1,35 +1,25 @@
 class Solution {
+  
+  private final List<String> LETTER_MAPPING = Arrays.asList("abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz");
+  
   public List<String> letterCombinations(String digits) {
-    if (digits.length() == 0) {
-      return new ArrayList<>();
-    }
-    String[] strs = {"abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
-    Map<Integer, String> map = new HashMap<>();
-    for (int i = 2; i <= 9; i++) {
-      map.put(i, strs[i - 2]);
-    }
-    List<String> list = new ArrayList<>();
-    helper(digits, 0, digits.length(), new StringBuilder(), map, list);
-    return list;
+    List<String> result = new ArrayList<>();
+    helper(digits, 0, new StringBuilder(), result);
+    return result;
   }
   
-  private void helper(
-    String digits, int idx, int n, StringBuilder sb, Map<Integer, String> map, List<String> list
-  ) {
-    if (idx == n) {
-      if (sb.length() == n) {
-        list.add(sb.toString());
+  private void helper(String digits, int idx, StringBuilder sb, List<String> result) {
+    if (idx == digits.length()) {
+      if (sb.length() > 0) {
+        result.add(new String(sb.toString()));
       }
-    }
-    else {
-      for (int i = idx; i < n; i++) {
-        int digit = Character.getNumericValue(digits.charAt(i));
-        for (char c : map.get(digit).toCharArray()) {
-          sb.append(c);
-          helper(digits, i + 1, n, sb, map, list);
-          sb.deleteCharAt(sb.length() - 1);
-        }
-      }
+      return;
+    } 
+    int mappingIdx = Character.getNumericValue(digits.charAt(idx)) - 2;
+    for (char c : LETTER_MAPPING.get(mappingIdx).toCharArray()) {
+      sb.append(c);
+      helper(digits, idx + 1, sb, result);
+      sb.deleteCharAt(sb.length() - 1);
     }
   }
 }
