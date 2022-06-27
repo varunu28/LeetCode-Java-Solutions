@@ -1,9 +1,9 @@
 class Solution {
   public int minPartitions(String n) {
-    return n.chars()
-            .mapToObj(c -> (char) c)
-            .mapToInt(Character::getNumericValue)
-            .reduce(Integer::max)
-            .orElse(0);
+    int maxDigit = Character.getNumericValue(n.charAt(0));
+    for (char c : n.toCharArray()) {
+      maxDigit = Math.max(maxDigit, Character.getNumericValue(c));
+    }
+    return maxDigit;
   }
 }
