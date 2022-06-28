@@ -1,62 +1,60 @@
 class Solution {
+  
+  private final int[][] DIRS = {{1, 0}, {0, 1}, {0, -1}, {-1, 0}};
+  
   public List<String> findWords(char[][] board, String[] words) {
+    TrieNode root = new TrieNode();
+    for (String word : words) {
+      TrieNode node = root;
+      for (Character letter : word.toCharArray()) {
+        if (node.children.containsKey(letter)) {
+          node = node.children.get(letter);
+        } else {
+          TrieNode newNode = new TrieNode();
+          node.children.put(letter, newNode);
+          node = newNode;
+        }
+      }
+      node.word = word;
+    }
     List<String> result = new ArrayList<>();
-    TrieNode root = buildTrie(words);
-    for (int i = 0; i < board.length; i++) {
-      for (int j = 0; j < board[0].length; j++) {
-        dfs(board, i, j, result, root);
+    for (int row = 0; row < board.length; ++row) {
+      for (int col = 0; col < board[row].length; ++col) {
+        if (root.children.containsKey(board[row][col])) {
+          backtracking(row, col, root, result, board);
+        }
       }
     }
     return result;
   }
   
-  private TrieNode buildTrie(String[] words) {
-    TrieNode root = new TrieNode();
-    for (String word : words) {
-      TrieNode temp = root;
-      for (char c : word.toCharArray()) {
-        if (temp.children[c - 'a'] == null) {
-          temp.children[c - 'a'] = new TrieNode();
-        }
-        temp = temp.children[c - 'a'];
-     }
-       temp.word = word;
+  private void backtracking(int row, int col, TrieNode parent, List<String> result, char[][] board) {
+    char letter = board[row][col];
+    TrieNode currNode = parent.children.get(letter);
+    if (currNode.word != null) {
+      result.add(currNode.word);
+      currNode.word = null;
     }
-    return root;
-  }
-
-  private void dfs(char[][] board, int i, int j, List<String> result, TrieNode root) {
-    char c = board[i][j];
-    if (c == '#' || root.children[c - 'a'] == null) {
-      return;
+    board[row][col] = '#';
+    for (int[] dir : DIRS) {
+      int newRow = row + dir[0];
+      int newCol = col + dir[1];
+      if (newRow < 0 || newRow >= board.length || newCol < 0 || newCol >= board[0].length) {
+        continue;
+      }
+      if (currNode.children.containsKey(board[newRow][newCol])) {
+        backtracking(newRow, newCol, currNode, result, board);
+      }
     }
-    root = root.children[c - 'a'];
-    if (root.word != null) {
-      result.add(root.word);
-      root.word = null;
-    }
-    board[i][j] = '#';
-    triggerDfsIfValid(board, i, j, result, root);
-    board[i][j] = c;
-  }
-  
-  private void triggerDfsIfValid(char[][] board, int i, int j, List<String> result, TrieNode root) {
-    if (i > 0) {
-      dfs(board, i - 1, j, result, root);
-    }
-    if (j > 0) {
-      dfs(board, i, j - 1, result, root);
-    }
-    if (i < board.length - 1) {
-      dfs(board, i + 1, j, result, root);
-    }
-    if (j < board[0].length - 1) {
-      dfs(board, i, j + 1, result, root);
+    board[row][col] = letter;
+    if (currNode.children.isEmpty()) {
+      parent.children.remove(letter);
     }
   }
   
-  class TrieNode {
-    TrieNode[] children = new TrieNode[26];
-    String word;
+  private class TrieNode {
+    Map<Character, TrieNode> children = new HashMap<Character, TrieNode>();
+    String word = null;
+    public TrieNode() {}
   }
 }
