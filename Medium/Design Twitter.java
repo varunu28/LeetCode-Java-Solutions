@@ -1,105 +1,69 @@
+import java.util.Map.Entry;
+
+
 class Twitter {
 
-  /** Initialize your data structure here. */
-  Map<Integer, User> userMap;
-
-  int tweetTimeStamp;
+  private final Map<Integer, Set<Integer>> userFollowing;
+  private final Map<Integer, TweetNode> userToTweet;
+  private int timestamp;
 
   public Twitter() {
-    userMap = new HashMap<>();
-    tweetTimeStamp = 0;
+    this.userFollowing = new HashMap<>();
+    this.timestamp = 0;
+    this.userToTweet = new HashMap<>();
   }
 
-  /** Compose a new tweet. */
   public void postTweet(int userId, int tweetId) {
-    createUserIfNotExist(userId);
-    userMap.get(userId).addTweet(tweetId, tweetTimeStamp++);
+    TweetNode tweetNode = new TweetNode(tweetId, this.timestamp++);
+    if (this.userToTweet.containsKey(userId)) {
+      tweetNode.next = this.userToTweet.get(userId);
+    }
+    this.userToTweet.put(userId, tweetNode);
   }
 
-  /**
-   * Retrieve the 10 most recent tweet ids in the user's news feed. Each item in the news feed must
-   * be posted by users who the user followed or by the user herself. Tweets must be ordered from
-   * most recent to least recent.
-   */
   public List<Integer> getNewsFeed(int userId) {
-    createUserIfNotExist(userId);
-    List<User> usersFollowed =
-        userMap.get(userId).following.stream()
-            .map(e -> userMap.get(e))
-            .collect(Collectors.toList());
-    return userMap.get(userId).getFeed(usersFollowed);
-  }
-
-  /** Follower follows a followee. If the operation is invalid, it should be a no-op. */
-  public void follow(int followerId, int followeeId) {
-    if (followerId != followeeId) {
-      createUserIfNotExist(followerId);
-      createUserIfNotExist(followeeId);
-      userMap.get(followerId).following.add(followeeId);
-    }
-  }
-
-  /** Follower unfollows a followee. If the operation is invalid, it should be a no-op. */
-  public void unfollow(int followerId, int followeeId) {
-    if (followerId != followeeId) {
-      createUserIfNotExist(followerId);
-      createUserIfNotExist(followeeId);
-      userMap.get(followerId).following.remove(followeeId);
-    }
-  }
-
-  private void createUserIfNotExist(int userId) {
-    userMap.computeIfAbsent(userId, k -> new User(userId));
-  }
-}
-
-class User {
-  int id;
-  Set<Integer> following;
-  PriorityQueue<Tweet> tweets;
-
-  public User(int id) {
-    this.id = id;
-    following = new HashSet<>();
-    tweets = new PriorityQueue<>((t1, t2) -> t2.timestamp - t1.timestamp);
-  }
-
-  public void addTweet(int tweetId, int timestamp) {
-    tweets.add(new Tweet(tweetId, timestamp));
-  }
-
-  public List<Integer> getFeed(List<User> usersFollowed) {
-    PriorityQueue<PriorityQueue<Tweet>> allTweets =
-        new PriorityQueue<>(
-            (t1, t2) -> {
-              if (t2.peek() != null) {
-                return t2.peek().timestamp - (t1.peek() != null ? t1.peek().timestamp : 0);
-              }
-              return 0;
-            });
-    usersFollowed.add(this);
-    usersFollowed.stream()
-        .filter(user -> !user.tweets.isEmpty())
-        .forEach(user -> allTweets.add(new PriorityQueue<>(user.tweets)));
-    List<Integer> feed = new ArrayList<>();
-    while (feed.size() < 10 && !allTweets.isEmpty()) {
-      PriorityQueue<Tweet> removed = allTweets.remove();
-      feed.add(removed.poll().id);
-      if (!removed.isEmpty()) {
-        allTweets.add(removed);
+    PriorityQueue<TweetNode> priorityQueue =
+        new PriorityQueue<>((o1, o2) -> o2.timestamp - o1.timestamp);
+    priorityQueue.addAll(
+        this.userToTweet.entrySet().stream()
+            .filter(
+                entry ->
+                    entry.getKey() == userId
+                        || this.userFollowing
+                            .getOrDefault(userId, new HashSet<>())
+                            .contains(entry.getKey()))
+            .map(Entry::getValue)
+            .collect(Collectors.toList()));
+    List<Integer> result = new ArrayList<>();
+    while (!priorityQueue.isEmpty() && result.size() < 10) {
+      TweetNode removed = priorityQueue.remove();
+      result.add(removed.tweetId);
+      if (removed.next != null) {
+        priorityQueue.add(removed.next);
       }
     }
-    return feed;
+    return result;
   }
-}
 
-class Tweet {
-  int id;
-  int timestamp;
+  public void follow(int followerId, int followeeId) {
+    this.userFollowing.computeIfAbsent(followerId, k -> new HashSet<>()).add(followeeId);
+  }
 
-  public Tweet(int id, int timestamp) {
-    this.id = id;
-    this.timestamp = timestamp;
+  public void unfollow(int followerId, int followeeId) {
+    if (this.userFollowing.getOrDefault(followerId, new HashSet<>()).contains(followeeId)) {
+      this.userFollowing.get(followerId).remove(followeeId);
+    }
+  }
+
+  private static class TweetNode {
+    int tweetId;
+    int timestamp;
+    TweetNode next;
+
+    public TweetNode(int tweetId, int timestamp) {
+      this.tweetId = tweetId;
+      this.timestamp = timestamp;
+    }
   }
 }
 
