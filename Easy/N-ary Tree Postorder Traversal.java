@@ -6,38 +6,31 @@ class Node {
 
     public Node() {}
 
-    public Node(int _val,List<Node> _children) {
+    public Node(int _val) {
+        val = _val;
+    }
+
+    public Node(int _val, List<Node> _children) {
         val = _val;
         children = _children;
     }
 };
 */
+
 class Solution {
-    public List<Integer> postorder(Node root) {
-        List<Integer> values = new ArrayList<>();
-        if (root == null) {
-            return values;
-        }
-        
-        
-        Stack<Node> stack1 = new Stack<>();
-        Stack<Node> stack2 = new Stack<>();
-
-        stack1.push(root);
-
-        while (!stack1.empty()) {
-            Node temp = stack1.pop();
-            stack2.push(temp);
-            List<Node> childrens = temp.children;
-            for(Node children : childrens) {
-                stack1.push(children);
-            }
-        }
-
-        while (!stack2.empty()) {
-            values.add(stack2.pop().val);
-        }
-        
-        return values;
+  public List<Integer> postorder(Node root) {
+    List<Integer> result = new ArrayList<>();
+    helper(root, result);
+    return result;
+  } 
+  
+  private void helper(Node root, List<Integer> result) {
+    if (root == null) {
+      return;
     }
+    for (Node child : root.children) {
+      helper(child, result);
+    }
+    result.add(root.val);
+  }
 }
