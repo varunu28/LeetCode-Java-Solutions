@@ -1,33 +1,25 @@
 class Solution {
   public int compareVersion(String version1, String version2) {
-    String[] versionOneSplit = version1.split("\\.");
-    String[] versionTwoSplit = version2.split("\\.");
-    int idxOne = 0;
-    int idxTwo = 0;
-    while (idxOne < versionOneSplit.length && idxTwo < versionTwoSplit.length) {
-      int diff = Integer.parseInt(versionOneSplit[idxOne]) - Integer.parseInt(versionTwoSplit[idxTwo]);
-      if (diff < 0) {
-        return -1;
-      } else if (diff > 0) {
+    String[] splitOne = version1.split("\\.");
+    String[] splitTwo = version2.split("\\.");
+    int i = 0;
+    for (i = 0; i < Math.min(splitOne.length, splitTwo.length); i++) {
+      int diff = Integer.parseInt(splitOne[i]) - Integer.parseInt(splitTwo[i]);
+      if (diff == 0) {
+        continue;
+      }
+      return diff < 0 ? -1 : 1;
+    }
+    while (i < splitOne.length) {
+      if (Integer.parseInt(splitOne[i++]) > 0) {
         return 1;
       }
-      idxOne++;
-      idxTwo++;
     }
-    if (containsNonZeroRevision(versionOneSplit, idxOne)) {
-      return 1;
-    } else if (containsNonZeroRevision(versionTwoSplit, idxTwo)) {
-      return -1;
-    }
-    return 0;
-  }
-  
-  private boolean containsNonZeroRevision(String[] versions, int idx) {
-    for (int i = idx; i < versions.length; i++) {
-      if (Integer.parseInt(versions[i]) > 0) {
-        return true;
+    while (i < splitTwo.length) {
+      if (Integer.parseInt(splitTwo[i++]) > 0) {
+        return -1;
       }
     }
-    return false;
-  }
+    return 0;
+  } 
 }
