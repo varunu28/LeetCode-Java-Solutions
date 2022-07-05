@@ -1,27 +1,21 @@
 class Solution {
   public boolean isHappy(int n) {
-    Set<Integer> set = new HashSet<>();
-    set.add(n);
-    while (true) {
-      int sumOfDigitSquare = getSumOfDigitSquare(n);
-      if (sumOfDigitSquare == 1) {
-        return true;
-      }
-      if (set.contains(sumOfDigitSquare)) {
-        break;
-      }
-      set.add(sumOfDigitSquare);
-      n = sumOfDigitSquare;
+    int slow = n;
+    int fast = getSquareDigitSum(n);
+    while (fast != 1 && slow != fast) {
+      slow = getSquareDigitSum(slow);
+      fast = getSquareDigitSum(getSquareDigitSum(fast));
     }
-    return false;
+    return fast == 1;
   }
   
-  private int getSumOfDigitSquare(int n) {
-    int sum = 0;
+  private int getSquareDigitSum(int n) {
+    int squareDigitSum = 0;
     while (n > 0) {
-      sum += (int) Math.pow(n % 10, 2);
+      int digit = n % 10;
+      squareDigitSum += digit * digit;
       n /= 10;
     }
-    return sum;
+    return squareDigitSum;
   }
 }
