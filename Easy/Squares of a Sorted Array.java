@@ -1,30 +1,24 @@
 class Solution {
   public int[] sortedSquares(int[] nums) {
-    int firstNegativeIdx = nums[0] < 0 ? 0 : nums.length;
-    int lastPositiveIdx = nums[nums.length - 1] >= 0 ? nums.length - 1 : -1;
+    int negativeIdx = 0;
+    int positiveIdx = nums.length - 1;
     int[] result = new int[nums.length];
-    int idx = result.length - 1;
-    while (idx >= 0) {
-      if (firstNegativeIdx < nums.length && lastPositiveIdx >= 0) {
-        if (Math.abs(nums[firstNegativeIdx]) > nums[lastPositiveIdx]) {
-          result[idx--] = nums[firstNegativeIdx] * nums[firstNegativeIdx];
-          firstNegativeIdx++;
-          if (firstNegativeIdx < nums.length && nums[firstNegativeIdx] >= 0) {
-            firstNegativeIdx = nums.length;
-          }
+    int resultIdx = nums.length - 1;
+    while(resultIdx >= 0) {
+      if (nums[negativeIdx] < 0 && nums[positiveIdx] >= 0) {
+        if (Math.abs(nums[negativeIdx]) > nums[positiveIdx]) {
+          result[resultIdx--] = nums[negativeIdx] * nums[negativeIdx];
+          negativeIdx++;
         } else {
-          result[idx--] = nums[lastPositiveIdx] * nums[lastPositiveIdx];
-          lastPositiveIdx--;
-          if (lastPositiveIdx >= 0 && nums[lastPositiveIdx] < 0) {
-            lastPositiveIdx = -1;
-          }
+          result[resultIdx--] = nums[positiveIdx] * nums[positiveIdx];
+          positiveIdx--;
         }
-      } else if (firstNegativeIdx < nums.length && lastPositiveIdx < 0) {
-          result[idx--] = nums[firstNegativeIdx] * nums[firstNegativeIdx];
-          firstNegativeIdx++;
+      } else if (nums[negativeIdx] < 0 && nums[positiveIdx] < 0) {
+        result[resultIdx--] = nums[negativeIdx] * nums[negativeIdx];
+        negativeIdx++;
       } else {
-          result[idx--] = nums[lastPositiveIdx] * nums[lastPositiveIdx];
-          lastPositiveIdx--;
+        result[resultIdx--] = nums[positiveIdx] * nums[positiveIdx];
+        positiveIdx--;  
       }
     }
     return result;
