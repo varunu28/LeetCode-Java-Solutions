@@ -1,18 +1,28 @@
 class Solution {
   public int findTheDistanceValue(int[] arr1, int[] arr2, int d) {
-    TreeSet<Integer> set = new TreeSet<>();
-    for (int num : arr2) {
-      set.add(num);
-    }
-    int count = 0;
-    for (int num : arr1) {
-      Integer higher = set.ceiling(num);
-      Integer lower = set.floor(num);
-      if ((higher != null && Math.abs(higher - num) <= d) || (lower != null && Math.abs(lower - num) <= d)) {
-        continue;  
+    Arrays.sort(arr2);
+    int distance = 0;
+    for (int i = 0; i < arr1.length; i++) {
+      if (outsideRange(arr2, arr1[i] - d, arr1[i] + d)) {
+        distance++;
       }
-      count++;
     }
-    return count;
+    return distance;
+  }
+  
+  private static boolean outsideRange(int[] arr, int from, int to) {
+    int start = 0;
+    int end = arr.length - 1;
+    while (start <= end) {
+      int mid = start + (end - start) / 2;
+      if (arr[mid] >= from && arr[mid] <= to) {
+        return false;
+      } else if (arr[mid] < from) {
+        start = mid + 1;
+      } else {
+        end = mid - 1;
+      }
+    }
+    return true;
   }
 }
