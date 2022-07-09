@@ -1,22 +1,22 @@
 class Solution {
   public boolean isPerfectSquare(int num) {
-    return binarySearchHelper((long)1, (long)num, num) == -1 ? false : true;
-  }
-  
-  private int binarySearchHelper(long start, long end, int num) {
+    if (num == 1) {
+      return true;
+    }
+    long start = 2;
+    long end = num / 2;
     while (start <= end) {
-      long mid = (start + end) / 2;
-      long square = (long) Math.pow(mid, 2);
-      if (square == num) {
-        return (int) mid;
+      long mid = start + (end - start) / 2;
+      long currSquare = mid * mid;
+      if (currSquare == num) {
+        return true;
       }
-      else if (square > num) {
+      if (currSquare > num) {
         end = mid - 1;
-      }
-      else {
+      } else {
         start = mid + 1;
       }
     }
-    return -1;
+    return false;
   }
 }
