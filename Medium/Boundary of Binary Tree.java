@@ -4,57 +4,75 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-  List<Integer> list;
-  List<Integer> rightVal;
   public List<Integer> boundaryOfBinaryTree(TreeNode root) {
-    list = new ArrayList<>();
-    rightVal = new ArrayList<>();
-    if (root == null) {
-      return list;
+    List<Integer> result = new ArrayList<>();
+    if (!isLeaf(root)) {
+      result.add(root.val);
     }
-    if (root.left == null && root.right == null) {
-      list.add(root.val);
-      return list;
+    if (root.left != null) {
+      addLeft(result, root.left);
     }
-    list.add(root.val);
-    addLeft(root.left);
-    addLeaves(root);
-    addRight(root.right);
-    for (int i = rightVal.size() - 1; i >= 0; i--) {
-      list.add(rightVal.get(i));
+    addLeaves(result, root);
+    if (root.right != null) {
+      addRight(result, root.right);
     }
-    return list;
+    return result;
   }
   
-  private void addLeft(TreeNode left) {
-    if (left == null || (left.left == null && left.right == null)) {
-      return;
+  private void addRight(List<Integer> result, TreeNode node) {
+    Stack<Integer> stack = new Stack<>();
+    while (node != null) {
+      if (!isLeaf(node)) {
+        stack.push(node.val);
+      }
+      if (node.right != null) {
+        node = node.right;
+      } else {
+        node = node.left;
+      }
     }
-    list.add(left.val);
-    addLeft(left.left == null ? left.right : left.left);
+    while (!stack.isEmpty()) {
+      result.add(stack.pop());
+    }
   }
   
-  private void addLeaves(TreeNode root) {
-    if (root == null) {
-      return;
+  private void addLeft(List<Integer> result, TreeNode node) {
+    while (node != null) {
+      if (!isLeaf(node)) {
+        result.add(node.val);
+      }
+      if (node.left != null) {
+        node = node.left;
+      } else {
+        node = node.right;
+      }
     }
-    if (root.left == null && root.right == null) {
-      list.add(root.val);
-      return;
-    }
-    addLeaves(root.left);
-    addLeaves(root.right);
   }
   
-  private void addRight(TreeNode right) {
-    if (right == null || (right.left == null && right.right == null)) {
-      return;
+  private void addLeaves(List<Integer> result, TreeNode root) {
+    if (isLeaf(root)) {
+      result.add(root.val);
+    } else {
+      if (root.left != null) {
+        addLeaves(result, root.left);
+      }
+      if (root.right != null) {
+        addLeaves(result, root.right);
+      }
     }
-    rightVal.add(right.val);
-    addRight(right.right == null ? right.left : right.right);
   }
+  
+  private boolean isLeaf(TreeNode node) {
+    return node.left == null && node.right == null;
+  } 
 }
