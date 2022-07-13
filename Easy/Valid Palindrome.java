@@ -3,22 +3,32 @@ class Solution {
     int startIdx = 0;
     int endIdx = s.length() - 1;
     while (startIdx < endIdx) {
-      if (!Character.isLetterOrDigit(s.charAt(startIdx))) {
+      if (!isAlphanumeric(s.charAt(startIdx))) {
         startIdx++;
-        continue;
-      }
-      if (!Character.isLetterOrDigit(s.charAt(endIdx))) {
+      } else if (!isAlphanumeric(s.charAt(endIdx))) {
         endIdx--;
-        continue;
+      } else {
+        if (!areSame(s.charAt(startIdx), s.charAt(endIdx))) {
+          return false;
+        }
+        startIdx++;
+        endIdx--;
       }
-      char startChar = Character.isDigit(s.charAt(startIdx)) ? s.charAt(startIdx) : Character.toLowerCase(s.charAt(startIdx));
-      char endChar = Character.isDigit(s.charAt(endIdx)) ? s.charAt(endIdx) : Character.toLowerCase(s.charAt(endIdx));
-      if (startChar != endChar) {
-        return false;
-      }
-      startIdx++;
-      endIdx--;
     }
     return true;
+  }
+  
+  private boolean areSame(char c1, char c2) {
+    if (Character.isAlphabetic(c1) && Character.isAlphabetic(c2)) {
+      return Character.toLowerCase(c1) == Character.toLowerCase(c2);
+    } else if (Character.isDigit(c1) && Character.isDigit(c2)) {
+      return c1 == c2;
+    } else {
+      return false;
+    }
+  }
+
+  private boolean isAlphanumeric(char c) {
+    return Character.isAlphabetic(c) || Character.isDigit(c);
   }
 }
