@@ -1,29 +1,40 @@
 class Solution {
   public int maxRepOpt1(String text) {
-    int[] count = new int[26];
+    int[] frequency = new int[26];
     for (char c : text.toCharArray()) {
-      count[c - 'a']++;
+      frequency[c - 'a']++;
     }
-    int maxCount = 0;
-    int i = 0;
-    while (i < text.length()) {
+    int maxRepeatingLength = 0;
+    for (int i = 0; i < text.length(); i++) {
       char c = text.charAt(i);
-      int curr = i;
-      int currCount = 0;
+      int j = i;
+      int count = 0;
       int diff = 0;
-      // To skip the same characters before we make a swap
-      int swapPoint = i;
-      while (curr < text.length() && (text.charAt(curr) == c || diff == 0) && currCount < count[c - 'a']) {
-        if (text.charAt(curr) != c) {
+      while (j < text.length() && (c == text.charAt(j) || diff == 0) && count < frequency[c - 'a']) {
+        if (c != text.charAt(j)) {
           diff++;
-          swapPoint = curr - 1;
+          i = j - 1;
         }
-        currCount++;
-        curr++;
+        count++;
+        j++;
       }
-      maxCount = Math.max(maxCount, currCount);
-      i = swapPoint + 1;
+      maxRepeatingLength = Math.max(maxRepeatingLength, count);
     }
-    return maxCount;
+    for (int i = text.length() - 1; i >= 0; i--) {
+      char c = text.charAt(i);
+      int count = 0;
+      int diff = 0;
+      int j = i;
+      while (j >= 0 && (c == text.charAt(j) || diff == 0) && count < frequency[c - 'a']) {
+        if (c != text.charAt(j)) {
+          diff++;
+          i = j + 1;
+        }
+        count++;
+        j--;
+      }
+      maxRepeatingLength = Math.max(maxRepeatingLength, count);
+    }
+    return maxRepeatingLength;
   }
 }
