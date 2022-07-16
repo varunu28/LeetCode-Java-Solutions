@@ -15,18 +15,25 @@
  */
 class Solution {
   public TreeNode bstFromPreorder(int[] preorder) {
-    int[] idx = {0};
-    return formBST(preorder, Integer.MIN_VALUE, Integer.MAX_VALUE, idx);
-  }
-  
-  private TreeNode formBST(int[] preorder, int min, int max, int[] idx) {
-    if (idx[0] == preorder.length || preorder[idx[0]] < min || preorder[idx[0]] > max) {
+    if (preorder.length == 0) {
       return null;
     }
-    int val = preorder[idx[0]++];
-    TreeNode node = new TreeNode(val);
-    node.left = formBST(preorder, min, val, idx);
-    node.right = formBST(preorder, val, max, idx);
-    return node;
+    TreeNode root = new TreeNode(preorder[0]);
+    Stack<TreeNode> stack = new Stack<>();
+    stack.push(root);
+    for (int i = 1; i < preorder.length; i++) {
+      TreeNode node = stack.peek();
+      TreeNode child = new TreeNode(preorder[i]);
+      while (!stack.isEmpty() && stack.peek().val < child.val) {
+        node = stack.pop();
+      }
+      if (node.val < child.val) {
+        node.right = child;
+      } else {
+        node.left = child;
+      }
+      stack.push(child);
+    }
+    return root;
   }
 }
