@@ -4,10 +4,11 @@ class Solution {
     int idx = 0;
     while (idx < s.length()) {
       if (s.charAt(idx) == 'X') {
-        idx += 2;
+        idx += 3;
         numOfMoves++;
+      } else {
+        idx++;
       }
-      idx++;
     }
     return numOfMoves;
   }
