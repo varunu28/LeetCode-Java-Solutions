@@ -1,39 +1,25 @@
 class Solution {
   public int[] searchRange(int[] nums, int target) {
-    return new int[]{binarySearchForMinIdx(nums, target), binarySearchForMaxIdx(nums, target)};
+    return new int[]{binarySearchHelper(nums, target, -1), binarySearchHelper(nums, target, 1)};
   }
   
-  private int binarySearchForMinIdx(int[] nums, int target) {
-    int leftIdx = 0;
-    int rightIdx = nums.length - 1;
+  private int binarySearchHelper(int[] nums, int target, int direction) {
     int idx = -1;
-    while (leftIdx <= rightIdx) {
-      int mid = (leftIdx + rightIdx) / 2;
+    int start = 0;
+    int end = nums.length - 1;
+    while (start <= end) {
+      int mid = (start + end) / 2;
       if (nums[mid] == target) {
-        idx = mid;
-        rightIdx = mid - 1;
+        idx = idx == -1 ? mid : (direction == -1 ? Math.min(mid, idx) : Math.max(mid, idx));
+        if (direction == -1) {
+          end = mid - 1;
+        } else {
+          start = mid + 1;
+        }
       } else if (nums[mid] > target) {
-        rightIdx = mid - 1;
+        end = mid - 1;
       } else {
-        leftIdx = mid + 1;
-      }
-    }
-    return idx;
-  }
-  
-  private int binarySearchForMaxIdx(int[] nums, int target) {
-    int leftIdx = 0;
-    int rightIdx = nums.length - 1;
-    int idx = -1;
-    while (leftIdx <= rightIdx) {
-      int mid = (leftIdx + rightIdx) / 2;
-      if (nums[mid] == target) {
-        idx = mid;
-        leftIdx = mid + 1;
-      } else if (nums[mid] > target) {
-        rightIdx = mid - 1;
-      } else {
-        leftIdx = mid + 1;
+        start = mid + 1;
       }
     }
     return idx;
