@@ -20,30 +20,27 @@ public class NestedIterator implements Iterator<Integer> {
   private Stack<NestedInteger> stack;
   
   public NestedIterator(List<NestedInteger> nestedList) {
-    stack = new Stack<>();
+    this.stack = new Stack<>();
     for (int i = nestedList.size() - 1; i >= 0; i--) {
-      stack.push(nestedList.get(i));
+      this.stack.push(nestedList.get(i));
     }
   }
 
   @Override
   public Integer next() {
-    return stack.pop().getInteger();
+    int value = this.stack.pop().getInteger();
+    return value;
   }
-  
+
   @Override
   public boolean hasNext() {
-    while (!stack.isEmpty() && !stack.peek().isInteger()) {
-      NestedInteger popped = stack.pop();
-      if (popped == null) {
-        continue;
-      }
-      List<NestedInteger> list = popped.getList();
-      for (int i = list.size() - 1; i >= 0; i--) {
-        stack.push(list.get(i));
+    while (!this.stack.isEmpty() && !this.stack.peek().isInteger()) {
+      List<NestedInteger> ni = this.stack.pop().getList();
+      for (int i = ni.size() - 1; i >= 0; i--) {
+        this.stack.push(ni.get(i));
       }
     }
-    return !stack.isEmpty();
+    return !this.stack.isEmpty();
   }
 }
 
