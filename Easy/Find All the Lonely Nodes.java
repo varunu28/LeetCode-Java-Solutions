@@ -15,19 +15,26 @@
  */
 class Solution {
   public List<Integer> getLonelyNodes(TreeNode root) {
-    List<Integer> list = new ArrayList<>();
-    helper(root, null, list);
-    return list;
-  }
-  
-  private void helper(TreeNode node, TreeNode parent, List<Integer> list) {
-    if (node == null) {
-      return;
+    List<Integer> lonelyNodes = new ArrayList<>();
+    Queue<TreeNode[]> queue = new LinkedList<>();
+    queue.add(new TreeNode[]{root, null});
+    while (!queue.isEmpty()) {
+      int size = queue.size();
+      while (size-- > 0) {
+        TreeNode[] removed = queue.remove();
+        TreeNode node = removed[0];
+        TreeNode parent = removed[1];
+        if (parent != null && ((parent.left == node && parent.right == null) || (parent.right == node && parent.left == null))) {
+          lonelyNodes.add(node.val);
+        }
+        if (node.left != null) {
+          queue.add(new TreeNode[]{node.left, node});
+        }
+        if (node.right != null) {
+          queue.add(new TreeNode[]{node.right, node});
+        }
+      }
     }
-    if (parent != null && ((parent.left != null && parent.right == null) || (parent.right != null && parent.left == null))) {
-      list.add(node.val);
-    }
-    helper(node.left, node, list);
-    helper(node.right, node, list);
+    return lonelyNodes;
   }
 }
