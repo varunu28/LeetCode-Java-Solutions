@@ -1,33 +1,24 @@
 class Solution {
   public int numMatchingSubseq(String s, String[] words) {
-    Map<Character, List<Pair>> map = new HashMap<>();
+    Map<Character, List<int[]>> map = new HashMap<>();
     for (int i = 0; i < words.length; i++) {
-      map.computeIfAbsent(words[i].charAt(0), k -> new ArrayList<>()).add(new Pair(0, i));
+      map.computeIfAbsent(words[i].charAt(0), k -> new ArrayList<>()).add(new int[]{0, i});
     }
-    int counter = 0;
+    int result = 0;
     for (char c : s.toCharArray()) {
-      List<Pair> existingPairs = map.getOrDefault(c, new ArrayList<>());
+      List<int[]> values = map.getOrDefault(c, new ArrayList<>());
       map.put(c, new ArrayList<>());
-      for (Pair pair : existingPairs) {
-        int currIdx = pair.currIdx;
-        if (currIdx + 1 == words[pair.wordIdx].length()) {
-          counter++;
+      for (int[] val : values) {
+        int stringIdx = val[0];
+        int wordIdx = val[1];
+        if (stringIdx + 1 == words[wordIdx].length()) {
+          result++;
         } else {
-          map.computeIfAbsent(words[pair.wordIdx].charAt(currIdx + 1), k -> new ArrayList<>())
-              .add(new Pair(currIdx + 1, pair.wordIdx));
+          char nextChar = words[wordIdx].charAt(stringIdx + 1);
+          map.computeIfAbsent(nextChar, k -> new ArrayList<>()).add(new int[]{stringIdx + 1, wordIdx});
         }
       }
     }
-    return counter;
-  }
-  
-  private static class Pair {
-    int currIdx;
-    int wordIdx;
-
-    public Pair(int currIdx, int wordIdx) {
-      this.currIdx = currIdx;
-      this.wordIdx = wordIdx;
-    }
+    return result;
   }
 }
