@@ -1,36 +1,38 @@
 class CustomStack {
-  Stack<Integer> stack;
-  int maxSize;
-  int[] increment;
+  
+  private Stack<Integer> stack;
+  private int[] incrementArray;
+  private int maxSize;
+  
   public CustomStack(int maxSize) {
+    this.stack = new Stack<>();
+    this.incrementArray = new int[maxSize];
     this.maxSize = maxSize;
-    stack = new Stack<>();
-    increment = new int[maxSize];
   }
 
   public void push(int x) {
-    if (stack.size() < maxSize) {
-      stack.push(x);
+    if (this.stack.size() < this.maxSize) {
+      this.stack.push(x);
     }
   }
 
   public int pop() {
-    int idx = stack.size() - 1;
+    int idx = this.stack.size() - 1;
     if (idx < 0) {
       return -1;
     }
     if (idx > 0) {
-      increment[idx - 1] += increment[idx];
+      this.incrementArray[idx - 1] += this.incrementArray[idx];
     }
-    int ans = stack.pop() + increment[idx];
-    increment[idx] = 0;
-    return ans;
+    int result = this.stack.pop() + this.incrementArray[idx];
+    this.incrementArray[idx] = 0;
+    return result;
   }
 
   public void increment(int k, int val) {
-    int idx = Math.min(k, stack.size()) - 1;
+    int idx = Math.min(k, this.stack.size()) - 1;
     if (idx >= 0) {
-      increment[idx] += val;
+      this.incrementArray[idx] += val;
     }
   }
 }
