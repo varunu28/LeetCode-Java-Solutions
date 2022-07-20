@@ -22,49 +22,45 @@
  *     public void add(NestedInteger ni);
  *
  *     // @return the nested list that this NestedInteger holds, if it holds a nested list
- *     // Return null if this NestedInteger holds a single integer
+ *     // Return empty list if this NestedInteger holds a single integer
  *     public List<NestedInteger> getList();
  * }
  */
 class Solution {
   public NestedInteger deserialize(String s) {
-    if (s == null || s.length() == 0) {
+    if (s.isEmpty()) {
       return null;
     }
     if (s.charAt(0) != '[') {
-      return new NestedInteger(Integer.valueOf(s));
+      return new NestedInteger(Integer.parseInt(s));
     }
     Stack<NestedInteger> stack = new Stack<>();
     NestedInteger curr = null;
-    int start = 0;
-    int n = s.length();
-    for (int end = 0; end < n; end++) {
-      char c = s.charAt(end);
-      if (c == '[') {
+    int leftIdx = 0;
+    for (int rightIdx = 0; rightIdx < s.length(); rightIdx++) {
+      if (s.charAt(rightIdx) == '[') {
         if (curr != null) {
           stack.push(curr);
         }
         curr = new NestedInteger();
-        start = end + 1;
-      }
-      else if (c == ']') {
-        String num = s.substring(start, end);
-        if (!num.isEmpty()) {
-          curr.add(new NestedInteger(Integer.valueOf(num)));
+        leftIdx = rightIdx + 1;
+      } else if (s.charAt(rightIdx) == ']') {
+        String number = s.substring(leftIdx, rightIdx);
+        if (!number.isEmpty()) {
+          curr.add(new NestedInteger(Integer.parseInt(number)));
         }
         if (!stack.isEmpty()) {
           NestedInteger popped = stack.pop();
           popped.add(curr);
           curr = popped;
         }
-        start = end + 1;
-      }
-      else if (c == ',') {
-        if (s.charAt(end - 1) != ']') {
-          String num = s.substring(start, end);
-          curr.add(new NestedInteger(Integer.valueOf(num)));
+        leftIdx = rightIdx + 1;
+      } else if (s.charAt(rightIdx) == ',') {
+        if (s.charAt(rightIdx - 1) != ']') {
+          String number = s.substring(leftIdx, rightIdx);
+          curr.add(new NestedInteger(Integer.parseInt(number)));
         }
-        start = end + 1;
+        leftIdx = rightIdx + 1;
       }
     }
     return curr;
