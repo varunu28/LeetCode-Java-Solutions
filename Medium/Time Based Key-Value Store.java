@@ -1,29 +1,43 @@
 class TimeMap {
 
-  /** Initialize your data structure here. */
-  Map<String, TreeMap<Integer, String>> map;
+  private Map<String, List<TimeStampValuePair>> map;
+  
   public TimeMap() {
-    map = new HashMap<>();
+    this.map = new HashMap<>();
   }
 
   public void set(String key, String value, int timestamp) {
-    if (!map.containsKey(key)) {
-      TreeMap<Integer, String> tMap = new TreeMap<>();
-      map.put(key, tMap);
-    }
-    map.get(key).put(timestamp, value);
+    this.map.computeIfAbsent(key, k -> new ArrayList<>()).add(new TimeStampValuePair(timestamp, value));
   }
 
   public String get(String key, int timestamp) {
-    if (!map.containsKey(key)) {
+    if (!this.map.containsKey(key)) {
       return "";
     }
-    TreeMap<Integer, String> tMap = map.get(key);
-    Integer lower = tMap.floorKey(timestamp);
-    if (lower == null) {
-      return "";
+    List<TimeStampValuePair> pairs = this.map.get(key);
+    int left = 0;
+    int right = pairs.size() - 1;
+    int maxIdx = -1;
+    while (left <= right) {
+      int mid = (left + right) / 2;
+      if (pairs.get(mid).timestamp <= timestamp) {
+        maxIdx = mid;
+        left = mid + 1;
+      } else {
+        right = mid - 1;
+      }
     }
-    return tMap.get(lower);
+    return maxIdx == -1 ? "" : pairs.get(maxIdx).value;
+  }
+  
+  private class TimeStampValuePair {
+    int timestamp;
+    String value;
+    
+    public TimeStampValuePair(int timestamp, String value) {
+      this.timestamp = timestamp;
+      this.value = value;
+    }
   }
 }
 
