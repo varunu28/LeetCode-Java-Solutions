@@ -1,34 +1,25 @@
+import java.util.PrimitiveIterator.OfInt;
+
 class Vector2D {
 
-  private int[][] vec;
-  private int vecIdx;
-  private int idx;
+  private Iterator<OfInt> iterators;
+  private Iterator currIterator;
 
   public Vector2D(int[][] vec) {
-    this.vec = vec;
-    this.idx = 0;
-    this.vecIdx = 0;
-    updateIdx();
-  }
-
-  private void updateIdx() {
-    if (this.vecIdx < this.vec.length && this.idx == this.vec[this.vecIdx].length) {
-      this.idx = 0;
-      this.vecIdx++;
-    }
-    while (this.vecIdx < this.vec.length && this.vec[this.vecIdx].length == 0) {
-      this.vecIdx++;
-    }
+    this.iterators = Arrays.stream(vec).map(v -> Arrays.stream(v).iterator()).iterator();
+    this.currIterator = Collections.emptyIterator();;
   }
 
   public int next() {
-    int result = this.vec[this.vecIdx][this.idx++];
-    updateIdx();
-    return result;
+    hasNext();
+    return (int) this.currIterator.next();
   }
 
   public boolean hasNext() {
-    return this.vecIdx < this.vec.length;
+    while (!this.currIterator.hasNext() && this.iterators.hasNext()) {
+      this.currIterator = this.iterators.next();
+    }
+    return this.currIterator.hasNext();
   }
 }
 
