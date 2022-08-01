@@ -1,23 +1,27 @@
 class Solution {
   public int[] findPermutation(String s) {
-    int[] ans = new int[s.length() + 1];
-    Stack<Integer> stack = new Stack<>();
-    int idx = 0;
-    for (int i = 1; i <= s.length(); i++) {
-      if (s.charAt(i - 1) == 'I') {
-        stack.push(i);
-        while (!stack.isEmpty()) {
-          ans[idx++] = stack.pop();
-        }
-      }
-      else {
-        stack.push(i);
-      }
+    int n = s.length();
+    int[] result = new int[n + 1];
+    for (int i = 0; i < result.length; i++) {
+      result[i] = i + 1;
     }
-    stack.push(s.length() + 1);
-    while (!stack.isEmpty()) {
-      ans[idx++] = stack.pop();
+    int idx = 1;
+    while (idx <= n) {
+      int k = idx;
+      while (idx <= n && s.charAt(idx - 1) == 'D') {
+        idx++;
+      }
+      reverse(result, k - 1, idx);
+      idx++;
     }
-    return ans;
-  } 
+    return result;
+  }
+  
+  private void reverse(int[] result, int start, int end) {
+    for (int i = 0; i < (end - start) / 2; i++) {
+      int temp = result[i + start];
+      result[i + start] = result[end - i - 1];
+      result[end - i - 1] = temp;
+    }
+  }
 }
