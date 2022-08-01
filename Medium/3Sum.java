@@ -1,22 +1,21 @@
 class Solution {
   public List<List<Integer>> threeSum(int[] nums) {
-    Arrays.sort(nums);
-    List<List<Integer>> result = new ArrayList<>();
-    for (int i = 0; i < nums.length && nums[i] <= 0; i++) {
-      if (i == 0 || nums[i - 1] != nums[i]) {
-        Set<Integer> set = new HashSet<>();
+    Set<List<Integer>> result = new HashSet<>();
+    Set<Integer> duplicates = new HashSet<>();
+    Map<Integer, Integer> map = new HashMap<>();
+    for (int i = 0; i < nums.length; i++) {
+      if (duplicates.add(nums[i])) {
         for (int j = i + 1; j < nums.length; j++) {
-          int target = -1 * (nums[i] + nums[j]);
-          if (set.contains(target)) {
-            result.add(Arrays.asList(nums[i], nums[j], target));
-            while (j + 1 < nums.length && nums[j] == nums[j + 1]) {
-              j++;
-            }
+          int target = -nums[i] - nums[j];
+          if (map.containsKey(target) && map.get(target) == i) {
+            List<Integer> temp = Arrays.asList(nums[i], nums[j], target);
+            Collections.sort(temp);
+            result.add(temp);
           }
-          set.add(nums[j]);
+          map.put(nums[j], i);
         }
       }
     }
-    return result;
+    return new ArrayList<>(result);
   }
 }
