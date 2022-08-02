@@ -1,11 +1,7 @@
 class Solution {
   public int kthSmallest(int[][] matrix, int k) {
     int numOfRows = matrix.length;
-    PriorityQueue<int[]> pq = new PriorityQueue<>(new Comparator<int[]>(){
-      public int compare(int[] o1, int[] o2) {
-        return o1[2] - o2[2];
-      }
-    });
+    PriorityQueue<int[]> pq = new PriorityQueue<>((o1, o2) -> o1[2] - o2[2]);
     for (int j = 0; j < numOfRows; j++) {
       pq.add(new int[]{0, j, matrix[0][j]});
     }
