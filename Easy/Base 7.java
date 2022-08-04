@@ -1,12 +1,16 @@
 class Solution {
-    public String convertToBase7(int num) {
-        if (num == 0) return "0";
-        int temp = Math.abs(num);
-        StringBuilder sb = new StringBuilder("");
-        while (temp > 0) {
-            sb.append(String.valueOf(temp%7));
-            temp /= 7;
-        }
-        return num < 0 ? "-" + sb.reverse().toString() : sb.reverse().toString();
+  public String convertToBase7(int num) {
+    StringBuilder sb = new StringBuilder();
+    char sign = num < 0 ? '-' : ' ';
+    num = Math.abs(num);
+    while (num > 0) {
+      sb.append(num % 7);
+      num /= 7;
     }
+    String representation = sb.length() == 0 ? "0" : sb.reverse().toString();
+    if (sign == '-') {
+      return sign + representation;
+    }
+    return representation;
+  }
 }
