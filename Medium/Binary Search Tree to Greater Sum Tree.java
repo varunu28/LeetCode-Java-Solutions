@@ -4,32 +4,30 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
   public TreeNode bstToGst(TreeNode root) {
-    if (root == null) {
-      return null;
-    }
-    TreeNode curr = root;
-    Stack<TreeNode> stack = new Stack<>();
     int sum = 0;
-    pushRight(stack, curr);
-    while (!stack.isEmpty()) {
-      TreeNode removed = stack.pop();
-      sum += removed.val;
-      removed.val = sum;
-      TreeNode leftNode = removed.left;
-      pushRight(stack, leftNode);
+    TreeNode node = root;
+    Stack<TreeNode> stack = new Stack<>();
+    while (!stack.isEmpty() || node != null) {
+      while (node != null) {
+        stack.add(node);
+        node = node.right;
+      }
+      node = stack.pop();
+      sum += node.val;
+      node.val = sum;
+      node = node.left;
     }
     return root;
-  }
-  
-  private void pushRight(Stack<TreeNode> stack, TreeNode curr) {
-    while (curr != null) {
-      stack.push(curr);
-      curr = curr.right;
-    }
   }
 }
