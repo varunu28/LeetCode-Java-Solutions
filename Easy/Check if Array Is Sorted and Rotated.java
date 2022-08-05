@@ -1,17 +1,14 @@
 class Solution {
   public boolean check(int[] nums) {
-    boolean rotationFound = false;
+    boolean rotated = false;
     for (int i = 0; i < nums.length - 1; i++) {
       if (nums[i] > nums[i + 1]) {
-        if (rotationFound) {
+        if (rotated) {
           return false;
         }
-        rotationFound = true;
+        rotated = true;
       }
     }
-    if (rotationFound && nums[nums.length - 1] > nums[0]) {
-      return false;
-    }
-    return true;
+    return !rotated || nums[nums.length - 1] <= nums[0];
   }
 }
