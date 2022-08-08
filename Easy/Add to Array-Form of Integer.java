@@ -1,20 +1,15 @@
 class Solution {
-  public List<Integer> addToArrayForm(int[] A, int K) {
-    List<Integer> list = new ArrayList<>();
-    int idx = A.length - 1;
+  public List<Integer> addToArrayForm(int[] num, int k) {
     int carry = 0;
-    while (K > 0 || idx >= 0 || carry > 0) {
-      int temp = (
-        (K > 0 ? K % 10 : 0) +
-        (idx >= 0 ? A[idx--] : 0) + 
-        carry
-      );
-      K /= 10;
-      carry = temp > 9 ? temp / 10 : 0;
-      temp = temp > 9 ? temp % 10 : temp;
-      list.add(temp);
+    int idx = num.length - 1;
+    List<Integer> result = new ArrayList<>();
+    while (idx >= 0 || carry > 0 || k > 0) {
+      int temp = k % 10 + carry + (idx >= 0 ? num[idx--] : 0);
+      result.add(temp % 10);
+      carry = temp / 10;
+      k /= 10;
     }
-    Collections.reverse(list);
-    return list;
+    Collections.reverse(result);
+    return result;
   }
 }
