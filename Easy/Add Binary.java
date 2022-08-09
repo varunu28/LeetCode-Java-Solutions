@@ -1,18 +1,19 @@
 class Solution {
   public String addBinary(String a, String b) {
-    int carry = 0;
     StringBuilder sb = new StringBuilder();
-    int idxA = a.length() - 1;
-    int idxB = b.length() - 1;
-    while (idxA >= 0 || idxB >= 0 || carry > 0) {
-      int temp = (
-        (idxA >= 0 ? Character.getNumericValue(a.charAt(idxA--)) : 0) + 
-        (idxB >= 0 ? Character.getNumericValue(b.charAt(idxB--)) : 0) + 
-        carry
-      );
-      carry = temp > 1 ? 1 : 0;
-      temp = temp > 1 ? (temp == 2 ? 0 : 1) : temp;
-      sb.append(temp);
+    int endIdxA = a.length() - 1;
+    int endIdxB = b.length() - 1;
+    int carry = 0;
+    while (endIdxA >= 0 || endIdxB >= 0 || carry > 0) {
+      int value = carry;
+      if (endIdxA >= 0) {
+        value += Character.getNumericValue(a.charAt(endIdxA--));
+      }
+      if (endIdxB >= 0) {
+        value += Character.getNumericValue(b.charAt(endIdxB--));
+      }
+      sb.append(value % 2);
+      carry = value / 2;
     }
     return sb.reverse().toString();
   }
