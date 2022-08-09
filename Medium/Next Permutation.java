@@ -1,10 +1,7 @@
 class Solution {
   public void nextPermutation(int[] nums) {
-    if (nums.length <= 1) {
-      return;
-    }
     int idx = nums.length - 2;
-    while (idx >= 0 && nums[idx] >= nums[idx + 1]) {
+    while (idx >= 0 && nums[idx + 1] <= nums[idx]) {
       idx--;
     }
     if (idx >= 0) {
@@ -14,16 +11,21 @@ class Solution {
       }
       swap(nums, idx, endIdx);
     }
-    int startIdx = idx + 1;
+    reverse(nums, idx + 1);
+  }
+  
+  private void reverse(int[] nums, int startIdx) {
     int endIdx = nums.length - 1;
     while (startIdx < endIdx) {
-      swap(nums, startIdx++, endIdx--);
+      swap(nums, startIdx, endIdx);
+      startIdx++;
+      endIdx--;
     }
   }
   
-  private void swap(int[] nums, int idxOne, int idxTwo) {
-    int temp = nums[idxOne];
-    nums[idxOne] = nums[idxTwo];
-    nums[idxTwo] = temp;
+  private void swap(int[] nums, int i, int j) {
+    int temp = nums[i];
+    nums[i] = nums[j];
+    nums[j] = temp;
   }
 }
