@@ -1,39 +1,53 @@
 class Solution {
   public List<Integer> findSubstring(String s, String[] words) {
-    if (s.length() == 0 || words.length == 0) {
-      return new ArrayList<>();
-    }
-    Map<String, Integer> wordFreqMap = new HashMap<>();
-    for (String word : words) {
-      wordFreqMap.put(word, wordFreqMap.getOrDefault(word, 0) + 1);
-    }
-    int stringLength = s.length();
-    int wordCount = words.length;
+    int numberOfWords = words.length;
     int singleWordLength = words[0].length();
-    List<Integer> indices = new ArrayList<>();
-    for (int i = 0; i + singleWordLength * wordCount <= stringLength; i++) {
-      if (match(s, i, singleWordLength, wordFreqMap, wordCount)) {
-        indices.add(i);
-      }
+    int totalSubstringLength = singleWordLength * numberOfWords;
+    Map<String, Integer> wordCount = new HashMap<>();
+    for (String word : words) {
+      wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
     }
-    return indices;
+    List<Integer> result = new ArrayList<>();
+    for (int i = 0; i < singleWordLength; i++) {
+      slidingWindow(i, s, result, singleWordLength, totalSubstringLength, wordCount, numberOfWords);
+    }
+    return result;
   }
-  
-  private boolean match(String s, int start, int singleWordLength, Map<String, Integer> wordFreqMap, int wordCount) {
-    Map<String, Integer> currFreqMap = new HashMap<>();
-    for (int i = 0; i < wordCount; i++) {
-      String currWord = s.substring(start + i * singleWordLength, start + (i + 1) * singleWordLength);
-      Integer freq = wordFreqMap.get(currWord);
-      // Word not in required words
-      if (freq == null) { 
-        return false;
-      }
-      currFreqMap.put(currWord, currFreqMap.getOrDefault(currWord, 0) + 1);
-      // Word occurs more than the required count
-      if (currFreqMap.get(currWord) > freq) {
-        return false;
+
+  private void slidingWindow(int left, String s, List<Integer> answer, int singleWordLength,
+      int totalSubstringLength, Map<String, Integer> wordCount, int numberOfWords) {
+    Map<String, Integer> wordsFound = new HashMap<>();
+    int wordsUsed = 0;
+    boolean excessWord = false;
+    int n = s.length();
+    for (int right = left; right <= n - singleWordLength; right += singleWordLength) {
+      String currSubstring = s.substring(right, right + singleWordLength);
+      if (!wordCount.containsKey(currSubstring)) {
+        wordsFound.clear();
+        wordsUsed = 0;
+        excessWord = false;
+        left = right + singleWordLength;
+      } else {
+        while (right - left == totalSubstringLength || excessWord) {
+          String leftmostWord = s.substring(left, left + singleWordLength);
+          left += singleWordLength;
+          wordsFound.put(leftmostWord, wordsFound.get(leftmostWord) - 1);
+          if (wordsFound.get(leftmostWord) >= wordCount.get(leftmostWord)) {
+            excessWord = false;
+          } else {
+            wordsUsed--;
+          }
+        }
+        wordsFound.put(currSubstring, wordsFound.getOrDefault(currSubstring, 0) + 1);
+        if (wordsFound.get(currSubstring) <= wordCount.get(currSubstring)) {
+          wordsUsed++;
+        } else {
+          excessWord = true;
+        }
+        if (wordsUsed == numberOfWords && !excessWord) {
+          answer.add(left);
+        }
       }
     }
-    return true;
   }
 }
