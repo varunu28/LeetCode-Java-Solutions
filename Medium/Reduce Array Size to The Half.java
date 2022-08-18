@@ -1,16 +1,27 @@
 class Solution {
   public int minSetSize(int[] arr) {
-    Map<Integer, Long> frequencyMap = Arrays.stream(arr).boxed()
-        .collect(Collectors.groupingBy(Function.identity(), HashMap::new, Collectors.counting()));
-    int halfSize = arr.length / 2;
-    PriorityQueue<Integer> pq = new PriorityQueue<>(
-        (o1, o2) -> (int) (frequencyMap.get(o2) - frequencyMap.get(o1)));
-    pq.addAll(frequencyMap.keySet());
-    int counter = 0;
-    while (!pq.isEmpty() && halfSize > 0) {
-      halfSize -= frequencyMap.get(pq.poll());
-      counter++;
+    Map<Integer, Integer> map = new HashMap<>();
+    int maxCount = 0;
+    for (int num : arr) {
+      map.put(num, map.getOrDefault(num, 0) + 1);
+      maxCount = Math.max(maxCount, map.get(num));
     }
-    return counter;
+    int[] bucket = new int[maxCount + 1];
+    for (int count : map.values()) {
+      bucket[count]++;
+    }
+    int n = arr.length;
+    int setSize = 0;
+    int bucketIdx = bucket.length - 1;
+    while (n > arr.length / 2) {
+      if (bucket[bucketIdx] > 0) {
+        setSize++;
+        n -= bucketIdx;
+        bucket[bucketIdx]--;
+      } else {
+        bucketIdx--;
+      }
+    }
+    return setSize;
   }
 }
