@@ -1,28 +1,33 @@
 class Solution {
   public boolean isPossible(int[] nums) {
-    Map<Integer, Integer> map = new HashMap<>();
-    Map<Integer, Integer> appendMap = new HashMap<>();
+    PriorityQueue<int[]> pq = new PriorityQueue<>((int[] o1, int[] o2) -> {
+      if (o1[1] == o2[1]) {
+        return (o1[1] - o1[0]) - (o2[1] - o2[0]);
+      } 
+      return o1[1] - o2[1];
+    });
     for (int num : nums) {
-      map.put(num, map.getOrDefault(num, 0) + 1);
+      while (!pq.isEmpty() && pq.peek()[1] + 1 < num) {
+        if (!isValidSubsequence(pq.poll())) {
+          return false;
+        }
+      }
+      if (pq.isEmpty() || pq.peek()[1] == num) {
+        pq.add(new int[]{num, num});
+      } else {
+        int[] subsequence = pq.poll();
+        pq.add(new int[]{subsequence[0], num});
+      }
     }
-    for (int i : nums) {
-      if (map.get(i) == 0) {
-        continue;
-      }
-      else if (appendMap.getOrDefault(i, 0) > 0) {
-        appendMap.put(i, appendMap.get(i) - 1);
-        appendMap.put(i + 1, appendMap.getOrDefault(i + 1, 0) + 1);
-      }
-      else if (map.getOrDefault(i + 1, 0) > 0 && map.getOrDefault(i + 2, 0) > 0) {
-        map.put(i + 1, map.get(i + 1) - 1);
-        map.put(i + 2, map.get(i + 2) - 1);
-        appendMap.put(i + 3, appendMap.getOrDefault(i + 3, 0) + 1);
-      }
-      else {
+    while (!pq.isEmpty()) {
+      if (!isValidSubsequence(pq.poll())) {
         return false;
       }
-      map.put(i, map.get(i) - 1);
     }
     return true;
+  }
+  
+  private boolean isValidSubsequence(int[] subsequence) {
+    return subsequence[1] - subsequence[0] + 1 >= 3;
   }
 }
