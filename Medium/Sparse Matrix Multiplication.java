@@ -1,20 +1,15 @@
 class Solution {
-  public int[][] multiply(int[][] A, int[][] B) {
-    int m = A.length;
-    int n = A[0].length;
-    int nB = B[0].length;
-    int[][] C = new int[m][nB];
-    for(int i = 0; i < m; i++) {
-      for(int k = 0; k < n; k++) {
-        if (A[i][k] != 0) {
-          for (int j = 0; j < nB; j++) {
-            if (B[k][j] != 0) {
-              C[i][j] += A[i][k] * B[k][j];
-            }
+  public int[][] multiply(int[][] mat1, int[][] mat2) {
+    int[][] result = new int[mat1.length][mat2[0].length];
+    for (int i = 0; i < mat1.length; i++) {
+      for (int j = 0; j < mat1[0].length; j++) {
+        if (mat1[i][j] != 0) {
+          for (int k = 0; k < mat2[0].length; k++) {
+            result[i][k] += mat1[i][j] * mat2[j][k];
           }
         }
       }
     }
-    return C;   
+    return result;
   }
 }
