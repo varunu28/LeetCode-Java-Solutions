@@ -1,37 +1,28 @@
 class HitCounter {
+  
+  private Deque<int[]> record;
+  private int count;
+  
+  public HitCounter() {
+    this.record = new LinkedList<>();
+    this.count = 0;
+  }
 
-    /** Initialize your data structure here. */
-    int[] times;
-    int[] hits;
-    public HitCounter() {
-        times = new int[300];
-        hits = new int[300];
+  public void hit(int timestamp) {
+    if (!record.isEmpty() && record.getLast()[0] == timestamp) {
+      record.getLast()[1]++;
+    } else {
+      record.add(new int[]{timestamp, 1});
     }
-    
-    /** Record a hit.
-        @param timestamp - The current timestamp (in seconds granularity). */
-    public void hit(int timestamp) {
-        int idx = timestamp % 300;
-        if (times[idx] != timestamp) {
-            times[idx] = timestamp;
-            hits[idx] = 1;
-        }
-        else {
-            hits[idx]++;
-        }
+    this.count++;
+  }
+
+  public int getHits(int timestamp) {
+    while (!record.isEmpty() && timestamp - record.getFirst()[0] >= 300) {
+      this.count -= record.removeFirst()[1];
     }
-    
-    /** Return the number of hits in the past 5 minutes.
-        @param timestamp - The current timestamp (in seconds granularity). */
-    public int getHits(int timestamp) {
-        int totalCount = 0;
-        for (int i = 0; i < 300; i++) {
-            if (timestamp - times[i] < 300) {
-                totalCount += hits[i];
-            }
-        }
-        return totalCount;
-    }
+    return this.count;
+  }
 }
 
 /**
