@@ -3,17 +3,13 @@ class Solution {
     int count = 0;
     int lessThanCount = 0;
     for (int num : nums) {
-      if (num == target) {
-        count++;
-      }
-      if (num < target) {
-        lessThanCount++;
-      }
+      count += num == target ? 1 : 0;
+      lessThanCount += num < target ? 1 : 0;
     }
-    List<Integer> indices = new ArrayList<>();
-    for (int i = 0; i < count; i++) {
-      indices.add(lessThanCount + i);
+    List<Integer> result = new ArrayList<>();
+    while (count-- > 0) {
+      result.add(lessThanCount++);
     }
-    return indices;
+    return result;
   }
 }
