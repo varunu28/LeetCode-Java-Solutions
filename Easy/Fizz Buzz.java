@@ -1,11 +1,17 @@
 class Solution {
   public List<String> fizzBuzz(int n) {
-    return IntStream.range(1, n + 1)
-        .boxed()
-        .map(e -> (
-                e % 3 == 0 && e % 5 == 0 ? "FizzBuzz"
-                    : (e % 3 == 0 ? "Fizz" : (e % 5 == 0 ? "Buzz" : String.valueOf(e)))
-            )
-        ).collect(Collectors.toList());
-  }
+    List<String> result = new ArrayList<>();
+    for (int i = 1; i <= n; i++) {
+      if (i % 15 == 0) {
+        result.add("FizzBuzz");
+      } else if (i % 3 == 0) {
+        result.add("Fizz");
+      } else if (i % 5 == 0) {
+        result.add("Buzz");
+      } else {
+        result.add(String.valueOf(i));
+      }
+    }
+    return result;
+  } 
 }
