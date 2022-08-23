@@ -3,32 +3,45 @@
  * public class ListNode {
  *     int val;
  *     ListNode next;
- *     ListNode(int x) { val = x; }
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
 class Solution {
-    public boolean isPalindrome(ListNode head) {
-        ArrayList<Integer> arr = new ArrayList<Integer>();
-        while (head != null) {
-            arr.add(head.val);
-            head = head.next;
-        }
-        
-        if (arr.size() < 2) return true;
-    
-        int i=0;
-        int j = arr.size()-1;
-        
-        while (true) {
-            
-            if (arr.get(i).equals(arr.get(j)) == false) return false;
-            
-            if (arr.size()%2 == 0 && j - i == 1) break;
-            if (arr.size()%2 != 0 && j - i == 2) break;
-            
-            i++;
-            j--;
-        }
-        return true;
+  public boolean isPalindrome(ListNode head) {
+    if (head.next == null) {
+      return true;
     }
+    ListNode slow = head;
+    ListNode fast = head;
+    ListNode prev = null;
+    while (fast != null && fast.next != null) {
+      prev = slow;
+      fast = fast.next.next;
+      slow = slow.next;
+    }
+    ListNode revNode = reverse(slow);
+    while (revNode != null) {
+      if (revNode.val != head.val) {
+        return false;
+      }
+      revNode = revNode.next;
+      head = head.next;
+    }
+    return true;
+  }
+  
+  private ListNode reverse(ListNode node) {
+    ListNode prev = null;
+    ListNode curr = node;
+    ListNode next = node;
+    while (curr != null) {
+      next = curr.next;
+      curr.next = prev;
+      prev = curr;
+      curr = next;
+    }
+    return prev;
+  }
 }
