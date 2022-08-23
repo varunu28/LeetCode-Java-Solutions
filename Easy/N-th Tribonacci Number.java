@@ -1,10 +1,13 @@
 class Solution {
   public int tribonacci(int n) {
-    int[] arr = new int[38];
-    arr[1] = arr[2] = 1;
-    for (int i = 3; i < 38; i++) {
-      arr[i] = arr[i - 1] + arr[i - 2] + arr[i - 3];
+    if (n <= 2) {
+      return n == 0 ? 0 : 1;
     }
-    return arr[n];
+    int[] dp = new int[n + 1];
+    dp[1] = dp[2] = 1;
+    for (int i = 3; i <= n; i++) {
+      dp[i] = dp[i - 2] + dp[i - 1] + dp[i - 3];
+    }
+    return dp[n];
   }
 }
