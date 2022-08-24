@@ -1,23 +1,11 @@
 class Solution {
-  public boolean isUgly(int num) {
-    if (num <= 0) {
-      return false;
-    }
-    long lNum = (long) num;
-    while (lNum > 1) {
-      if (lNum % 2 == 0) {
-        lNum /= 2;
-      }
-      else if (lNum % 3 == 0) {
-        lNum /= 3;
-      }
-      else if (lNum % 5 == 0) {
-        lNum /= 5;
-      }
-      else {
-        return false;
+  public boolean isUgly(int n) {
+    int[] primes = {2, 3, 5};
+    for (int i = 0; i < primes.length; i++) {
+      while (n > 1 && n % primes[i] == 0) {
+        n /= primes[i];
       }
     }
-    return true;
+    return n == 1;
   }
 }
