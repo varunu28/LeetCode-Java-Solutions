@@ -1,14 +1,19 @@
 class Solution {
   public boolean isPowerOfThree(int n) {
-    if (n <= 0) {
-      return false;
-    }
-    while (n > 1) {
-      if (n % 3 != 0) {
-        return false;
+    int left = 0;
+    int right = n / 3;
+    while (left <= right) { 
+      int mid = (left + right) / 2;
+      double powValue = Math.pow(3, mid);
+      if (powValue == n) {
+        return true;
       }
-      n /= 3;
+      if (powValue > n) {
+        right = mid - 1;
+      } else {
+        left = mid + 1;
+      }
     }
-    return true;
+    return false;
   }
 }
