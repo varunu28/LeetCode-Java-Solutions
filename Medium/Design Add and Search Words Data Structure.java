@@ -1,51 +1,51 @@
 class WordDictionary {
-
-  private final TrieNode root;
-
+  
+  private Node root;
+  
   public WordDictionary() {
-    this.root = new TrieNode();
+    this.root = new Node();
   }
 
   public void addWord(String word) {
-    TrieNode curr = root;
+    Node curr = root;
     for (char c : word.toCharArray()) {
-      if (!curr.children.containsKey(c)) {
-        curr.children.put(c, new TrieNode());
+      if (curr.children[c - 'a'] == null) {
+        curr.children[c - 'a'] = new Node();
       }
-      curr = curr.children.get(c);
+      curr = curr.children[c - 'a'];
     }
     curr.isWord = true;
   }
 
   public boolean search(String word) {
-    return searchHelper(word, 0, root);
+    Node curr = root;
+    return searchHelper(word, 0, curr);
   }
-
-  private boolean searchHelper(String word, int idx, TrieNode curr) {
+  
+  private boolean searchHelper(String word, int idx, Node curr) {
     if (idx == word.length()) {
       return curr.isWord;
     }
-    if (curr.children.containsKey(word.charAt(idx))) {
-      return searchHelper(word, idx + 1, curr.children.get(word.charAt(idx)));
+    if (word.charAt(idx) != '.' && curr.children[word.charAt(idx) - 'a'] == null) {
+      return false;
     }
     if (word.charAt(idx) == '.') {
-      for (char c : curr.children.keySet()) {
-        if (searchHelper(word, idx + 1, curr.children.get(c))) {
+      for (Node child : curr.children) {
+        if (child != null && searchHelper(word, idx + 1, child)) {
           return true;
         }
       }
+      return false;
     }
-    return false;
+    return searchHelper(word, idx + 1, curr.children[word.charAt(idx) - 'a']);
   }
-
-
-  private static class TrieNode {
-
-    private final Map<Character, TrieNode> children;
-    private boolean isWord;
-
-    public TrieNode() {
-      this.children = new HashMap<>();
+  
+  private static class Node {
+    Node[] children;
+    boolean isWord;
+    
+    public Node() {
+      this.children = new Node[26];
       this.isWord = false;
     }
   }
