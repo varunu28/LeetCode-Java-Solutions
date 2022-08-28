@@ -4,32 +4,33 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-  List<String> list;
   public List<String> binaryTreePaths(TreeNode root) {
-    list = new ArrayList<>();
-    if (root == null) {
-      return list;
-    }
-    helper(root, new StringBuilder());
-    return list;
+    List<String> result = new ArrayList<>();
+    helper(root, result, new StringBuilder());
+    return result;
   }
   
-  private void helper(TreeNode root, StringBuilder sb) {
+  private void helper(TreeNode root, List<String> result, StringBuilder path) {
     if (root == null) {
       return;
     }
+    path.append(root.val);
     if (root.left == null && root.right == null) {
-      sb.append(root.val);
-      list.add(sb.toString());
-    }
-    else {
-      sb.append(root.val).append("->");
-      helper(root.left, new StringBuilder(sb.toString()));
-      helper(root.right, new StringBuilder(sb.toString()));
+      result.add(path.toString());
+    } else {
+      path.append("->");
+      helper(root.left, result, new StringBuilder(path));
+      helper(root.right, result, new StringBuilder(path));
     }
   }
 }
