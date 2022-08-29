@@ -4,30 +4,36 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class FindElements {
-    TreeNode root;
-    Set<Integer> set;
-    public FindElements(TreeNode root) {
-        set = new HashSet<>();
-        buildTree(root, 0);
+
+  private Set<Integer> set;
+  
+  public FindElements(TreeNode root) {
+    set = new HashSet<>();
+    recover(root, 0);
+  }
+  
+  private void recover(TreeNode root, int value) {
+    if (root == null) {
+      return;
     }
-    
-    private void buildTree(TreeNode root, int val) {
-        if (root == null) {
-            return;
-        }
-        root.val = val;
-        set.add(val);
-        buildTree(root.left, 2 * val + 1);
-        buildTree(root.right, 2 * val + 2);
-    }
-    
-    public boolean find(int target) {
-        return set.contains(target);
-    }
+    set.add(value);
+    recover(root.left, 2 * value + 1);
+    recover(root.right, 2 * value + 2);
+  }
+
+  public boolean find(int target) {
+    return set.contains(target);
+  }
 }
 
 /**
