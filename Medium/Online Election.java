@@ -1,44 +1,24 @@
 class TopVotedCandidate {
 
-  List<Winner> winners;
+  private TreeMap<Integer, Integer> currWinner;
+
   public TopVotedCandidate(int[] persons, int[] times) {
-    winners = new ArrayList<>();
-    Map<Integer, Integer> countMap = new HashMap<>();
-    Map<Integer, Integer> timeMap = new HashMap<>();
-    int maxVotes = 0;
+    this.currWinner = new TreeMap<>();
+    Map<Integer, Integer> candidateToVotecount = new HashMap<>();
+    int currWinningCandidate = -1;
     for (int i = 0; i < persons.length; i++) {
-      countMap.put(persons[i], countMap.getOrDefault(persons[i], 0) + 1);
-      timeMap.put(persons[i], times[i]);
-      if (countMap.get(persons[i]) >= maxVotes) {
-        winners.add(new Winner(times[i], persons[i]));
-        maxVotes = Math.max(maxVotes, countMap.get(persons[i]));
+      int person = persons[i];
+      int newVoteCount = candidateToVotecount.getOrDefault(person, 0) + 1;
+      candidateToVotecount.put(person, newVoteCount);
+      if (currWinningCandidate == -1 || newVoteCount >= candidateToVotecount.get(currWinningCandidate)) {
+        currWinningCandidate = person;
       }
+      currWinner.put(times[i], currWinningCandidate);
     }
   }
 
   public int q(int t) {
-    return winners.get(binarySearchHelper(t)).val;
-  }
-  
-  private int binarySearchHelper(int target) {
-    int start = 0;
-    int end = winners.size() - 1;
-    int idx = 0;
-    while (start <= end) {
-      int mid = (start + end) / 2;
-      if (winners.get(mid).time == target) {
-        idx = mid;
-        break;
-      }
-      else if (winners.get(mid).time < target) {  
-        idx = mid;
-        start = mid + 1;
-      }
-      else {
-        end = mid - 1;
-      }
-    }
-    return idx == winners.size() ? 0 : idx;
+    return this.currWinner.floorEntry(t).getValue();
   }
 }
 
@@ -47,13 +27,3 @@ class TopVotedCandidate {
  * TopVotedCandidate obj = new TopVotedCandidate(persons, times);
  * int param_1 = obj.q(t);
  */
-
-class Winner {
-  int time;
-  int val;
-  
-  public Winner(int time, int val) {
-    this.time = time;
-    this.val = val;
-  }
-}
