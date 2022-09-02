@@ -15,27 +15,22 @@
  */
 class Solution {
   public int countUnivalSubtrees(TreeNode root) {
+    if (root == null) {
+      return 0;
+    }
     int[] count = {0};
-    helper(root, count);
+    helper(root, count, root.val);
     return count[0];
   }
   
-  private boolean helper(TreeNode root, int[] count) {
+  private boolean helper(TreeNode root, int[] count, int val) {
     if (root == null) {
       return true;
     }
-    boolean leftVal = helper(root.left, count);
-    boolean rightVal = helper(root.right, count);
-    if (leftVal && rightVal) {
-      if (
-        (root.left != null && root.left.val != root.val) || 
-        (root.right != null && root.right.val != root.val)
-      ) {
-        return false;
-      }
-      count[0]++;
-      return true;
+    if (!helper(root.left, count, root.val) | !helper(root.right, count, root.val)) {
+      return false;
     }
-    return false;
+    count[0]++;
+    return root.val == val;
   }
 }
