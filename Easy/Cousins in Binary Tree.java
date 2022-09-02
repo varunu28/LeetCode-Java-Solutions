@@ -15,30 +15,30 @@
  */
 class Solution {
   public boolean isCousins(TreeNode root, int x, int y) {
-    NodeDetail nodeDetailX = getNodeDetail(root, x, null, 0);
-    NodeDetail nodeDetailY = getNodeDetail(root, y, null, 0);
-    return nodeDetailX.depth == nodeDetailY.depth && nodeDetailX.parent != nodeDetailY.parent;
+    ParentDepthPair xPair = getParentDepthPair(root, x, 0);
+    ParentDepthPair yPair = getParentDepthPair(root, y, 0);
+    return xPair.parent != yPair.parent && xPair.depth == yPair.depth;
   }
   
-  private NodeDetail getNodeDetail(TreeNode root, int n, TreeNode parent, int depth) {
+  private ParentDepthPair getParentDepthPair(TreeNode root, int val, int currDepth) {
     if (root == null) {
       return null;
     }
-    if (root.val == n) {
-      return new NodeDetail(parent, depth);
+    if (root.val == val) {
+      return new ParentDepthPair(root, currDepth);
     }
-    NodeDetail left = getNodeDetail(root.left, n, root, depth + 1);
-    if (left != null) {
-      return left;
+    if ((root.left != null && root.left.val == val) || (root.right != null && root.right.val == val)) {
+      return new ParentDepthPair(root, currDepth);
     }
-    return getNodeDetail(root.right, n, root, depth + 1);
+    ParentDepthPair leftPair = getParentDepthPair(root.left, val, currDepth + 1);
+    return leftPair != null ? leftPair : getParentDepthPair(root.right, val, currDepth + 1);
   }
   
-  private class NodeDetail {
+  private static class ParentDepthPair {
     TreeNode parent;
     int depth;
-
-    public NodeDetail(TreeNode parent, int depth) {
+    
+    public ParentDepthPair(TreeNode parent, int depth) {
       this.parent = parent;
       this.depth = depth;
     }
