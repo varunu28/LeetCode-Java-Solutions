@@ -1,31 +1,25 @@
 class Solution {
-  public int[] numsSameConsecDiff(int N, int K) {
-    if (N == 1) {
-      return new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    }
-    Set<Integer> set = new HashSet<>();
-    for (int i = 1; i <= 9; i++) {
-      helper(i, new StringBuilder(), K, set, N);
-    }
-    int[] ans = new int[set.size()];
-    Iterator<Integer> iterator = set.iterator();
-    for (int i = 0; i < ans.length; i++) {
-      ans[i] = iterator.next();
-    }
-    return ans;
+  public int[] numsSameConsecDiff(int n, int k) {
+    List<Integer> result = new ArrayList<>();
+    helper(n, k, result, new StringBuilder());
+    return result.stream().mapToInt(Integer::intValue).toArray();
   }
 
-  private void helper(int curr, StringBuilder sb, int k, Set<Integer> set, int n) {
+  private void helper(int n, int k, List<Integer> result, StringBuilder sb) {
     if (sb.length() == n) {
-      set.add(Integer.parseInt(sb.toString()));
-    }
-    if (sb.length() > n || curr > 9 || curr < 0) {
+      result.add(Integer.parseInt(sb.toString()));
       return;
     }
-    else {
-      sb.append(curr);
-      helper(curr + k, sb, k, set, n);
-      helper(curr - k, sb, k, set, n);
+    for (int i = 0; i <= 9; i++) {
+      if (sb.isEmpty() && i == 0) {
+        continue;
+      }
+      if (!sb.isEmpty()
+          && Math.abs(Character.getNumericValue(sb.charAt(sb.length() - 1)) - i) != k) {
+        continue;
+      }
+      sb.append(i);
+      helper(n, k, result, new StringBuilder(sb));
       sb.deleteCharAt(sb.length() - 1);
     }
   }
