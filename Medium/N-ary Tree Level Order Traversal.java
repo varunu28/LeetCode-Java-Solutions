@@ -22,21 +22,19 @@ class Solution {
     if (root == null) {
       return new ArrayList<>();
     }
-    List<List<Integer>> result = new ArrayList<>();
+    List<List<Integer>> levels = new ArrayList<>();
     Queue<Node> queue = new LinkedList<>();
     queue.add(root);
     while (!queue.isEmpty()) {
       int size = queue.size();
-      List<Integer> level = new ArrayList<>();
+      List<Integer> currLevel = new ArrayList<>();
       while (size-- > 0) {
         Node removed = queue.remove();
-        level.add(removed.val);
-        for (Node child : removed.children) {
-          queue.add(child);
-        }
+        currLevel.add(removed.val);
+        queue.addAll(removed.children);
       }
-      result.add(level);
+      levels.add(currLevel);
     }
-    return result;
-  }
+    return levels;
+  }   
 }
