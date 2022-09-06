@@ -15,23 +15,21 @@
  */
 class Solution {
   public TreeNode pruneTree(TreeNode root) {
-    boolean isRootOne = helper(root);
-    return isRootOne ? root : null;
+    return subtreeContainsOne(root) ? root : null;
   }
   
-  private boolean helper(TreeNode root) {
+  private boolean subtreeContainsOne(TreeNode root) {
     if (root == null) {
       return false;
     }
-    boolean selfOne = root.val == 1;
-    boolean leftContainsOne = helper(root.left);
-    boolean rightContainsOne = helper(root.right);
-    if (!leftContainsOne) {
+    boolean leftContains = subtreeContainsOne(root.left);
+    boolean rightContains = subtreeContainsOne(root.right);
+    if (!leftContains) {
       root.left = null;
     }
-    if (!rightContainsOne) {
+    if (!rightContains) {
       root.right = null;
     }
-    return selfOne || leftContainsOne || rightContainsOne;
+    return leftContains || rightContains || root.val == 1;
   }
 }
