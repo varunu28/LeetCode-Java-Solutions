@@ -14,26 +14,26 @@
  * }
  */
 class Solution {
-  public String tree2str(TreeNode t) {
+  public String tree2str(TreeNode root) {
     StringBuilder sb = new StringBuilder();
-    helper(t, sb);
+    helper(root, sb);
     return sb.toString();
   }
   
-  private void helper(TreeNode node, StringBuilder sb) {
-    if (node == null) {
+  private void helper(TreeNode root, StringBuilder sb) {
+    if (root == null) {
       return;
     }
-    sb.append(node.val);
-    if (node.left == null && node.right == null) {
+    sb.append(root.val);
+    if (root.left == null && root.right == null) {
       return;
     }
     sb.append("(");
-    helper(node.left, sb);
+    helper(root.left, sb);
     sb.append(")");
-    if (node.right != null) {
+    if (root.right != null) {
       sb.append("(");
-      helper(node.right, sb);
+      helper(root.right, sb);
       sb.append(")");
     }
   }
