@@ -1,27 +1,30 @@
 class Solution {
-    public boolean isValidSudoku(char[][] board) {
-        HashSet<Character>[] rowSet = new HashSet[9];
-        HashSet<Character>[] colSet = new HashSet[9];
-        HashSet<Character>[] boxSet = new HashSet[9];
-        for (int i = 0; i < 9; i++) {
-            rowSet[i] = new HashSet<>();
-            colSet[i] = new HashSet<>();
-            boxSet[i] = new HashSet<>();
+  public boolean isValidSudoku(char[][] board) {
+    int N = 9;
+    int[][] rows = new int[N][N];
+    int[][] cols = new int[N][N];
+    int[][] boxes = new int[N][N];
+    for (int r = 0; r < N; r++) {
+      for (int c = 0; c < N; c++) {
+        if (board[r][c] == '.') {
+          continue;
         }
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                if (board[i][j] != '.') {
-                    char val = board[i][j];
-                    int boxIdx = (i / 3) * 3 + j / 3;
-                    if (rowSet[i].contains(val) || colSet[j].contains(val) || boxSet[boxIdx].contains(val)) {
-                        return false;
-                    }
-                    rowSet[i].add(val);
-                    colSet[j].add(val);
-                    boxSet[boxIdx].add(val);
-                }
-            }
+        int pos = board[r][c] - '1';
+        if (rows[r][pos] == 1) {
+          return false;
         }
-        return true;
+        rows[r][pos] = 1;
+        if (cols[c][pos] == 1) {
+          return false;
+        }
+        cols[c][pos] = 1;
+        int idx = (r / 3) * 3 + c / 3;
+        if (boxes[idx][pos] == 1) {
+          return false;
+        }
+        boxes[idx][pos] = 1;
+      }
     }
+    return true;
+  }
 }
