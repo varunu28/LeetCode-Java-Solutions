@@ -1,21 +1,24 @@
 class Solution {
   public int[] frequencySort(int[] nums) {
-    Map<Integer, Long> counter = Arrays.stream(nums).boxed()
-        .collect(Collectors.groupingBy(Function.identity(), Collectors.counting())
-    );
-    PriorityQueue<Integer> frequencyMinHeap = new PriorityQueue<>((o1, o2) -> {
-      int c = (int) (counter.get(o1) - counter.get(o2));
-      return c != 0 ? c : o2 - o1;
+    Map<Integer, Integer> map = new HashMap<>();
+    for (int num : nums) {
+      map.put(num, map.getOrDefault(num, 0) + 1);
+    }
+    PriorityQueue<Integer> pq = new PriorityQueue<>((o1, o2) -> {
+      int c = map.get(o1).compareTo(map.get(o2));
+      if (c != 0) {
+        return c;
+      }
+      return o2.compareTo(o1);
     });
-    frequencyMinHeap.addAll(counter.keySet());
-    int[] sortedByFrequency = new int[nums.length];
-    for (int idx = 0; idx < sortedByFrequency.length;) {
-      int value = frequencyMinHeap.poll();
-      long count = counter.get(value);
-      while (count-- > 0) {
-        sortedByFrequency[idx++] = value;
+    pq.addAll(map.keySet());
+    int idx = 0;
+    while (!pq.isEmpty()) {
+      int removed = pq.remove();
+      for (int i = 0; i < map.get(removed); i++) {
+        nums[idx++] = removed;
       }
     }
-    return sortedByFrequency;
+    return nums;
   }
 }
