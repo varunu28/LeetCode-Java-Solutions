@@ -15,37 +15,42 @@
  */
 class Solution {
   public int pseudoPalindromicPaths (TreeNode root) {
-    int[] map = new int[10];
-    int[] count = {0};
-    pseudoPalindromicPathsUtil(root, map, count);
-    return count[0];
-  }
-  
-  private boolean isPalindrome(int[] map) {
-    boolean oddFound = false;
-    for(int i = 1; i <= 9; i++) {
-      if (map[i] % 2 != 0) {
-        if (oddFound) {
-          return false;
+    Queue<NodePathPair> queue = new LinkedList<>();
+    NodePathPair nodePathPair = new NodePathPair(root, 0);
+    queue.add(nodePathPair);
+    int count = 0;
+    while (!queue.isEmpty()) {
+      int size = queue.size();
+      while (size-- > 0) {
+        NodePathPair removed = queue.remove();
+        TreeNode node = removed.node;
+        int path = removed.path;
+        // XOR operation ensures that the bit corresponding to the number only appears in the
+        // path if it has occurred odd number of times. 
+        // 1 << node.val decides the bit of the value
+        path = path ^ (1 << node.val);
+        if (node.left == null && node.right == null) {
+          // Subtracting 1 means setting rightmost 1 bit to 0 and setting all lower bits to 1
+          count += (path & (path - 1)) == 0 ? 1 : 0;
+        } 
+        if (node.left != null) {
+          queue.add(new NodePathPair(node.left, path));
         }
-        oddFound = true;
+        if (node.right != null) {
+          queue.add(new NodePathPair(node.right, path));
+        }
       }
     }
-    return true;
+    return count;
   }
   
-  private void pseudoPalindromicPathsUtil(TreeNode root, int[] map, int[] count) {
-    if (root == null) {
-      return;
+  private static class NodePathPair {
+    TreeNode node;
+    Integer path;
+    
+    public NodePathPair(TreeNode node, int path) {
+      this.node = node;
+      this.path = path;
     }
-    map[root.val] = map[root.val] + 1;
-    if (root.left == null && root.right == null) {
-      if (isPalindrome(map)) {
-        count[0]++;
-      }
-    }
-    pseudoPalindromicPathsUtil(root.left, map, count);
-    pseudoPalindromicPathsUtil(root.right, map, count);
-    map[root.val] = map[root.val] - 1;
   }
 }
