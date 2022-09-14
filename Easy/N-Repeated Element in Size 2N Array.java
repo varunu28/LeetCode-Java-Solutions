@@ -1,11 +1,11 @@
 class Solution {
-  public int repeatedNTimes(int[] A) {
-    int[] arr = new int[10001];
-    for (int num : A) {
-      if (arr[num] == 1) {
-        return num;
+  public int repeatedNTimes(int[] nums) {
+    for (int i = 1; i <= 3; i++) {
+      for (int j = 0; j < nums.length - i; j++) {
+        if (nums[j] == nums[j + i]) {
+          return nums[j];
+        }
       }
-      arr[num]++;
     }
     return -1;
   }
