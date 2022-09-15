@@ -1,20 +1,25 @@
 class Solution {
   public int[] intersection(int[] nums1, int[] nums2) {
-    Set<Integer> set = new HashSet<>();
+    boolean[][] found = new boolean[1001][2];
     for (int num : nums1) {
-      set.add(num);
+      found[num][0] = true;
     }
-    Set<Integer> match = new HashSet<>();
+    int count = 0;
     for (int num : nums2) {
-      if (set.contains(num)) {
-        match.add(num);
+      if (!found[num][1]) {
+        if (found[num][0]) {
+          count++;
+        }
+      }
+      found[num][1] = true;
+    }
+    int[] result = new int[count];
+    int idx = 0;
+    for (int i = 1; i <= 1000; i++) {
+      if (found[i][0] && found[i][1]) {
+        result[idx++] = i;
       }
     }
-    int[] ans = new int[match.size()];
-    Iterator<Integer> iter = match.iterator();
-    for (int i = 0; i < ans.length; i++) {
-      ans[i] = iter.next();
-    }
-    return ans;
+    return result;
   }
 }
