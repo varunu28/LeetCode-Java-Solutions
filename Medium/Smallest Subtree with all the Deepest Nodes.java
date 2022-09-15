@@ -14,41 +14,32 @@
  * }
  */
 class Solution {
-  Map<TreeNode, Integer> map;
-  int maxDepth;
   public TreeNode subtreeWithAllDeepest(TreeNode root) {
-    map = new HashMap<>();
-    maxDepth = -1;
-    map.put(null, -1);
-    dfs(root, null);
-    return helper(root);
+    return dfs(root).node;
   }
   
-  private void dfs(TreeNode root, TreeNode parent) {
+  private NodeResult dfs(TreeNode root) {
     if (root == null) {
-      return;
+      return new NodeResult(null, 0);
     }
-    map.put(root, map.get(parent) + 1);
-    maxDepth = Math.max(maxDepth, map.get(root));
-    dfs(root.left, root);
-    dfs(root.right, root);
+    NodeResult leftResult = dfs(root.left);
+    NodeResult rightResult = dfs(root.right);
+    if (leftResult.distance > rightResult.distance) {
+      return new NodeResult(leftResult.node, leftResult.distance + 1);
+    }
+    if (leftResult.distance < rightResult.distance) {
+      return new NodeResult(rightResult.node, rightResult.distance + 1);
+    }
+    return new NodeResult(root, rightResult.distance + 1);
   }
   
-  private TreeNode helper(TreeNode root) {
-    if (root == null || map.get(root) == maxDepth) {
-      return root;
+  private static class NodeResult {
+    TreeNode node;
+    int distance;
+    
+    public NodeResult(TreeNode node, int distance) {
+      this.node = node;
+      this.distance = distance;
     }
-    TreeNode left = helper(root.left);
-    TreeNode right = helper(root.right);
-    if (left != null && right != null) {
-      return root;
-    }
-    if (left != null) {
-      return left;
-    }
-    if (right != null) {
-      return right;
-    }
-    return null;
   }
 }
