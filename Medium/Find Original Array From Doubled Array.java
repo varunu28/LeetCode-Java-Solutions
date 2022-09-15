@@ -3,19 +3,25 @@ class Solution {
     if (changed.length % 2 != 0) {
       return new int[]{};
     }
-    int[] answer = new int[changed.length / 2];
-    int idx = 0;
-    Map<Integer, Long> map = Arrays.stream(changed).boxed()
-        .collect(Collectors.groupingBy(Function.identity(), TreeMap::new, Collectors.counting()));
-    for (Integer key : map.keySet()) {
-      if (map.get(key) > map.getOrDefault(key * 2, 0L)) {
-        return new int[0];
-      }
-      for (int i = 0; i < map.get(key); i++) {
-        answer[idx++] = key;
-        map.put(key * 2, map.get(key * 2) - 1);
+    Arrays.sort(changed);
+    Map<Integer, Integer> map = new HashMap<>();
+    for (int num : changed) {
+      map.put(num, map.getOrDefault(num, 0) + 1);
+    }
+    int[] result = new int[changed.length / 2];
+    int resultIdx = 0;
+    for (int num : changed) {
+      if (map.get(num) > 0) {
+        map.put(num, map.get(num) - 1);
+        int doubleValue = num * 2;
+        if (map.getOrDefault(doubleValue, 0) > 0) {
+          map.put(doubleValue, map.get(doubleValue) - 1);
+          result[resultIdx++] = num;
+        } else {
+          return new int[]{};
+        }
       }
     }
-    return answer;
+    return result;
   }
 }
