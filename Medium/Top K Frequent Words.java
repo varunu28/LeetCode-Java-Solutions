@@ -1,23 +1,29 @@
 class Solution {
   public List<String> topKFrequent(String[] words, int k) {
-    Map<String, Integer> map = new HashMap<>();
+    Map<String, Integer> wordFrequency = new HashMap<>();
+    Map<Integer, Set<String>> frequencyToWord = new HashMap<>();
+    int maxFrequency = 0;
     for (String word : words) {
-      map.put(word, map.getOrDefault(word, 0) + 1);
-    }
-    PriorityQueue<String> pq = new PriorityQueue<>(new Comparator<String>(){
-      public int compare(String s1, String s2) {
-        int c = map.get(s2) - map.get(s1);
-        if (c != 0) {
-          return c;
-        }
-        return s1.compareTo(s2);
+      if (!wordFrequency.containsKey(word)) {
+        wordFrequency.put(word, 1);
+        frequencyToWord.computeIfAbsent(1, j -> new HashSet<>()).add(word);
+      } else {
+        int oldFrequency = wordFrequency.get(word);
+        int newFrequency = oldFrequency + 1;
+        wordFrequency.put(word, newFrequency);
+        frequencyToWord.get(oldFrequency).remove(word);
+        frequencyToWord.computeIfAbsent(newFrequency, j -> new HashSet<>()).add(word);
       }
-    });
-    pq.addAll(map.keySet());
-    List<String> ans = new ArrayList<>();
-    while (!pq.isEmpty() && k-- > 0) {
-      ans.add(pq.poll());
+      maxFrequency = Math.max(maxFrequency, wordFrequency.get(word));
     }
-    return ans;
+    List<String> result = new ArrayList<>();
+    for (int i = maxFrequency; i > 0 && result.size() < k; i--) {
+      List<String> currFreqWords = new ArrayList<>(frequencyToWord.get(i));
+      Collections.sort(currFreqWords);
+      for (int j = 0; j < currFreqWords.size() && result.size() < k; j++) {
+        result.add(currFreqWords.get(j));
+      }
+    }
+    return result;
   }
 }
