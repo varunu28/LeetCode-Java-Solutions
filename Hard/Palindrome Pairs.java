@@ -1,54 +1,68 @@
 class Solution {
-    public List<List<Integer>> palindromePairs(String[] words) {
-        List<List<Integer>> lists = new ArrayList<>();
-        Map<String, Integer> map = new HashMap<>();
-        for (int i=0; i<words.length; i++) {
-            map.put(new StringBuilder(words[i]).reverse().toString(), i);
+  public List<List<Integer>> palindromePairs(String[] words) {
+    TrieNode root = new TrieNode();
+    for (int i = 0; i < words.length; i++) {
+      String reversed = new StringBuilder(words[i]).reverse().toString();
+      TrieNode curr = root;
+      for (int j = 0; j < reversed.length(); j++) {
+        if (isPalindrome(reversed, j)) {
+          curr.palindromePrefixRemainingIds.add(i);
         }
-
-        if (map.containsKey("")) {
-            for (int i = 0; i < words.length; i++) {
-                if (i == map.get("")) {
-                    continue;
-                }
-
-                if (palindromeCheck(words[i])) {
-                    lists.add(Arrays.asList(map.get(""), i));
-                }
-            }
+        if (!curr.children.containsKey(reversed.charAt(j))) {
+          curr.children.put(reversed.charAt(j), new TrieNode());
         }
-
-        for (int i=0; i<words.length; i++) {
-            for (int j=0; j<words[i].length(); j++) {
-                String leftPart = words[i].substring(0, j);
-                String rightPart = words[i].substring(j);
-
-                if (map.containsKey(leftPart) && palindromeCheck(rightPart) && map.get(leftPart) != i) {
-                    lists.add(Arrays.asList(i, map.get(leftPart)));
-                }
-
-                if (map.containsKey(rightPart) && palindromeCheck(leftPart) && map.get(rightPart) != i) {
-                    lists.add(Arrays.asList(map.get(rightPart), i));
-                }
-            }
-        }
-
-        return lists;
+        curr = curr.children.get(reversed.charAt(j));
+      }
+      curr.wordEndingId = i;
     }
+    List<List<Integer>> result = new ArrayList<>();
+    for (int i = 0; i < words.length; i++) {
+      String word = words[i];
+      TrieNode curr = root;
+      for (int j = 0; j < word.length(); j++) {
+        if (curr.wordEndingId != -1 && isPalindrome(word, j)) {
+          result.add(Arrays.asList(i, curr.wordEndingId));
+        }
+        char c = word.charAt(j);
+        curr = curr.children.get(c);
+        if (curr == null) {
+          break;
+        }
+      }
+      if (curr == null) {
+        continue;
+      }
+      if (curr.wordEndingId != -1 && curr.wordEndingId != i) {
+        result.add(Arrays.asList(i, curr.wordEndingId));
+      }
+      for (int idx : curr.palindromePrefixRemainingIds) {
+        result.add(Arrays.asList(i, idx));
+      }
+    }
+    return result;
+  }
+  
+  private static boolean isPalindrome(String s, int start) {
+    int end = s.length() - 1;
+    while (start < end) {
+      if (s.charAt(start) != s.charAt(end)) {
+        return false;
+      }
+      start++;
+      end--;
+    }
+    return true;
+  }
+  
+  private static class TrieNode {
+    private int wordEndingId;
+    private Map<Character, TrieNode> children;
+    private List<Integer> palindromePrefixRemainingIds;
     
-    private boolean palindromeCheck(String word) {
-        int i = 0;
-        int j = word.length() - 1;
-
-        while (i < j) {
-            if (word.charAt(i) != word.charAt(j)) {
-                return false;
-            }
-
-            i++;
-            j--;
-        }
-
-        return true;
+    public TrieNode() {
+      this.wordEndingId = -1;
+      this.children = new HashMap<>();
+      this.palindromePrefixRemainingIds = new ArrayList<>();
     }
+  }
 }
