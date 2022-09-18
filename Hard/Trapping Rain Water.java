@@ -1,20 +1,27 @@
 class Solution {
-    public int trap(int[] A) {
-        Stack<Integer> stack = new Stack<Integer>();
-        int i = 0;
-        int maxWater = 0;
-        
-        while (i < A.length){
-            if (stack.isEmpty() || A[i] <= A[stack.peek()]){
-                stack.push(i++);
-            }
-            else {
-                int bot = stack.pop();
-                maxWater += stack.isEmpty() ? 0 :
-                    (Math.min(A[stack.peek()], A[i]) - A[bot]) * (i - stack.peek() - 1);
-            }
+  public int trap(int[] height) {
+    int leftIdx = 0;
+    int rightIdx = height.length - 1;
+    int leftMax = 0;
+    int rightMax = 0;
+    int result = 0;
+    while (leftIdx < rightIdx) {
+      if (height[leftIdx] < height[rightIdx]) {
+        if (height[leftIdx] >= leftMax) {
+          leftMax = height[leftIdx];
+        } else {
+          result += leftMax - height[leftIdx];
         }
-        
-        return maxWater;
+        leftIdx++;
+      } else {
+        if (height[rightIdx] >= rightMax) {
+          rightMax = height[rightIdx];
+        } else {
+          result += rightMax - height[rightIdx];
+        }
+        rightIdx--;
+      }
     }
+    return result;
+  }
 }
