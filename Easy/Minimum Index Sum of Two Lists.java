@@ -4,25 +4,25 @@ class Solution {
     for (int i = 0; i < list1.length; i++) {
       map.put(list1[i], i);
     }
-    List<String> list = new ArrayList<>();
     int minIndexSum = Integer.MAX_VALUE;
+    Map<String, Integer> stringToIndexSum = new HashMap<>();
     for (int i = 0; i < list2.length; i++) {
       if (map.containsKey(list2[i])) {
-        int indexSum = map.get(list2[i]) + i;
-        if (indexSum < minIndexSum) {
-          minIndexSum = indexSum;
-          list = new ArrayList<>();
-          list.add(list2[i]);
-        }
-        else if (indexSum == minIndexSum) {
-          list.add(list2[i]);
-        }
+        int indexSum = i + map.get(list2[i]);
+        minIndexSum = Math.min(minIndexSum, indexSum);
+        stringToIndexSum.put(list2[i], indexSum);
       }
     }
-    String[] ans = new String[list.size()];
-    for (int i = 0; i < list.size(); i++) {
-      ans[i] = list.get(i);
+    List<String> result = new ArrayList<>();
+    for (String key : stringToIndexSum.keySet()) {
+      if (stringToIndexSum.get(key) == minIndexSum) {
+        result.add(key);
+      }
     }
-    return ans;
+    String[] resultArr = new String[result.size()];
+    for (int i = 0; i < result.size(); i++) {
+      resultArr[i] = result.get(i);
+    }
+    return resultArr;
   }
 }
