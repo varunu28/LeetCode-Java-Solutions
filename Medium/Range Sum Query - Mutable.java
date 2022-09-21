@@ -1,45 +1,50 @@
 class NumArray {
-  
+
+  private BIT bit;
   private int[] nums;
-  private int[] indexTree;
-  private int n;
   
   public NumArray(int[] nums) {
+    this.bit = new BIT(nums.length);
     this.nums = nums;
-    this.n = nums.length;
-    this.indexTree = new int[n + 1];
-    for (int i = 0; i < n; i++) {
-      initialize(i, nums[i]);
+    for (int i = 0; i < nums.length; i++) {
+      this.bit.update(i + 1, nums[i]);
     }
   }
 
   public void update(int index, int val) {
-    int diff = val - this.nums[index];
-		this.nums[index] = val;
-		initialize(index, diff);
+    int delta = val - nums[index];
+    this.bit.update(index + 1, delta);
+    this.nums[index] = val;
   }
 
   public int sumRange(int left, int right) {
-    return getSum(right) - getSum(left - 1);
+    return this.bit.query(right + 1) - this.bit.query(left);
   }
   
-  private void initialize(int idx, int value) {
-		idx++;
-		while (idx <= this.n) {
-			this.indexTree[idx] += value;
-			idx += (idx & -idx);
-		}
+  private static class BIT {
+    
+    private int[] sum;
+    
+    public BIT(int n) {
+      this.sum = new int[n + 1];
+    }
+    
+    private void update(int idx, int delta) {
+      while (idx < sum.length) {
+        sum[idx] += delta;
+        idx += (idx & -idx);
+      }
+    }
+    
+    private int query(int idx) {
+      int result = 0;
+      while (idx > 0) {
+        result += sum[idx];
+        idx -= (idx & -idx); 
+      }
+      return result;
+    }
   }
-  
-  private int getSum(int i) {
-		int sum = 0;
-		i++;
-		while (i > 0) {
-			sum += this.indexTree[i];
-			i -= (i & -i);
-		}
-		return sum;
-	}
 }
 
 /**
