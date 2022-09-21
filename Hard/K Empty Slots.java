@@ -1,19 +1,23 @@
 class Solution {
-    public int kEmptySlots(int[] flowers, int k) {
-        TreeSet<Integer> set = new TreeSet<>();
-        int day = 0;
-
-        for (int flower : flowers) {
-            day++;
-            set.add(flower);
-            Integer lower = set.lower(flower);
-            Integer higher = set.higher(flower);
-
-            if ((lower != null && flower - lower - 1 == k) || (higher != null && higher - flower - 1 == k)) {
-                return day;
-            }
-        }
-
-        return -1;
+  public int kEmptySlots(int[] bulbs, int k) {
+    int n = bulbs.length;
+    int[] position = new int[n + 1];
+    for (int i = 0; i < n; i++) {
+      position[bulbs[i]] = i;
     }
+    int result = Integer.MAX_VALUE;
+    int start = 1;
+    int end = k + 2;
+    for (int i = 1; end <= n; i++) {
+      if (position[i] > position[start] && position[i] > position[end]) {
+        continue;
+      }
+      if (i == end) {
+        result = Math.min(result, Math.max(position[start], position[end]) + 1);
+      }
+      start = i;
+      end = k + 1 + i;
+    }
+    return result == Integer.MAX_VALUE ? -1 : result;
+  }
 }
