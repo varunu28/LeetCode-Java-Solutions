@@ -1,23 +1,22 @@
 class Solution {
   public boolean lemonadeChange(int[] bills) {
-    final int LEMONADE_COST = 5;
-    int[] billDenominations = {20, 10, 5};
-    Map<Integer, Integer> cashCounter = new HashMap<>();
+    int[] billCount = new int[3];
     for (int bill : bills) {
-      int changeRequired = bill - LEMONADE_COST;
-      cashCounter.put(bill, cashCounter.getOrDefault(bill, 0) + 1);
-      for (Integer denomination : billDenominations) {
-        int numOfBills = Math.min(
-            changeRequired / denomination, cashCounter.getOrDefault(denomination, 0)
-        );
-        changeRequired -= denomination * numOfBills;
-        cashCounter.put(
-          denomination, cashCounter.getOrDefault(denomination, 0) - numOfBills
-        );
+      int returnAmount = bill - 5;
+      for (int i = 2; i >= 0 && returnAmount > 0; i--) {
+        int amount = i == 2 ? 20 : (i == 1 ? 10 : 5);
+        if (returnAmount >= amount) {
+          int billsRequired = returnAmount / amount;
+          int billsAvailable = billCount[i];
+          returnAmount -= Math.min(billsRequired, billsAvailable) * amount;
+          billCount[i] -= Math.min(billsRequired, billsAvailable);
+        }
       }
-      if (changeRequired > 0) {
+      if (returnAmount != 0) {
         return false;
       }
+      int amountIdx = bill == 20 ? 2 : (bill == 10 ? 1 : 0);
+      billCount[amountIdx]++;
     }
     return true;
   }
