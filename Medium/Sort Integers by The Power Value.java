@@ -15,9 +15,6 @@ class Solution {
   }
 
   private int calculateSteps(Map<Integer, Integer> cache, int num) {
-    if (num == 1) {
-      return 0;
-    }
     if (cache.containsKey(num)) {
       return cache.get(num);
     }
