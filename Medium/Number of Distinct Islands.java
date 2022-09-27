@@ -1,38 +1,35 @@
 class Solution {
-  Set<String> set;
-  int[][] dirs = {{-1, 0}, {0, -1}, {1, 0}, {0, 1}};
   public int numDistinctIslands(int[][] grid) {
-    if (grid.length == 0 || grid[0].length == 0) {
-      return 0;
-    }
-    set = new HashSet<>();
-    boolean[][] visited = new boolean[grid.length][grid[0].length];
-    for (int i = 0; i < grid.length; i++) {
-      for (int j = 0; j < grid[i].length; j++) {
-        if (!visited[i][j]) {
-          StringBuilder sb = new StringBuilder();
-          dfs(grid, i, j, visited, sb, 0);
-          if (sb.length() > 0) {
-            set.add(sb.toString());
-          }
+    int rows = grid.length;
+    int cols = grid[0].length;
+    boolean[][] visited = new boolean[rows][cols];
+    Set<String> islands = new HashSet<>();
+    for (int row = 0; row < rows; row++) {
+      for (int col = 0; col < cols; col++) {
+        StringBuilder currIsland = new StringBuilder();
+        dfs(grid, row, col, visited, currIsland, '0');
+        if (currIsland.length() == 0) {
+          continue;
         }
+        islands.add(currIsland.toString());
       }
     }
-    return set.size();
+    return islands.size();
   }
   
-  private void dfs(int[][] grid, int x, int y, boolean[][] visited, StringBuilder sb, int currDir) {
-    if (x < 0 || x >= grid.length || y < 0 || y >= grid[0].length || grid[x][y] != 1 || visited[x][y]) {
+  private void dfs(int[][] grid, int row, int col, boolean[][] visited, StringBuilder currIsland, char direction) {
+    if (row < 0 || row >= grid.length || col < 0 || col >= grid[0].length) {
       return;
     }
-    sb.append(currDir);
-    visited[x][y] = true;
-    int curr = 1;
-    for (int[] dir : dirs) {
-      int newX = x + dir[0];
-      int newY = y + dir[1];
-      dfs(grid, newX, newY, visited, sb, curr++);
+    if (visited[row][col] || grid[row][col] == 0) {
+      return;
     }
-    sb.append(0);
+    visited[row][col] = true;
+    currIsland.append(direction);
+    dfs(grid, row + 1, col, visited, currIsland, 'D');
+    dfs(grid, row - 1, col, visited, currIsland, 'U');
+    dfs(grid, row, col + 1, visited, currIsland, 'R');
+    dfs(grid, row, col - 1, visited, currIsland, 'L');
+    currIsland.append('0');
   }
 }
