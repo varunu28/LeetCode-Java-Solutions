@@ -16,48 +16,62 @@ class Node {
     }
 };
 */
+
 class Codec {
-    
   // Encodes a tree to a single string.
-  private final String SEPARATOR = ",";
-  private final String NULL_SEPARATOR = "#";
-  public String serialize(Node root) {
-    StringBuilder sb = new StringBuilder();
-    serializeHelper(root, sb);
-    return sb.toString();
-  }
   
-  private void serializeHelper(Node root, StringBuilder sb) {
+  private static final String SEPARATOR = ",";
+  private static final String NULL_NODE = "X";
+  
+  public String serialize(Node root) {
     if (root == null) {
-      sb.append(NULL_SEPARATOR).append(SEPARATOR);
+      return NULL_NODE;
     }
-    else {
-      sb.append(root.val).append(SEPARATOR).append(root.children.size()).append(SEPARATOR);
-      for (Node child : root.children) {
-        serializeHelper(child, sb);
+    StringBuilder sb = new StringBuilder();
+    Queue<Node> queue = new LinkedList<>();
+    queue.add(root);
+    queue.add(null);
+    while (!queue.isEmpty()) {
+      int size = queue.size();
+      for (int i = 0; i < size; i++) {
+        Node removed = queue.remove();
+        if (removed == null) {
+          sb.append(NULL_NODE).append(SEPARATOR);
+          break;
+        }
+        for (Node child : removed.children) {
+          queue.add(child);
+        }
+        queue.add(null);
+        sb.append(removed.val).append(SEPARATOR);
       }
     }
+    sb.deleteCharAt(sb.length() - 1);
+    return sb.toString();
   }
 
   // Decodes your encoded data to tree.
   public Node deserialize(String data) {
-    Deque<String> dq = new ArrayDeque<>(Arrays.asList(data.split(SEPARATOR)));
-    return deserializeHelper(dq);
-  }
-  
-  private Node deserializeHelper(Deque<String> dq) {
-    String removed = dq.removeFirst();
-    if (removed.equals(NULL_SEPARATOR)) {
+    String[] splits = data.split(SEPARATOR);
+    if (splits[0].equals(NULL_NODE)) {
       return null;
     }
-    else {
-      Node node = new Node(Integer.parseInt(removed), new ArrayList<>());
-      int childCount = Integer.parseInt(dq.removeFirst());
-      for (int i = 0; i < childCount; i++) {
-        node.children.add(deserializeHelper(dq));
+    Node root = new Node(Integer.parseInt(splits[0]));
+    Queue<Node> queue = new LinkedList<>();
+    queue.add(root);
+    int idx = 2;
+    while (idx < splits.length) {
+      Node node = queue.remove();
+      List<Node> children = new ArrayList<>();
+      while (!splits[idx].equals(NULL_NODE)) {
+        Node child = new Node(Integer.parseInt(splits[idx++]));
+        children.add(child);
+        queue.add(child);
       }
-      return node;
+      idx++;
+      node.children = children;
     }
+    return root;
   }
 }
 
