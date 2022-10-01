@@ -1,58 +1,28 @@
 class Solution {
-    int[] memo;
-    public int numDecodings(String s) {
-        if (s.length() == 0) {
-            return 0;
-        }
-        
-        memo = new int[s.length() + 1];
-        Arrays.fill(memo, -1);
-        
-        return helperDp(0, s);
+  
+  public int numDecodings(String s) {
+    Map<Integer, Integer> map = new HashMap<>();
+    return helper(s, 0, map);
+  } 
+  
+  private int helper(String s, int idx, Map<Integer, Integer> map) {
+    if (map.containsKey(idx)) {
+      return map.get(idx);
     }
-    
-    private int helperDp(int idx, String s) {
-        if (memo[idx] > -1) {
-            return memo[idx];
-        }
-        
-        int n = s.length();
-        if (idx == n) {
-            return memo[idx] = 1;
-        }
-        
-        if (s.charAt(idx) == '0') {
-            return memo[idx] = 0;
-        }
-        
-        int temp = helperRecursive(idx + 1, s);
-        memo[idx + 1] = temp;
-        
-        if (idx < n - 1 && (s.charAt(idx) == '1' || (s.charAt(idx) == '2' && s.charAt(idx + 1) < '7'))) {
-            memo[idx + 2] = helperRecursive(idx + 2, s);
-            temp += memo[idx + 2];
-        }
-        
-        return temp;
+    if (idx == s.length()) {
+      return 1;
     }
-    
-    private int helperRecursive(int idx, String s) {
-        int n = s.length();
-        
-        if (idx == n) {
-            return 1;
-        }
-        
-        if (s.charAt(idx) == '0') {
-            return 0;
-        }
-        
-        int temp = helperRecursive(idx + 1, s);
-        
-        if (idx < n - 1 && (s.charAt(idx) == '1' || (s.charAt(idx) == '2' && s.charAt(idx + 1) < '7'))) {
-            temp += helperRecursive(idx + 2, s);
-        }
-        
-        return temp;
+    if (s.charAt(idx) == '0') {
+      return 0;
     }
+    if (idx == s.length() - 1) {
+      return 1;
+    }
+    int result = helper(s, idx + 1, map);
+    if (Integer.parseInt(s.substring(idx, idx + 2)) <= 26) {
+      result += helper(s, idx + 2, map);
+    }
+    map.put(idx, result);
+    return result;
+  }
 }
