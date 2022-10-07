@@ -1,31 +1,24 @@
 class Solution {
   public int maxFreq(String s, int maxLetters, int minSize, int maxSize) {
-    int n = s.length();
-    if (minSize > n) {
-      return 0;
-    }
-    Map<String, Integer> substringMap = new HashMap<>();
-    for (int i = 0; i < n; i++) {
-      Map<Character, Integer> charMap = new HashMap<>();
-      for (int j = 0; j < maxSize; j++) {
-        if (i + j >= n) {
-          break;
-        }       
-        charMap.put(s.charAt(i + j), charMap.getOrDefault(s.charAt(i + j), 0) + 1);
-        if (charMap.size() > maxLetters) {
-          break;
+    Map<Character, Integer> letterFrequencyMap = new HashMap<>();
+    Map<String, Integer> substringFrequencyMap = new HashMap<>();
+    int start = 0;
+    int maxCount = 0;
+    for (int i = 0; i < s.length(); i++) {
+      letterFrequencyMap.put(s.charAt(i), letterFrequencyMap.getOrDefault(s.charAt(i), 0) + 1);
+      while (i - start + 1 > minSize || letterFrequencyMap.size() > maxLetters) {
+        letterFrequencyMap.put(s.charAt(start), letterFrequencyMap.getOrDefault(s.charAt(start), 0) - 1);
+        if (letterFrequencyMap.get(s.charAt(start)) == 0) {
+          letterFrequencyMap.remove(s.charAt(start));
         }
-        if (j >= minSize - 1) {
-          substringMap.put(
-            s.substring(i, i + j + 1), substringMap.getOrDefault(s.substring(i, i + j + 1), 0) + 1
-          );
-        }
+        start++;
+      }
+      if (i - start + 1 == minSize) {
+        String currSubstring = s.substring(start, i + 1);
+        substringFrequencyMap.put(currSubstring, substringFrequencyMap.getOrDefault(currSubstring, 0) + 1);
+        maxCount = Math.max(maxCount, substringFrequencyMap.get(currSubstring));
       }
     }
-    int maxFreqCount = 0;
-    for (String substr : substringMap.keySet()) {
-      maxFreqCount = Math.max(maxFreqCount, substringMap.get(substr));
-    }
-    return maxFreqCount;
+    return maxCount;
   }
 }
