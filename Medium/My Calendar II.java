@@ -1,18 +1,20 @@
 class MyCalendarTwo {
-  TreeMap<Integer, Integer> map;
+  
+  private TreeMap<Integer, Integer> delta;
+  
   public MyCalendarTwo() {
-    map = new TreeMap<>();
+    this.delta = new TreeMap<>();
   }
 
   public boolean book(int start, int end) {
-    map.put(start, map.getOrDefault(start, 0) + 1);
-    map.put(end, map.getOrDefault(end, 0) - 1);
-    int eventCount = 0;
-    for (int val : map.values()) {
-      eventCount += val;
-      if (eventCount >= 3) {
-        map.put(start, map.get(start) - 1);
-        map.put(end, map.get(end) + 1);
+    delta.put(start, delta.getOrDefault(start, 0) + 1);
+    delta.put(end, delta.getOrDefault(end, 0) - 1);
+    int active = 0;
+    for (int d : delta.values()) {
+      active += d;
+      if (active >= 3) {
+        delta.put(start, delta.get(start) - 1);
+        delta.put(end, delta.get(end) + 1);
         return false;
       }
     }
