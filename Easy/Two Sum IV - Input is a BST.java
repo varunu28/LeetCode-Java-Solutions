@@ -15,18 +15,31 @@
  */
 class Solution {
   public boolean findTarget(TreeNode root, int k) {
-    Set<Integer> set = new HashSet<>();
-    return helper(root, k, set);
-  }
-  
-  private boolean helper(TreeNode root, int k, Set<Integer> set) {
     if (root == null) {
       return false;
     }
-    if (set.contains(k - root.val)) {
-      return true;
+    Stack<TreeNode> stack = new Stack<>();
+    Set<Integer> set = new HashSet<>();
+    while (root != null) {
+      if (set.contains(k - root.val)) {
+        return true;
+      }
+      stack.push(root);
+      set.add(root.val);
+      root = root.left;
     }
-    set.add(root.val);
-    return helper(root.left, k, set) || helper(root.right, k, set);
+    while (!stack.isEmpty()) {
+      TreeNode removed = stack.pop();
+      TreeNode rightNode = removed.right;
+      while (rightNode != null) {
+        if (set.contains(k - rightNode.val)) {
+          return true;
+        }
+        stack.push(rightNode);
+        set.add(rightNode.val);
+        rightNode = rightNode.left;
+      }
+    }
+    return false;
   }
 }
