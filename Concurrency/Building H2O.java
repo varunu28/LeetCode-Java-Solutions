@@ -1,26 +1,26 @@
 class H2O {
-  private Semaphore hydrogen;
-  private Semaphore oxygen;
-  private Semaphore mutex;
+  
+  private final Semaphore hydrogenSemaphore;
+  private final Semaphore oxygenSemaphore;
 
   public H2O() {
-    this.hydrogen = new Semaphore(2);
-    this.oxygen = new Semaphore(0);
-    this.mutex = new Semaphore(1);
+    this.hydrogenSemaphore = new Semaphore(2);
+    this.oxygenSemaphore = new Semaphore(0);
   }
 
   public void hydrogen(Runnable releaseHydrogen) throws InterruptedException {
+
+    this.hydrogenSemaphore.acquire();
     // releaseHydrogen.run() outputs "H". Do not change or remove this line.
-    this.hydrogen.acquire();
     releaseHydrogen.run();
-    this.oxygen.release();
+    this.oxygenSemaphore.release();
   }
 
   public void oxygen(Runnable releaseOxygen) throws InterruptedException {
-    this.mutex.acquire();
-    this.oxygen.acquire(2);
+
+    this.oxygenSemaphore.acquire(2);
+    // releaseOxygen.run() outputs "O". Do not change or remove this line.
     releaseOxygen.run();
-    this.hydrogen.release(2);
-    this.mutex.release();
+    this.hydrogenSemaphore.release(2);
   }
 }
