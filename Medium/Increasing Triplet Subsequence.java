@@ -5,11 +5,9 @@ class Solution {
     for (int num : nums) {
       if (num <= firstNum) {
         firstNum = num;
-      }
-      else if (num <= secondNum) {
+      } else if (num <= secondNum) {
         secondNum = num;
-      }
-      else {
+      } else {
         return true;
       }
     }
