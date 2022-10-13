@@ -1,39 +1,35 @@
 class Solution {
-  public int numSquarefulPerms(int[] A) {
-    Map<Integer, Integer> count = new HashMap<>();
-    Map<Integer, List<Integer>> graph = new HashMap<>();
-    int n = A.length;
-    for (int num : A) {
-      count.put(num, count.getOrDefault(num, 0) + 1);
-    }
-    for (Integer key1 : count.keySet()) {
-      graph.computeIfAbsent(key1, k -> new ArrayList<>());
-      for (Integer key2 : count.keySet()) {
-        int r = (int) (Math.sqrt(key1 + key2) + 0.5);
-        if (r * r == key1 + key2) {
-          graph.get(key1).add(key2);
-        }
-      }
-    }
-    int ans = 0;
-    for (Integer key : count.keySet()) {
-      ans += dfs(key, n - 1, count, graph);
-    }
-    return ans;
+  public int numSquarefulPerms(int[] nums) {
+    Arrays.sort(nums);
+    int[] count = {0};
+    backtrack(new ArrayList<>(), nums, new boolean[nums.length], -1, count);
+    return count[0];
   }
   
-  private int dfs(int key, int toReach, Map<Integer, Integer> count, Map<Integer, List<Integer>> graph) {
-    count.put(key, count.get(key) - 1);
-    int currAns = 1;
-    if (toReach != 0) {
-      currAns = 0;
-      for (int node : graph.get(key)) {
-        if (count.get(node) != 0) {
-          currAns += dfs(node, toReach - 1, count, graph);
+  private void backtrack(List<Integer> temp, int[] nums, boolean[] used, int lastNumber, int[] count) {
+    if (temp.size() == nums.length){
+      count[0]++;
+      return;
+    }
+    for (int i = 0; i < nums.length; i++){
+      if (used[i] || (i > 0 && nums[i] == nums[i - 1] && !used[i - 1])){
+        continue;
+      }
+      if (lastNumber != -1) {
+        if (!isSquare(nums[i] + lastNumber)) {
+          continue;
         }
       }
+      used[i] = true;
+      temp.add(nums[i]);
+      backtrack(temp, nums, used, nums[i], count);
+      temp.remove(temp.size() - 1);
+      used[i] = false;
     }
-    count.put(key, count.get(key) + 1);
-    return currAns;
+  }
+  
+  private boolean isSquare(int num) {
+    int squareRoot = (int) Math.sqrt(num);
+    return squareRoot * squareRoot == num;
   }
 }
