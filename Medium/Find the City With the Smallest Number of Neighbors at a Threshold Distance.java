@@ -1,37 +1,45 @@
 class Solution {
   public int findTheCity(int n, int[][] edges, int distanceThreshold) {
-    Map<Integer, Map<Integer, Integer>> map = new HashMap<>();
+    Map<Integer, List<int[]>> graph = new HashMap<>();
     for (int[] edge : edges) {
-      map.computeIfAbsent(edge[0], k -> new HashMap<>()).put(edge[1], edge[2]);
-      map.computeIfAbsent(edge[1], k -> new HashMap<>()).put(edge[0], edge[2]);
+      graph.computeIfAbsent(edge[0], k -> new ArrayList<>())
+          .add(new int[]{edge[1], edge[2]});
+      graph.computeIfAbsent(edge[1], k -> new ArrayList<>())
+          .add(new int[]{edge[0], edge[2]});
     }
-    int min = n + 1;
-    int res = -1;
+    int minNeighborCount = n + 1;
+    int nodeWithMinNeighbor = -1;
     for (int i = 0; i < n; i++) {
-      Queue<int[]> queue = new PriorityQueue<>((a, b) -> (b[1] - a[1]));
-      queue.add(new int[]{i, distanceThreshold});
-      boolean[] visited = new boolean[n];
-      int count = 0;
-      while (!queue.isEmpty()) {
-        int[] city = queue.poll();
-        if (visited[city[0]]) {
-          continue;
-        }
-        visited[city[0]] = true;
-        count++;
-        Map<Integer, Integer> temp = map.getOrDefault(city[0], new HashMap<>());
-        for (Integer neighbour : temp.keySet()) {
-          if (!visited[neighbour] && city[1] >= temp.get(neighbour)) {
-            queue.add(new int[]{neighbour, city[1] - temp.get(neighbour)});
-          }
-        }
+      int numOfNeighbors = findNumberOfNeighborsWithinThresholdDistance(i, distanceThreshold, graph);
+      minNeighborCount = Math.min(numOfNeighbors, minNeighborCount);
+      nodeWithMinNeighbor = minNeighborCount == numOfNeighbors ? i : nodeWithMinNeighbor;
+    }
+    return nodeWithMinNeighbor;
+  }
+
+  private int findNumberOfNeighborsWithinThresholdDistance(int node, int distanceThreshold, Map<Integer, List<int[]>> graph) {
+    Queue<int[]> queue = new PriorityQueue<>((a, b) -> (b[1] - a[1]));
+    Set<Integer> visited = new HashSet<>();
+    queue.add(new int[]{node, distanceThreshold});
+    int numOfNeighbors = 0;
+    while (!queue.isEmpty()) {
+      int[] removed = queue.remove();
+      int currNode = removed[0];
+      int currDistanceThreshold = removed[1];
+      if (visited.contains(currNode)) {
+        continue;
       }
-      if (count - 1 <= min) {
-        min = count - 1;
-        res = i;
+      visited.add(currNode);
+      numOfNeighbors++;
+      for (int[] neighbor : graph.getOrDefault(currNode, new ArrayList<>())) {
+        int neighborNode = neighbor[0];
+        int neighborDistance = neighbor[1];
+        if (!visited.contains(neighborNode) &&
+            currDistanceThreshold >= neighborDistance) {
+          queue.add(new int[]{neighborNode, currDistanceThreshold - neighborDistance});
+        }
       }
     }
-    return res;
+    return numOfNeighbors;
   }
 }
-
