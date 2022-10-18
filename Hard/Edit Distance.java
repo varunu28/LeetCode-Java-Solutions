@@ -1,32 +1,26 @@
 class Solution {
-    public int minDistance(String s1, String s2) {
-        return minDistanceHelperDP(s1, s2, s1.length(), s2.length());
+  public int minDistance(String word1, String word2) {
+    int n = word1.length();
+    int m = word2.length();
+    if (n * m == 0) {
+      return n + m;
     }
-    
-    private int minDistanceHelperDP(String s1, String s2, int m, int n) {
-        int[][] dp = new int[m+1][n+1];
-
-        for (int i=0;i<=m;i++) {
-            for (int j=0;j<=n;j++) {
-                // First substring is empty
-                if (i == 0) {
-                    dp[i][j] = j;
-                }
-                // Second substring is empty
-                else if (j == 0) {
-                    dp[i][j] = i;
-                }
-                // If character are same, value is same as the previous dp array
-                else if (s1.charAt(i-1) == s2.charAt(j-1)) {
-                    dp[i][j] = dp[i-1][j-1];
-                }
-                // If different, then 1 + min
-                else {
-                    dp[i][j] = 1 + Math.min(dp[i-1][j-1], Math.min(dp[i][j-1], dp[i-1][j]));
-                }
-            }
+    int[][] dp = new int[n + 1][m + 1];
+    for (int i = 0; i <= n; i++) {
+      dp[i][0] = i;
+    }
+    for (int j = 0; j <= m; j++) {
+      dp[0][j] = j;
+    }
+    for (int i = 1; i <= n; i++) {
+      for (int j = 1; j <= m; j++) {
+        if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+          dp[i][j] = dp[i - 1][j - 1];
+        } else {
+          dp[i][j] = Math.min(dp[i - 1][j - 1], Math.min(dp[i - 1][j], dp[i][j - 1])) + 1;
         }
-
-        return dp[m][n];
+      }
     }
+    return dp[n][m];
+  }
 }
