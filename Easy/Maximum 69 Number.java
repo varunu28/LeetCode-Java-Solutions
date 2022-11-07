@@ -1,23 +1,11 @@
 class Solution {
-  public int maximum69Number (int num) {
-    int lastSixIndex = Integer.MAX_VALUE;
-    int count = 0;
-    int copy = num;
-    while (copy > 0) {
-      int rem = copy % 10;
-      if (rem == 6) {
-        lastSixIndex = count;
-      }
-      copy /= 10;
-      count++;
+    public int maximum69Number (int num) {
+        String numString = String.valueOf(num);
+        for (int i = 0; i < numString.length(); i++) {
+            if (numString.charAt(i) == '6') {
+                return Integer.parseInt(numString.substring(0, i) + '9' + numString.substring(i + 1));
+            }
+        }
+        return num;
     }
-    if (lastSixIndex == Integer.MAX_VALUE) {
-      return num;
-    }
-    return (
-      ((num / ((int) Math.pow(10, lastSixIndex + 1))) * ((int) Math.pow(10, lastSixIndex + 1))) +
-      (9 * ((int) Math.pow(10, lastSixIndex))) + 
-      (num % ((int) Math.pow(10, lastSixIndex)))
-    );
-  }
 }
