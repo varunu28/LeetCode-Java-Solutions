@@ -1,21 +1,19 @@
 class Solution {
-    public int binaryGap(int N) {
-        char[] binValues = Integer.toBinaryString(N).toCharArray();
-        int oneIndex = -1;
-        int maxDistance = 0;
-        
-        for (int i=0; i<binValues.length; i++) {
-            if (binValues[i] == '1') {
-                if (oneIndex == -1) {
-                    oneIndex = i;
+    public int binaryGap(int n) {
+        int lastOnePosition = -1;
+        int currPosition = 0;
+        int maxGap = 0;
+        while (n > 0) {
+            int rem = n % 2;
+            n /= 2;
+            if (rem == 1) {
+                if (lastOnePosition != -1) {
+                    maxGap = Math.max(maxGap, currPosition - lastOnePosition);
                 }
-                else {
-                    maxDistance = Math.max(i - oneIndex, maxDistance);
-                    oneIndex = i;
-                }
+                lastOnePosition = currPosition;
             }
+            currPosition++;
         }
-        
-        return maxDistance;
+        return maxGap;
     }
 }
