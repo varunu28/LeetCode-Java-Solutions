@@ -1,27 +1,26 @@
 class MedianFinder {
-
-  private PriorityQueue<Integer> small;
-  private PriorityQueue<Integer> large;
-  
-  public MedianFinder() {
-    this.small = new PriorityQueue<>((a, b) -> b - a);
-    this.large = new PriorityQueue<>();
-  }
-
-  public void addNum(int num) {
-    small.add(num);
-    large.add(small.remove());
-    if (large.size() > small.size()) {
-      small.add(large.remove());
+    
+    private final PriorityQueue<Integer> minQueue;
+    private final PriorityQueue<Integer> maxQueue;
+    
+    public MedianFinder() {
+        this.minQueue = new PriorityQueue<>();
+        this.maxQueue = new PriorityQueue<>((a, b) -> b - a);
     }
-  }
-
-  public double findMedian() {
-    if (small.size() > large.size()) {
-      return small.peek();
+    
+    public void addNum(int num) {
+        maxQueue.add(num);
+        minQueue.add(maxQueue.poll());
+        if (maxQueue.size() < minQueue.size()) {
+            maxQueue.add(minQueue.poll());
+        }
     }
-    return (small.peek() + large.peek()) / 2.0;
-  }
+    
+    public double findMedian() {
+        return maxQueue.size() > minQueue.size() ? 
+            ((double) maxQueue.peek()) : 
+            ((maxQueue.peek() + minQueue.peek()) / (2.0));
+    }
 }
 
 /**
