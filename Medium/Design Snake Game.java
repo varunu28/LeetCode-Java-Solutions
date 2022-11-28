@@ -1,87 +1,74 @@
 class SnakeGame {
-  
-  private final int width;
-  private final int height;
-  private final Set<Pair<Integer, Integer>> body;
-  private final Deque<Pair<Integer, Integer>> bodyQueue;
-  private final Queue<Pair<Integer, Integer>> foodQueue;
-  private int foodPoint;
-
-  public SnakeGame(int width, int height, int[][] food) {
-    this.width = width;
-    this.height = height;
-    this.body = new HashSet<>();
-    this.bodyQueue = new LinkedList<>();
-    this.body.add(new Pair<Integer, Integer>(0, 0));
-    this.bodyQueue.add(new Pair<Integer, Integer>(0, 0));
     
-    this.foodQueue = new LinkedList<>();
-    for (int[] fd : food) {
-      foodQueue.add(new Pair<Integer, Integer>(fd[0], fd[1]));
+    private final Deque<int[]> snake;
+    private final Queue<int[]> foodQueue;
+    private final Set<String> snakeBody;
+    private final int width;
+    private final int height;
+    private int score;
+    
+    public SnakeGame(int width, int height, int[][] food) {
+        this.snake = new ArrayDeque<>();
+        this.snake.addFirst(new int[]{0, 0});
+        this.foodQueue = new LinkedList<>();
+        this.foodQueue.addAll(Arrays.asList(food));
+        this.snakeBody = new HashSet<>();
+        this.snakeBody.add(0 + "|" + 0);
+        this.width = width;
+        this.height = height;
+        this.score = 0;
     }
-    this.foodPoint = 0;
-  }
-
-  public int move(String direction) {
-    Pair<Integer, Integer> currPosition = bodyQueue.peekLast();
-    Pair<Integer, Integer> nextPosition = move(currPosition, direction);
-    if (!isSnakeAlive(nextPosition)) {
-      return -1;
+    
+    public int move(String direction) {
+        int[] nextMove = getNextMove(direction);
+        if (!isMoveWithInBound(nextMove)) {
+            return -1;
+        }
+        moveSnake(nextMove);
+        if (isBitingItself(nextMove)) {
+            return -1;
+        }
+        this.snakeBody.add(nextMove[0] + "|" + nextMove[1]);
+        return score;
     }
-    if (!snakeAteFood(nextPosition)) {
-      body.remove(bodyQueue.pollFirst());
-      bodyQueue.addLast(nextPosition);
-      body.add(nextPosition);
+    
+    private int[] getNextMove(String direction) {
+        int[] nextMove = Arrays.copyOf(this.snake.peekFirst(), 2);
+        switch (direction) {
+            case "L" -> nextMove[1]--;
+            case "R" -> nextMove[1]++;
+            case "U" -> nextMove[0]--;
+            case "D" -> nextMove[0]++;
+            default -> {}
+        }
+        return nextMove;
     }
-    return foodPoint;
-  }
-  
-  private Pair<Integer, Integer> move(Pair<Integer, Integer> currPosition, String direction) {
-    int row = currPosition.getKey();
-    int col = currPosition.getValue();
-    switch (direction) {
-      case "U":
-        row--;
-        break;
-      case "D":
-        row++;
-        break;
-      case "L":
-        col--;
-        break;
-      case "R":
-        col++;
-        break;
-      default:
-        break;
+    
+    private boolean isMoveWithInBound(int[] move) {
+        int x = move[0];
+        int y = move[1];
+        return x >= 0 && y >= 0 && x < this.height && y < this.width;
     }
-    return new Pair<Integer, Integer>(row, col);
-  }
-  
-  private boolean isSnakeAlive(Pair<Integer, Integer> position) {
-    int row = position.getKey();
-    int col = position.getValue();
-    // Snake touched the boundary
-    if (!(row >= 0 && col >= 0 && row < height && col < width)) {
-      return false;
+    
+    private void moveSnake(int[] move) {
+        this.snake.addFirst(move);
+        if (snakeEatsFood(move)) {
+            this.foodQueue.remove();
+            this.score++;
+        } else {
+            int[] tail = this.snake.removeLast();
+            this.snakeBody.remove(tail[0] + "|" + tail[1]);
+        }
     }
-    // Snake bit somewhere in middle of the body
-    if (!position.equals(this.bodyQueue.peekFirst()) && this.body.contains(position)) {
-      return false;
+    
+    private boolean snakeEatsFood(int[] move) {
+        return !this.foodQueue.isEmpty() && move[0] == this.foodQueue.peek()[0] && move[1] == this.foodQueue.peek()[1];
     }
-    return true;
-  }
-  
-  private boolean snakeAteFood(Pair<Integer, Integer> position) {
-    if (!foodQueue.isEmpty() && position.equals(foodQueue.peek())) {
-      bodyQueue.addLast(position);
-      body.add(position);
-      foodQueue.poll();
-      foodPoint++;
-      return true;
+    
+    private boolean isBitingItself(int[] move) {
+        String key = move[0] + "|" + move[1];
+        return this.snakeBody.contains(key);
     }
-    return false;
-  }
 }
 
 /**
