@@ -10,48 +10,44 @@
 public class Codec {
 
     // Encodes a tree to a single string.
-  public String serialize(TreeNode root) {
-    if (root == null) {
-      return "";
+    public String serialize(TreeNode root) {
+        if (root == null) {
+            return "#";
+        }
+        StringBuilder sb = new StringBuilder();
+        dfsSerialize(root, sb);
+        return sb.toString().trim();
     }
-    StringBuilder sb = new StringBuilder();
-    dfs(root, sb);
-    return sb.toString().trim();
-  }
-  
-  private void dfs(TreeNode root, StringBuilder sb) {
-    if (root == null) {
-      return;
+    
+    private void dfsSerialize(TreeNode root, StringBuilder sb) {
+        if (root == null) {
+            sb.append("#").append(" ");
+            return;
+        }
+        sb.append(root.val).append(" ");
+        dfsSerialize(root.left, sb);
+        dfsSerialize(root.right, sb);
     }
-    sb.append(root.val).append(" ");
-    dfs(root.left, sb);
-    dfs(root.right, sb);
-  }
 
-  // Decodes your encoded data to tree.
-  public TreeNode deserialize(String data) {
-    if (data.length() == 0) {
-      return null;
+    // Decodes your encoded data to tree.
+    public TreeNode deserialize(String data) {
+        Queue<String> queue = new LinkedList<>(Arrays.asList(data.split("\\s+")));
+        return dfsDeserialize(queue);
     }
-    String[] split = data.split("\\s+");
-    return buildBST(split, 0, split.length - 1);
-  }
-  
-  private TreeNode buildBST(String[] data, int start, int end) {
-    if (start > end) {
-      return null;
+    
+    private TreeNode dfsDeserialize(Queue<String> queue) {
+        if (queue.isEmpty()) {
+            return null;
+        }
+        String removed = queue.remove();
+        if (removed.equals("#")) {
+            return null;
+        }
+        TreeNode root = new TreeNode(Integer.parseInt(removed));
+        root.left = dfsDeserialize(queue);
+        root.right = dfsDeserialize(queue);
+        return root;
     }
-    TreeNode root = new TreeNode(Integer.parseInt(data[start]));
-    int index;
-    for (index = start; index <= end; index++) {
-      if (Integer.parseInt(data[index]) > Integer.parseInt(data[start])) {
-        break;
-      }
-    }
-    root.left = buildBST(data, start + 1, index - 1);
-    root.right = buildBST(data, index, end);
-    return root;
-  }
 }
 
 // Your Codec object will be instantiated and called as such:
