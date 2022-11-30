@@ -1,82 +1,64 @@
-class Trie {
+public class Trie {
 
-  private Node head;
+    private final TrieNode root;
 
-  public Trie() {
-    this.head = new Node('-');
-  }
-
-  public void insert(String word) {
-    Node curr = this.head;
-    for (char c : word.toCharArray()) {
-      if (!curr.children.containsKey(c)) {
-        curr.children.put(c, new Node(c));
-      }
-      curr = curr.children.get(c);
+    public Trie() {
+        this.root = new TrieNode();
     }
-    curr.wordToFrequency.put(word, curr.wordToFrequency.getOrDefault(word, 0) + 1);
-  }
 
-  public int countWordsEqualTo(String word) {
-    Node curr = this.head;
-    curr = traverseTrie(curr, word);
-    if (curr == null) {
-      return 0;
+    public void insert(String word) {
+        TrieNode curr = root;
+        for (char c : word.toCharArray()) {
+            if (!curr.children.containsKey(c)) {
+                curr.children.put(c, new TrieNode());
+            }
+            curr = curr.children.get(c);
+            curr.startingWordCount++;
+        }
+        curr.completeWordCount++;
     }
-    return curr.wordToFrequency.getOrDefault(word, 0);
-  }
 
-  public int countWordsStartingWith(String prefix) {
-    Node curr = this.head;
-    curr = traverseTrie(curr, prefix);
-    if (curr == null) {
-      return 0;
+    public int countWordsEqualTo(String word) {
+        TrieNode endNode = searchWord(word);
+        return endNode == null ? 0 : endNode.completeWordCount;
     }
-    int count = 0;
-    Queue<Node> queue = new LinkedList<>();
-    queue.add(curr);
-    while (!queue.isEmpty()) {
-      Node removed = queue.remove();
-      for (String word : removed.wordToFrequency.keySet()) {
-        count += removed.wordToFrequency.get(word);
-      }
-      for (Character child : removed.children.keySet()) {
-        queue.add(removed.children.get(child));
-      }
-    }
-    return count;
-  }
 
-  public void erase(String word) {
-    Node curr = this.head;
-    curr = traverseTrie(curr, word);
-    if (curr == null || curr.wordToFrequency.getOrDefault(word, 0) == 0) {
-      return;
+    public int countWordsStartingWith(String prefix) {
+        TrieNode endNode = searchWord(prefix);
+        return endNode == null ? 0 : endNode.startingWordCount;
     }
-    curr.wordToFrequency.put(word, curr.wordToFrequency.get(word) - 1);
-  }
 
-  private Node traverseTrie(Node curr, String word) {
-    for (char c : word.toCharArray()) {
-      if (!curr.children.containsKey(c)) {
-        return null;
-      }
-      curr = curr.children.get(c);
+    public void erase(String word) {
+        TrieNode curr = root;
+        for (char c : word.toCharArray()) {
+            curr = curr.children.get(c);
+            curr.startingWordCount--;
+        }
+        curr.completeWordCount--;
     }
-    return curr;
-  }
 
-  private static class Node {
-    char c;
-    Map<Character, Node> children;
-    Map<String, Integer> wordToFrequency;
-
-    public Node(char c) {
-      this.c = c;
-      this.children = new HashMap<>();
-      this.wordToFrequency = new HashMap<>();
+    private TrieNode searchWord(String word) {
+        TrieNode curr = root;
+        for (char c : word.toCharArray()) {
+            if (!curr.children.containsKey(c)) {
+                return null;
+            }
+            curr = curr.children.get(c);
+        }
+        return curr;
     }
-  }
+
+    private static class TrieNode {
+        Map<Character, TrieNode> children;
+        int completeWordCount;
+        int startingWordCount;
+
+        public TrieNode() {
+            this.children = new HashMap<>();
+            this.completeWordCount = 0;
+            this.startingWordCount = 0;
+        }
+    }
 }
 
 /**
