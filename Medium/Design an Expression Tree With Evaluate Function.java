@@ -4,49 +4,55 @@
  */
 
 abstract class Node {
-  public abstract int evaluate();
-  // define your fields here
+    public abstract int evaluate();
+    // define your fields here
 };
 
+
 class NumericNode extends Node {
-  
-  private int val;
-  
-  public NumericNode(int val) {
-    this.val = val;  
-  }
-  
-  public int evaluate() {
-    return this.val;
-  }
+    private int val;
+    
+    public NumericNode(int val) {
+        this.val = val;
+    }
+    
+    @Override
+    public int evaluate() {
+        return this.val;
+    }
 }
+
 
 class OperatorNode extends Node {
-  private char operator;
-  private Node leftNode;
-  private Node rightNode;
-  
-  public OperatorNode(char operator, Node leftNode, Node rightNode) {
-    this.operator = operator;
-    this.leftNode = leftNode;
-    this.rightNode = rightNode;
-  }
-  
-  public int evaluate() {
-    int leftValue = this.leftNode == null ? 0 : this.leftNode.evaluate();
-    int rightValue = this.rightNode == null ? 0 : this.rightNode.evaluate();
-    if (this.operator == '+') {
-      return leftValue + rightValue;
-    } else if (this.operator == '-') {
-      return leftValue - rightValue;
-    } else if (this.operator == '*') {
-      return leftValue * rightValue;
-    } else {
-      return leftValue / rightValue;
+    private char operator;
+    private Node left;
+    private Node right;
+    
+    public OperatorNode(char operator) {
+        this.operator = operator;
+        this.left = null;
+        this.right = null;
     }
-  }
+    
+    @Override
+    public int evaluate() {
+        return switch(operator) {
+            case '+' -> left.evaluate() + right.evaluate();
+            case '-' -> left.evaluate() - right.evaluate();
+            case '*' -> left.evaluate() * right.evaluate();
+            case '/' -> left.evaluate() / right.evaluate();
+            default -> 0;
+        };
+    }
+    
+    public void setRightNode(Node right) {
+        this.right = right;
+    }
+    
+    public void setLeftNode(Node left) {
+        this.left = left;
+    }
 }
-
 
 /**
  * This is the TreeBuilder class.
@@ -55,19 +61,27 @@ class OperatorNode extends Node {
  */
 
 class TreeBuilder {
-  Node buildTree(String[] postfix) {
-    Stack<Node> stack = new Stack<>();
-    for(String token: postfix){
-      if (token.equals("*") || token.equals("+") || token.equals("-") || token.equals("/")) {
-        Node o2 = stack.pop();
-        Node o1 = stack.pop();
-        stack.push(new OperatorNode(token.charAt(0), o1, o2));
-      } else{
-        stack.push(new NumericNode(Integer.parseInt(token)));
-      }
+    private static final Set<String> OPERATORS = Set.of("+", "-", "/", "*");
+    
+    Node buildTree(String[] postfix) {
+        int[] idx = {postfix.length - 1};
+        return buildTree(postfix, idx);
     }
-    return stack.pop();
-  }
+    
+    private Node buildTree(String[] postfix, int[] idx) {
+        if (idx[0] < 0) {
+            return null;
+        }
+        String val = postfix[idx[0]--];
+        if (OPERATORS.contains(val)) {
+            OperatorNode node = new OperatorNode(val.charAt(0));
+            node.setRightNode(buildTree(postfix, idx));
+            node.setLeftNode(buildTree(postfix, idx));
+            return node;
+        }
+        NumericNode node = new NumericNode(Integer.parseInt(val));
+        return node;
+    }
 };
 
 
