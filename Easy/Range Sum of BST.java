@@ -14,22 +14,22 @@
  * }
  */
 class Solution {
-  public int rangeSumBST(TreeNode root, int low, int high) {
-    Stack<TreeNode> stack = new Stack<>();
-    stack.push(root);
-    int sum = 0;
-    while (!stack.isEmpty()) {
-        TreeNode removed = stack.pop();
-        if (removed.val > low && removed.left != null) { 
-          stack.push(removed.left); 
-        } 
-        if (removed.val < high && removed.right != null) { 
-          stack.push(removed.right); 
+    public int rangeSumBST(TreeNode root, int low, int high) {
+        int sum = 0;
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            TreeNode removed = queue.remove();
+            if (removed.val >= low && removed.val <= high) {
+                sum += removed.val;
+            }
+            if (removed.val >= low && removed.left != null) {
+                queue.add(removed.left);
+            }
+            if (removed.val <= high && removed.right != null) {
+                queue.add(removed.right);
+            }
         }
-        if (low <= removed.val && removed.val <= high) {
-          sum += removed.val; 
-        }
+        return sum;
     }
-    return sum;
-  }
 }
