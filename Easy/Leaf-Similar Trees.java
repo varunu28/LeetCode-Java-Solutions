@@ -14,29 +14,23 @@
  * }
  */
 class Solution {
-  public boolean leafSimilar(TreeNode root1, TreeNode root2) {
-    return getLeaves(root1).equals(getLeaves(root2));
-  }   
-  
-  private List<Integer> getLeaves(TreeNode root) {
-    Stack<TreeNode> stack = new Stack<>();
-    List<Integer> leaves = new ArrayList<>();
-    while (root != null) {
-      stack.push(root);
-      root = root.left;
+    public boolean leafSimilar(TreeNode root1, TreeNode root2) {
+        StringBuilder leavesOne = new StringBuilder();
+        StringBuilder leavesTwo = new StringBuilder();
+        populateLeaves(root1, leavesOne);
+        populateLeaves(root2, leavesTwo);
+        return leavesOne.toString().equals(leavesTwo.toString());
     }
-    while (!stack.isEmpty()) {
-      TreeNode removed = stack.pop();
-      if (removed.left == null && removed.right == null) {
-        leaves.add(removed.val);
-      } else {
-        TreeNode rightNode = removed.right;
-        while (rightNode != null) {
-          stack.push(rightNode);
-          rightNode = rightNode.left;
+    
+    private void populateLeaves(TreeNode root, StringBuilder leaves) {
+        if (root == null) {
+            return;
         }
-      }
+        if (root.left == null && root.right == null) {
+            leaves.append(root.val).append(",");
+            return;
+        }
+        populateLeaves(root.left, leaves);
+        populateLeaves(root.right, leaves);
     }
-    return leaves;
-  }
 }
