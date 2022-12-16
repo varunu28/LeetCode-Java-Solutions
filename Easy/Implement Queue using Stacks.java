@@ -1,46 +1,40 @@
 class MyQueue {
+    
+    private final Stack<Integer> stackOne;
+    private final Stack<Integer> stackTwo;
 
-  /** Initialize your data structure here. */
-  Stack<Integer> stack;
-  Stack<Integer> revStack;
-  public MyQueue() {
-    stack = new Stack<>();
-    revStack = new Stack<>();
-  }
-
-  /** Push element x to the back of queue. */
-  public void push(int x) {
-    stack.push(x);
-  }
-
-  /** Removes the element from in front of queue and returns that element. */
-  public int pop() {
-    while (!stack.isEmpty()) {
-      revStack.push(stack.pop());
+    public MyQueue() {
+        this.stackOne = new Stack<>();
+        this.stackTwo = new Stack<>();
     }
-    int num = revStack.pop();
-    while (!revStack.isEmpty()) {
-      stack.push(revStack.pop());
+    
+    public void push(int x) {
+        this.stackOne.push(x);
     }
-    return num;
-  }
-
-  /** Get the front element. */
-  public int peek() {
-    while (!stack.isEmpty()) {
-      revStack.push(stack.pop());
+    
+    public int pop() {
+        exchangeElements(stackOne, stackTwo);
+        int popped = stackTwo.pop();
+        exchangeElements(stackTwo, stackOne);
+        return popped;
     }
-    int num = revStack.peek();
-    while (!revStack.isEmpty()) {
-      stack.push(revStack.pop());
+    
+    public int peek() {
+        exchangeElements(stackOne, stackTwo);
+        int peeked = stackTwo.peek();
+        exchangeElements(stackTwo, stackOne);
+        return peeked;
     }
-    return num;
-  }
-
-  /** Returns whether the queue is empty. */
-  public boolean empty() {
-    return stack.isEmpty();
-  }
+    
+    public boolean empty() {
+        return stackOne.isEmpty();
+    }
+    
+    private void exchangeElements(Stack<Integer> stack1, Stack<Integer> stack2) {
+        while (!stack1.isEmpty()) {
+            stack2.push(stack1.pop());
+        }
+    }
 }
 
 /**
