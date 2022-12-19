@@ -1,28 +1,26 @@
 class Solution {
-  public boolean validPath(int n, int[][] edges, int start, int end) {
-    Map<Integer, Set<Integer>> graph = new HashMap<>();
-    for (int[] edge : edges) {
-      graph.computeIfAbsent(edge[0], k -> new HashSet<>()).add(edge[1]);
-      graph.computeIfAbsent(edge[1], k -> new HashSet<>()).add(edge[0]);
-    }
-    Queue<Integer> queue = new LinkedList<>();
-    queue.add(start);
-    Set<Integer> visited = new HashSet<>();
-    while (!queue.isEmpty()) {
-      int size = queue.size();
-      while (size-- > 0) {
-        int removed = queue.remove();
-        if (removed == end) {
-          return true;
+    public boolean validPath(int n, int[][] edges, int source, int destination) {
+        Map<Integer, List<Integer>> graph = new HashMap<>();
+        for (int[] edge : edges) {
+            graph.computeIfAbsent(edge[0], k -> new ArrayList<>()).add(edge[1]);
+            graph.computeIfAbsent(edge[1], k -> new ArrayList<>()).add(edge[0]);
         }
-        visited.add(removed);
-        for (Integer connection : graph.getOrDefault(removed, new HashSet<>())) {
-          if (!visited.contains(connection)) {
-            queue.add(connection);
-          }
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(source);
+        Set<Integer> visited = new HashSet<>();
+        visited.add(source);
+        while (!queue.isEmpty()) {
+            Integer removed = queue.remove();
+            if (removed == destination) {
+                return true;
+            }
+            for (Integer connection : graph.getOrDefault(removed, new ArrayList<>())) {
+                if (!visited.contains(connection)) {
+                    queue.add(connection);
+                    visited.add(connection);
+                }
+            }
         }
-      }
+        return false;
     }
-    return false;
-  }
 }
