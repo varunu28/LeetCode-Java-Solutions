@@ -1,30 +1,28 @@
 class Solution {
-  public int[] countSubTrees(int n, int[][] edges, String labels) {
-    Map<Integer, List<Integer>> map = new HashMap<>();
-    for (int[] edge : edges) {
-      map.computeIfAbsent(edge[0], k -> new ArrayList<>()).add(edge[1]);
-      map.computeIfAbsent(edge[1], k -> new ArrayList<>()).add(edge[0]);
-    }
-    int[] count = new int[n];
-    Set<Integer> set = new HashSet<>();
-    dfs(map, 0, labels, count, set);
-    return count;
-  }
-  
-  private int[] dfs(Map<Integer, List<Integer>> map, int curr, String labels, int[] count, Set<Integer> set) {
-    int[] cnt = new int[26];
-    if (set.add(curr)) {
-      char c = labels.charAt(curr);
-      for (Integer child : map.getOrDefault(curr, new ArrayList<>())) {
-        int[] temp = dfs(map, child, labels, count, set);
-        for (int i = 0; i < 26; i++) {
-          cnt[i] += temp[i];
+    public int[] countSubTrees(int n, int[][] edges, String labels) {
+        Map<Integer, List<Integer>> tree = new HashMap<>();
+        for (int[] edge : edges) {
+            tree.computeIfAbsent(edge[0], k -> new ArrayList<>()).add(edge[1]);
+            tree.computeIfAbsent(edge[1], k -> new ArrayList<>()).add(edge[0]);
         }
-      }
-      cnt[c - 'a']++;
-      count[curr] = cnt[c - 'a'];
+        int[] result = new int[n];
+        Set<Integer> visited = new HashSet<>();
+        bfs(tree, 0, labels, result, visited);
+        return result;
+    } 
+    
+    private int[] bfs(Map<Integer, List<Integer>> tree, int currNode, String labels, int[] result, Set<Integer> visited) {
+        int[] labelCount = new int[26];
+        if (visited.add(currNode)) {
+            labelCount[labels.charAt(currNode) - 'a']++;
+            for (Integer child : tree.getOrDefault(currNode, new ArrayList<>())) {
+                int[] childLabelCount = bfs(tree, child, labels, result, visited);
+                for (int i = 0; i < 26; i++) {
+                    labelCount[i] += childLabelCount[i];
+                }
+            }
+            result[currNode] += labelCount[labels.charAt(currNode) - 'a'];
+        }
+        return labelCount;
     }
-    return cnt;
-  }
 }
-
