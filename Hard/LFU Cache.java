@@ -1,112 +1,125 @@
 class LFUCache {
 
-  private final Map<Integer, Node> keyToNodeMap;
-  private final Map<Integer, Node[]> frequencyToNodeMap;
-  private final Map<Integer, Integer> keyToFrequencyMap;
-  private int capacity;
-  private int currentCapacity;
+    private final TreeMap<Integer, NodeLinkedList> frequencyToNodeMap;
+    private final Map<Integer, Node> keyToNodeMap;
+    private final int capacity;
 
-  public LFUCache(int capacity) {
-    this.capacity = capacity;
-    this.currentCapacity = 0;
-    this.keyToNodeMap = new HashMap<>();
-    this.frequencyToNodeMap = new TreeMap<>();
-    this.keyToFrequencyMap = new HashMap<>();
-  }
-
-  public int get(int key) {
-    if (!keyToNodeMap.containsKey(key)) {
-      return -1;
+    public LFUCache(int capacity) {
+        this.frequencyToNodeMap = new TreeMap<>();
+        this.keyToNodeMap = new HashMap<>();
+        this.capacity = capacity;
     }
-    Node node = keyToNodeMap.get(key);
-    removeNode(node);
-    int currentFrequency = keyToFrequencyMap.get(key);
-    int newFrequency = currentFrequency + 1;
-    keyToFrequencyMap.put(key, newFrequency);
-    addNodeToFrequencyHead(node, newFrequency);
-    return node.val;
-  }
 
-  public void put(int key, int value) {
-    if (this.capacity == 0) {
-      return;
-    }
-    removeNodeIfCapacityReached(key);
-    Node node = getNode(key, value);
-    int newFrequency = keyToFrequencyMap.getOrDefault(key, 0) + 1;
-    keyToFrequencyMap.put(key, newFrequency);
-    keyToNodeMap.put(key, node);
-    if (newFrequency > 1) {
-      removeNode(node);
-    }
-    addNodeToFrequencyHead(node, newFrequency);
-  }
-
-  private void removeNodeIfCapacityReached(int key) {
-    if (!keyToNodeMap.containsKey(key) && this.currentCapacity == capacity) {
-      for (Integer freq : frequencyToNodeMap.keySet()) {
-        Node[] nodes = frequencyToNodeMap.get(freq);
-        if (nodes[1].prev.val == -1) {
-          continue;
+    public int get(int key) {
+        if (!keyToNodeMap.containsKey(key)) {
+            return -1;
         }
-        Node toRemove = nodes[1].prev;
-        removeNode(toRemove);
-        keyToNodeMap.remove(toRemove.key);
-        keyToFrequencyMap.remove(toRemove.key);
-        this.currentCapacity--;
-        break;
-      }
+        Node node = keyToNodeMap.get(key);
+        updateNodeForFrequencyChange(node);
+        return node.value;
     }
-  }
 
-  private Node getNode(int key, int value) {
-    Node node;
-    if (keyToNodeMap.containsKey(key)) {
-      node = keyToNodeMap.get(key);
-      removeNode(node);
-      node.val = value;
-    } else {
-      this.currentCapacity++;
-      node = new Node(value, key);
+    public void put(int key, int value) {
+        if (this.keyToNodeMap.containsKey(key)) {
+            updateNode(key, value);
+        } else {
+            addNewNode(key, value);
+        }
     }
-    return node;
-  }
 
-  private void addNodeToFrequencyHead(Node node, int newFrequency) {
-    if (!frequencyToNodeMap.containsKey(newFrequency)) {
-      Node head = new Node(-1, Integer.MIN_VALUE);
-      Node tail = new Node(-1, Integer.MAX_VALUE);
-      head.next = tail;
-      tail.prev = head;
-      frequencyToNodeMap.put(newFrequency, new Node[]{head, tail});
+    private void updateNode(int key, int value) {
+        Node node = keyToNodeMap.get(key);
+        node.value = value;
+        updateNodeForFrequencyChange(node);
     }
-    Node headNode = frequencyToNodeMap.get(newFrequency)[0];
-    Node nextToHead = headNode.next;
-    nextToHead.prev = node;
-    node.next = nextToHead;
-    headNode.next = node;
-    node.prev = headNode;
-  }
-  
-  private void removeNode(Node node) {
-    Node prevNode = node.prev;
-    Node nextNode = node.next;
-    prevNode.next = nextNode;
-    nextNode.prev = prevNode;
-  }
 
-  private static class Node {
-    int val;
-    int key;
-    Node next;
-    Node prev;
-
-    public Node(int val, int key) {
-      this.val = val;
-      this.key = key;
+    private void addNewNode(int key, int value) {
+        if (capacity == 0) {
+            return;
+        }
+        if (capacity == keyToNodeMap.size()) {
+            evictCache();
+        }
+        Node node = new Node(key, value);
+        addToFrequencyMap(node);
+        keyToNodeMap.put(key, node);
     }
-  }
+
+    private void evictCache() {
+        int firstKey = frequencyToNodeMap.firstKey();
+        Node nodeToEvict = frequencyToNodeMap.get(firstKey).getFirstNode();
+        removeNode(nodeToEvict);
+        keyToNodeMap.remove(nodeToEvict.key);
+        if (frequencyToNodeMap.get(firstKey).getFirstNode().value == -1) {
+            frequencyToNodeMap.remove(firstKey);
+        }
+    }
+
+    private void updateNodeForFrequencyChange(Node node) {
+        int prevFrequency = node.frequency;
+        node.frequency = node.frequency + 1;
+        removeNode(node);
+        if (frequencyToNodeMap.get(prevFrequency).getFirstNode().value == -1) {
+            frequencyToNodeMap.remove(prevFrequency);
+        }
+        addToFrequencyMap(node);
+    }
+
+    private void removeNode(Node node) {
+        Node prevToNode = node.prev;
+        Node nextToNode = node.next;
+        prevToNode.next = nextToNode;
+        nextToNode.prev = prevToNode;
+    }
+
+    private void addToFrequencyMap(Node node) {
+        if (!frequencyToNodeMap.containsKey(node.frequency)) {
+            frequencyToNodeMap.put(node.frequency, new NodeLinkedList());
+        }
+        frequencyToNodeMap.get(node.frequency).addNode(node);
+    }
+
+    private static class NodeLinkedList {
+        private final Node head;
+        private final Node tail;
+
+        public NodeLinkedList() {
+            this.head = new Node(-1, -1);
+            this.tail = new Node(-1, -1);
+            head.next = tail;
+            tail.prev = head;
+        }
+
+        public Node getFirstNode() {
+            return head.next;
+        }
+
+        public void addNode(Node node) {
+            Node prevToTail = tail.prev;
+            node.prev = prevToTail;
+            prevToTail.next = node;
+            node.next = tail;
+            tail.prev = node;
+        }
+    }
+
+    private static class Node {
+        private final int key;
+        private int value;
+        private int frequency;
+        private Node next;
+        private Node prev;
+
+        public Node(int key, int value) {
+            this.key = key;
+            this.value = value;
+            this.frequency = 1;
+            this.next = null;
+            this.prev = null;
+        }
+    }
 }
+
 /**
  * Your LFUCache object will be instantiated and called as such:
  * LFUCache obj = new LFUCache(capacity);
