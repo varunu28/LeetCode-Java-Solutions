@@ -14,26 +14,21 @@
  * }
  */
 class Solution {
-  public boolean isSubtree(TreeNode root, TreeNode subRoot) {
-    if (root == null) {
-      return false;
+    public boolean isSubtree(TreeNode root, TreeNode subRoot) {
+        if (root == null) {
+            return false;
+        }
+        boolean result = root.val == subRoot.val && isSubtreeHelper(root, subRoot);
+        return result || isSubtree(root.left, subRoot) || isSubtree(root.right, subRoot);
     }
-    if (isSubtreeHelper(root, subRoot)) {
-      return true;
+    
+    private boolean isSubtreeHelper(TreeNode root, TreeNode subRoot) {
+        if (root == null && subRoot == null) {
+            return true;
+        }
+        if (root == null || subRoot == null) {
+            return false;
+        }
+        return root.val == subRoot.val && isSubtreeHelper(root.left, subRoot.left) && isSubtreeHelper(root.right, subRoot.right);
     }
-    return isSubtree(root.left, subRoot) || isSubtree(root.right, subRoot);
-  }
-  
-  private boolean isSubtreeHelper(TreeNode root, TreeNode subRoot) {
-    if (root == null && subRoot == null) {
-      return true;
-    }
-    if (root == null || subRoot == null) {
-      return false;
-    }
-    if (root.val != subRoot.val) {
-      return false;
-    }
-    return isSubtreeHelper(root.left, subRoot.left) && isSubtreeHelper(root.right, subRoot.right);
-  }
 }
