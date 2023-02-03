@@ -1,25 +1,29 @@
 class Solution {
-  public String convert(String s, int numRows) {
-    if (numRows == 1) {
-      return s;
+    public String convert(String s, int numRows) {
+        if (numRows == 1) {
+            return s;
+        }
+        StringBuilder[] rows = new StringBuilder[numRows];
+        for (int i = 0; i < numRows; i++) {
+            rows[i] = new StringBuilder();
+        }
+        int row = 0;
+        int n = s.length();
+        int idx = 0;
+        while (idx < n) {
+            while (idx < n && row < numRows) {
+                rows[row++].append(s.charAt(idx++));
+            }
+            row -= 2;
+            while (idx < n && row >= 0) {
+                rows[row--].append(s.charAt(idx++));
+            }
+            row += 2;
+        }
+        StringBuilder result = new StringBuilder();
+        for (StringBuilder sb : rows) {
+            result.append(sb.toString());
+        }
+        return result.toString();
     }
-    List<StringBuilder> list = new ArrayList<>();
-    for (int i = 0; i < numRows; i++) {
-      list.add(new StringBuilder());
-    }
-    int idx = 0;
-    boolean downDirection = false;
-    for (char c : s.toCharArray()) {
-      list.get(idx).append(c);
-      if (idx == 0 || idx == numRows - 1) {
-        downDirection = !downDirection;
-      }
-      idx += downDirection ? 1 : -1;
-    }
-    StringBuilder result = new StringBuilder();
-    for (StringBuilder sb : list) {
-      result.append(sb.toString());
-    }
-    return result.toString();
-  }
 }
