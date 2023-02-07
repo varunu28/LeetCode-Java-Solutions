@@ -1,23 +1,23 @@
 class MovingAverage {
-  
-  private int currSum;
-  private Queue<Integer> queue;
-  private int size;
-  
-  public MovingAverage(int size) {
-    this.currSum = 0;
-    this.size = size;
-    this.queue = new LinkedList<>();
-  }
 
-  public double next(int val) {
-    this.queue.add(val);
-    this.currSum += val;
-    if (this.queue.size() > this.size) {
-      this.currSum -= this.queue.remove();
+    private final Queue<Integer> queue;
+    private double currSum;
+    private final int size;
+    
+    public MovingAverage(int size) {
+        this.queue = new LinkedList<>();
+        this.currSum = 0;
+        this.size = size;
     }
-    return ((double) this.currSum) / this.queue.size();
-  }
+    
+    public double next(int val) {
+        this.queue.add(val);
+        this.currSum += val;
+        if (this.queue.size() > this.size) {
+            this.currSum -= this.queue.remove();
+        }
+        return this.currSum / this.queue.size();
+    }
 }
 
 /**
