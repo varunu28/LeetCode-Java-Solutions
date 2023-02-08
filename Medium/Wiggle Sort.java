@@ -1,24 +1,11 @@
 class Solution {
-  public void wiggleSort(int[] nums) {
-    boolean small = true;
-    for (int i = 0; i < nums.length - 1; i++) {
-      if (small) {
-        if (nums[i] > nums[i + 1]) {
-          swap(nums, i, i + 1);
+    public void wiggleSort(int[] nums) {
+        for (int i = 1; i < nums.length; i++) {
+            if ((i % 2 == 1 && nums[i] < nums[i - 1]) || (i % 2 != 1 && nums[i] > nums[i - 1])) {
+                int temp = nums[i];
+                nums[i] = nums[i - 1];
+                nums[i - 1] = temp;
+            } 
         }
-      }
-      else {
-        if (nums[i] < nums[i + 1]) {
-          swap(nums, i, i + 1);
-        }
-      }
-      small = !small;
     }
-  }
-  
-  private void swap(int[] nums, int idx1, int idx2) {
-    int temp = nums[idx2];
-    nums[idx2] = nums[idx1];
-    nums[idx1] = temp;
-  }
 }
