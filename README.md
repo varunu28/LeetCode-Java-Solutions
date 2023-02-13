@@ -7,6 +7,7 @@
 
 Problem Category | Count
 --- | --- 
-[Easy](https://github.com/varunu28/LeetCode-Java-Solutions/blob/master/Easy/README.md) | 452
-[Medium](https://github.com/varunu28/LeetCode-Java-Solutions/blob/master/Medium/README.md) | 543
-[Hard](https://github.com/varunu28/LeetCode-Java-Solutions/blob/master/Hard/README.md) | 67
+[Easy](https://github.com/varunu28/LeetCode-Java-Solutions/blob/master/Easy/README.md) | 558
+[Medium](https://github.com/varunu28/LeetCode-Java-Solutions/blob/master/Medium/README.md) | 739
+[Hard](https://github.com/varunu28/LeetCode-Java-Solutions/blob/master/Hard/README.md) | 95
+[Concurrency](https://github.com/varunu28/LeetCode-Java-Solutions/blob/master/Concurrency/README.md) | 9
