@@ -1,57 +1,50 @@
 class FileSharing {
-  Map<Integer, Set<Integer>> chunkToUserMap;
-  Map<Integer, Set<Integer>> userToChunkMap;
-  int id;
-  PriorityQueue<Integer> availableIds;
-  public FileSharing(int m) {
-    id = 1;
-    chunkToUserMap = new HashMap<>();
-    userToChunkMap = new HashMap<>();
-    for (int i = 1; i <= m; i++) {
-      chunkToUserMap.put(i, new HashSet<>());
-    }
-    availableIds = new PriorityQueue<>();
-  }
 
-  public int join(List<Integer> ownedChunks) {
-    int userId = getUserId();
-    userToChunkMap.put(userId, new HashSet<>(ownedChunks));
-    for (Integer chunk : ownedChunks) {
-      chunkToUserMap.get(chunk).add(userId);
-    }
-    return userId;
-  }
-  
-  private int getUserId() {
-    if (availableIds.isEmpty()) {
-      return id++;
-    }
-    return availableIds.poll();
-  }
+    private final PriorityQueue<Integer> userIdsInSystem;
+    private final Map<Integer, Set<Integer>> chunkToUserIdMapping;
+    private final Map<Integer, Set<Integer>> userIdToChunkMapping;
 
-  public void leave(int userID) {
-    Set<Integer> chunksOwned = userToChunkMap.get(userID);
-    userToChunkMap.remove(userID);
-    for (Integer chunk : chunksOwned) {
-      chunkToUserMap.get(chunk).remove(userID);
+    public FileSharing(int m) {
+        this.userIdsInSystem = new PriorityQueue<>();
+        this.userIdsInSystem.add(1);
+        this.chunkToUserIdMapping = new HashMap<>();
+        for (int i = 1; i <= m; i++) {
+            chunkToUserIdMapping.put(i, new HashSet<>());
+        }
+        this.userIdToChunkMapping = new HashMap<>();
     }
-    availableIds.add(userID);
-  }
 
-  public List<Integer> request(int userID, int chunkID) {
-    Set<Integer> usersOwningChunk = chunkToUserMap.get(chunkID);
-    Iterator<Integer> iterator = usersOwningChunk.iterator();
-    List<Integer> users = new ArrayList<>();
-    while (iterator.hasNext()) {
-      users.add(iterator.next());
+    public int join(List<Integer> ownedChunks) {
+        int currUserId = this.userIdsInSystem.poll();
+        if (this.userIdsInSystem.isEmpty()) {
+            this.userIdsInSystem.add(currUserId + 1);
+        }
+        this.userIdToChunkMapping.computeIfAbsent(currUserId, k -> new HashSet<>());
+        for (Integer chunk : ownedChunks) {
+            this.chunkToUserIdMapping.get(chunk).add(currUserId);
+            this.userIdToChunkMapping.get(currUserId).add(chunk);
+        }
+        return currUserId;
     }
-    if (!usersOwningChunk.contains(userID) && usersOwningChunk.size() > 0) {
-      userToChunkMap.get(userID).add(chunkID);
-      chunkToUserMap.get(chunkID).add(userID);
+
+    public void leave(int userID) {
+        this.userIdsInSystem.add(userID);
+        Set<Integer> chunksOwned = this.userIdToChunkMapping.get(userID);
+        this.userIdToChunkMapping.remove(userID);
+        for (Integer chunk : chunksOwned) {
+            this.chunkToUserIdMapping.get(chunk).remove(userID);
+        }
     }
-    Collections.sort(users);
-    return users;
-  }
+
+    public List<Integer> request(int userID, int chunkID) {
+        if (this.chunkToUserIdMapping.get(chunkID).isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<Integer> usersOwningChunk = this.chunkToUserIdMapping.get(chunkID).stream().sorted().toList();
+        this.userIdToChunkMapping.get(userID).add(chunkID);
+        this.chunkToUserIdMapping.get(chunkID).add(userID);
+        return usersOwningChunk;
+    }
 }
 
 /**
