@@ -14,13 +14,21 @@
  * }
  */
 class Solution {
-  public TreeNode searchBST(TreeNode root, int val) {
-    if (root == null) {
-      return root;
+    public TreeNode searchBST(TreeNode root, int val) {
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            TreeNode removed = queue.remove();
+            if (removed.val == val) {
+                return removed;
+            }
+            if (removed.val > val && removed.left != null) {
+                queue.add(removed.left);
+            } 
+            if (removed.val < val && removed.right != null) {
+                queue.add(removed.right);
+            }
+        }
+        return null;
     }
-    if (root.val == val) {
-      return root;
-    }
-    return root.val > val ? searchBST(root.left, val) : searchBST(root.right, val);
-  }
 }
