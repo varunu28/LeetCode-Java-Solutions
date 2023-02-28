@@ -4,35 +4,32 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-    Map<String, TreeNode> map;
-    
     public List<TreeNode> findDuplicateSubtrees(TreeNode root) {
-        map = new HashMap<>();
-        List<TreeNode> ans = new ArrayList<>();
-        
-        helper(root);
-        
-        for (TreeNode node : map.values()) {
-            if (node != null) {
-                ans.add(node);
-            }
-        }
-        
-        return ans;
+        List<TreeNode> result = new LinkedList<>();
+        traverse(root, new HashMap<>(), result);
+        return result;
     }
-
-    private String helper(TreeNode root) {
-        if (root == null) {
-            return "#";
+    
+    private String traverse(TreeNode node, Map<String, Integer> frequencyMap, List<TreeNode> result) {
+        if (node == null) {
+            return "";
         }
-        
-        String path = root.val + "|" + helper(root.left) + "|" + helper(root.right);
-        map.put(path, map.containsKey(path) ? root : null);
-        
-        return path;
+        String key = ("(" + traverse(node.left, frequencyMap, result) + ")" + node.val + 
+                      "(" + traverse(node.right, frequencyMap, result) + ")");
+        frequencyMap.put(key, frequencyMap.getOrDefault(key, 0) + 1);
+        if (frequencyMap.get(key) == 2) {
+            result.add(node);
+        }
+        return key;
     }
 }
