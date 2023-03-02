@@ -1,42 +1,43 @@
 class Solution {
-  public List<Integer> majorityElement(int[] nums) {
-    Integer majorityElementOne = null;
-    Integer majorityElementTwo = null;
-    int countOne = 0;
-    int countTwo = 0;
-    for (int num : nums) {
-      if (majorityElementOne != null && num == majorityElementOne) {
-        countOne++;
-      } else if (majorityElementTwo != null && num == majorityElementTwo) {
-        countTwo++;
-      } else if (countOne == 0) {
-        majorityElementOne = num;
-        countOne = 1;
-      } else if (countTwo == 0) {
-        majorityElementTwo = num;
-        countTwo = 1;
-      } else {
-        countOne--;
-        countTwo--;
-      }
+    public List<Integer> majorityElement(int[] nums) {
+        Integer candidateOne = null;
+        Integer candidateTwo = null;
+        int countOne = 0;
+        int countTwo = 0;
+        for (int num : nums) {
+            if (candidateOne != null && candidateOne == num) {
+                countOne++;
+            } else if (candidateTwo != null && candidateTwo == num) {
+                countTwo++;
+            } else if (countOne == 0) {
+                candidateOne = num;
+                countOne++;
+            } else if (countTwo == 0) {
+                candidateTwo = num;
+                countTwo++;
+            } else {
+                countOne--;
+                countTwo--;
+            }
+        }
+        countOne = 0;
+        countTwo = 0;
+        for (int num : nums) {
+            if (candidateOne != null && candidateOne == num) {
+                countOne++;
+            }
+            if (candidateTwo != null && candidateTwo == num) {
+                countTwo++;
+            }
+        }
+        int n = nums.length;
+        List<Integer> result = new ArrayList<>();
+        if (countOne > n / 3) {
+            result.add(candidateOne);
+        }
+        if (countTwo > n / 3) {
+            result.add(candidateTwo);
+        }
+        return result;
     }
-    List<Integer> result = new ArrayList<>();
-    countOne = 0;
-    countTwo = 0;
-    for (int num : nums) {
-      if (majorityElementOne != null && majorityElementOne == num) {
-        countOne++;
-      }
-      if (majorityElementTwo != null && majorityElementTwo == num) {
-        countTwo++;
-      }
-    }
-    if (countOne > nums.length / 3) {
-      result.add(majorityElementOne);
-    }
-    if (countTwo > nums.length / 3) {
-      result.add(majorityElementTwo);
-    }
-    return result;
-  }
 }
