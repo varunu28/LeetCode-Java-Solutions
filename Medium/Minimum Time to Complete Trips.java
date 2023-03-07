@@ -1,27 +1,27 @@
 class Solution {
-  public long minimumTime(int[] time, int totalTrips) {
-    long minTime = 1;
-    long fastestBus = time[0];
-    for (int t : time) {
-      fastestBus = Math.min(fastestBus, t);
+    public long minimumTime(int[] time, int totalTrips) {
+        int maxTime = 1;
+        for (int t : time) {
+            maxTime = Math.max(maxTime, t);
+        }
+        long left = 1;
+        long right = (long) maxTime * totalTrips;
+        while (left < right) {
+            long mid = (left + right) / 2;
+            if (isPossible(time, mid, totalTrips)) {
+                right = mid;
+            } else {
+                left = mid + 1;
+            }
+        }
+        return left;
     }
-    long maxTime = fastestBus * totalTrips;
-    while (minTime < maxTime) {
-      long midTime = minTime + (maxTime - minTime) / 2;
-      if (getNumberOfTripsWithTime(time, midTime) >= totalTrips) {
-        maxTime = midTime;
-      } else {
-        minTime = midTime + 1;
-      }
+    
+    private boolean isPossible(int[] time, long totalTime, int totalTrips) {
+        long actualTrips = 0;
+        for (int t : time) {
+            actualTrips += totalTime / t;
+        }
+        return actualTrips >= totalTrips;
     }
-    return minTime;
-  }
-  
-  private long getNumberOfTripsWithTime(int[] time, long currentTime) {
-    long totalTrips = 0;
-    for (int t : time) {
-      totalTrips += currentTime / t;
-    }
-    return totalTrips;
-  }
 }
