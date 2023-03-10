@@ -1,28 +1,23 @@
 class Solution {
-  public int shortestWay(String source, String target) {
-    int count = 1;
-    int idx = 0;
-    int n = target.length();
-    int sourceIdx = 0;
-    boolean match = false;
-    while (idx < n) {
-      if (source.charAt(sourceIdx) == target.charAt(idx)) {
-        idx++;
-        sourceIdx++;
-        match = true;
-      }
-      else {
-        sourceIdx++;
-      }
-      if (sourceIdx == source.length() && idx != n) {
-        if (!match) {
-          return -1;
+    public int shortestWay(String source, String target) {
+        Set<Character> letters = source.chars().mapToObj(c -> (char) c).collect(Collectors.toSet());
+        int count = 0;
+        int sourceIdx = 0;
+        int targetIdx = 0;
+        while (targetIdx < target.length()) {
+            char targetLetter = target.charAt(targetIdx);
+            if (!letters.contains(targetLetter)) {
+                return -1;
+            }
+            if (targetLetter == source.charAt(sourceIdx)) {
+                targetIdx++;
+            }
+            sourceIdx++;
+            if (sourceIdx == source.length()) {
+                sourceIdx = 0;
+                count++;
+            }
         }
-        count++;
-        sourceIdx = 0;
-        match = false;
-      }
+        return count + (sourceIdx == 0 ? 0 : 1);
     }
-    return count;
-  }
 }
