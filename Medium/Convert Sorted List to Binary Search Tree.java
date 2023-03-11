@@ -3,7 +3,9 @@
  * public class ListNode {
  *     int val;
  *     ListNode next;
- *     ListNode(int x) { val = x; }
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
 /**
@@ -12,35 +14,33 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-    ListNode curr;
-    
-    public TreeNode sortedListToBST(ListNode head) {        
-        curr = head;
-        return generate(count(head));
-    }
-    
-    public int count(ListNode node) {
-        int n = 0;
-        while (node != null) {
-            node = node.next;
-            ++n;
+    public TreeNode sortedListToBST(ListNode head) {
+        List<Integer> list = new ArrayList<>();
+        while (head != null) {
+            list.add(head.val);
+            head = head.next;
         }
-        return n;
+        return helper(list, 0, list.size() - 1);
     }
     
-    public TreeNode generate(int n) {
-        if (n==0) return null;
-        
-        TreeNode node = new TreeNode(0);
-        node.left = generate(n/2);
-        node.val = curr.val;
-        curr = curr.next;
-        node.right = generate(n-(n/2)-1);
-        
-        return node;
+    private TreeNode helper(List<Integer> list, int start, int end) {
+        if (start > end) {
+            return null;
+        }
+        int mid = (start + end) / 2;
+        TreeNode root = new TreeNode(list.get(mid));
+        root.left = helper(list, start, mid - 1);
+        root.right = helper(list, mid + 1, end);
+        return root;
     }
 }
