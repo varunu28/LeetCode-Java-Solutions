@@ -14,22 +14,29 @@
  * }
  */
 class Solution {
-  public int sumNumbers(TreeNode root) {
-    int[] sum = {0};
-    helper(root, 0, sum);
-    return sum[0];
-  }
-  
-  private void helper(TreeNode root, int currValue, int[] sum) {
-    if (root == null) {
-      return;
+    public int sumNumbers(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        Queue<NodeSumPair> queue = new LinkedList<>();
+        queue.add(new NodeSumPair(root, 0));
+        int totalSum = 0;
+        while (!queue.isEmpty()) {
+            NodeSumPair removed = queue.remove();
+            TreeNode node = removed.node;
+            int currSum = removed.sum * 10 + node.val;
+            if (node.left == null && node.right == null) {
+                totalSum += currSum;
+            }
+            if (node.left != null) {
+                queue.add(new NodeSumPair(node.left, currSum));
+            }
+            if (node.right != null) {
+                queue.add(new NodeSumPair(node.right, currSum));
+            }
+        }
+        return totalSum;
     }
-    currValue = currValue * 10 + root.val;
-    if (root.left == null && root.right == null) {
-      sum[0] += currValue;
-      return;
-    }
-    helper(root.left, currValue, sum);
-    helper(root.right, currValue, sum);
-  }
+    
+    private static record NodeSumPair(TreeNode node, int sum) {}
 }
