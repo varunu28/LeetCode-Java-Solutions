@@ -17,44 +17,43 @@
  */
 
 class Solution {
-  public NodeCopy copyRandomBinaryTree(Node root) {
-    if (root == null) {
-      return null;
+    public NodeCopy copyRandomBinaryTree(Node root) {
+        if (root == null) {
+            return null;
+        }
+        Map<Node, NodeCopy> map = new HashMap<>();
+        copyOnlyNode(root, map);
+        copyNodePointers(root, map);
+        return map.get(root);
     }
-    Queue<Node> queue = new LinkedList<>();
-    Map<Node, NodeCopy> map = new HashMap<>();
-    queue.add(root);
-    while (!queue.isEmpty()) {
-      int size = queue.size();
-      while (size-- > 0) {
-        Node removed = queue.remove();
-        map.put(removed, new NodeCopy(removed.val));
-        if (removed.left != null) {
-          queue.add(removed.left);
+    
+    private void copyNodePointers(Node root, Map<Node, NodeCopy> map) {
+        Queue<Node> queue = new LinkedList<>();
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            Node removed = queue.remove();
+            NodeCopy copied = map.get(removed);
+            if (removed.left != null) {
+                queue.add(removed.left);
+                copied.left = map.get(removed.left);
+            }
+            if (removed.right != null) {
+                queue.add(removed.right);
+                copied.right = map.get(removed.right);
+            }
+            if (removed.random != null) {
+                copied.random = map.get(removed.random);
+            }
         }
-        if (removed.right != null) {
-          queue.add(removed.right);
-        }
-      }
     }
-    queue.add(root);
-    while (!queue.isEmpty()) {
-      int size = queue.size();
-      while (size-- > 0) {
-        Node removed = queue.remove();
-        if (removed.left != null) {
-          queue.add(removed.left);
-          map.get(removed).left = map.get(removed.left);
+    
+    private void copyOnlyNode(Node root, Map<Node, NodeCopy> map) {
+        if (root == null) {
+            return;
         }
-        if (removed.right != null) {
-          queue.add(removed.right);
-          map.get(removed).right = map.get(removed.right);
-        }
-        if (removed.random != null) {
-          map.get(removed).random = map.get(removed.random);
-        }
-      }
+        NodeCopy copiedNode = new NodeCopy(root.val);
+        map.put(root, copiedNode);
+        copyOnlyNode(root.left, map);
+        copyOnlyNode(root.right, map);
     }
-    return map.get(root);
-  }
 }
