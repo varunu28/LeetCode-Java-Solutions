@@ -14,22 +14,23 @@
  * }
  */
 class Solution {
-  public boolean isCompleteTree(TreeNode root) {
-    Queue<TreeNode> queue = new LinkedList<>();
-    queue.add(root);
-    boolean end = false;
-    while (!queue.isEmpty()) {
-      TreeNode removed = queue.poll();
-      if (removed == null) {
-        end = true;
-      } else {
-        if (end) {
-          return false;
+    public boolean isCompleteTree(TreeNode root) {
+        Queue<TreeNode> queue = new LinkedList<>();
+        boolean isEnd = false;
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            TreeNode removed = queue.remove();
+            if (removed == null) {
+                isEnd = true;
+            } 
+            if (removed != null) {
+                if (isEnd) {
+                    return false;
+                }
+                queue.add(removed.left);
+                queue.add(removed.right);
+            }
         }
-        queue.add(removed.left);
-        queue.add(removed.right);
-      }
+        return true;
     }
-    return true;
-  }
 }
