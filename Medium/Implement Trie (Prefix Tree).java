@@ -1,56 +1,61 @@
+import java.util.Optional;
+
 class Trie {
-  
-  private TrieNode root;
-  
-  public Trie() {
-    this.root = new TrieNode();
-  }
 
-  public void insert(String word) {
-    TrieNode curr = root;
-    for (char c : word.toCharArray()) {
-      if (!curr.children.containsKey(c)) {
-        curr.children.put(c, new TrieNode());
-      }
-      curr = curr.children.get(c);
+    private final TrieNode root;
+
+    public Trie() {
+        root = new TrieNode();
     }
-    curr.isWord = true;
-  }
 
-  public boolean search(String word) {
-    TrieNode searchNode = searchHelper(word);
-    return searchNode != null && searchNode.isWord;
-  }
-
-  public boolean startsWith(String prefix) {
-    return searchHelper(prefix) != null;
-  }
-  
-  private TrieNode searchHelper(String s) {
-    TrieNode curr = root;
-    for (char c : s.toCharArray()) {
-      if (!curr.children.containsKey(c)) {
-        return null;
-      }
-      curr = curr.children.get(c);
+    public void insert(String word) {
+        TrieNode curr = root;
+        for (char c : word.toCharArray()) {
+            if (!curr.children.containsKey(c)) {
+                curr.children.put(c, new TrieNode());
+            }
+            curr = curr.children.get(c);
+        }
+        curr.isWord = true;
     }
-    return curr;
-  }
-  
-  private class TrieNode {
-    Map<Character, TrieNode> children;
-    boolean isWord;
+
+    public boolean search(String word) {
+        Optional<TrieNode> node = searchHelper(word);
+        return node.isPresent() && node.get().isWord;
+    }
+
+    public boolean startsWith(String prefix) {
+        Optional<TrieNode> node = searchHelper(prefix);
+        return node.isPresent();
+    }
     
-    public TrieNode() {
-      this.children = new HashMap<>();
+    public Optional<TrieNode> searchHelper(String word) {
+        TrieNode curr = root;
+        for (char c : word.toCharArray()) {
+            if (!curr.children.containsKey(c)) {
+                return Optional.empty();
+            }
+            curr = curr.children.get(c);
+        }
+        return Optional.of(curr);
     }
-  }
+
+    private static class TrieNode {
+        
+        private final Map<Character, TrieNode> children;
+        private boolean isWord;
+
+        private TrieNode() {
+            this.children = new HashMap<>();
+            this.isWord = false;
+        }
+    }
 }
 
 /**
-* Your Trie object will be instantiated and called as such:
-* Trie obj = new Trie();
-* obj.insert(word);
-* boolean param_2 = obj.search(word);
-* boolean param_3 = obj.startsWith(prefix);
-*/
+ * Your Trie object will be instantiated and called as such:
+ * Trie obj = new Trie();
+ * obj.insert(word);
+ * boolean param_2 = obj.search(word);
+ * boolean param_3 = obj.startsWith(prefix);
+ */
