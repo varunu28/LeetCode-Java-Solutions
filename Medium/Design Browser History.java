@@ -1,32 +1,32 @@
 class BrowserHistory {
+    
+    private final Stack<String> history;
+    private final Stack<String> future;
 
-  private Stack<String> history;
-  private Stack<String> future;
-
-  public BrowserHistory(String homepage) {
-    this.history = new Stack<>();
-    this.history.push(homepage);
-    this.future = new Stack<>();
-  }
-
-  public void visit(String url) {
-    this.future.removeAllElements();
-    this.history.push(url);
-  }
-
-  public String back(int steps) {
-    while (steps-- > 0 && this.history.size() > 1) {
-      this.future.push(this.history.pop());
+    public BrowserHistory(String homepage) {
+        this.history = new Stack<>();
+        this.future = new Stack<>();
+        this.history.push(homepage);
     }
-    return this.history.peek();
-  }
-
-  public String forward(int steps) {
-    while (steps-- > 0 && !this.future.isEmpty()) {
-      this.history.push(this.future.pop());
+    
+    public void visit(String url) {
+        future.removeAllElements();
+        history.push(url);
     }
-    return this.history.peek();
-  }
+    
+    public String back(int steps) {
+        while (steps-- > 0 && history.size() > 1) {
+            future.push(history.pop());
+        }
+        return history.peek();
+    }
+    
+    public String forward(int steps) {
+        while (steps-- > 0 && !future.isEmpty()) {
+            history.push(future.pop());
+        }
+        return history.peek();
+    }
 }
 
 /**
