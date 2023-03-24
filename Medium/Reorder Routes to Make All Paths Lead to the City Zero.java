@@ -1,30 +1,31 @@
 class Solution {
-  public int minReorder(int n, int[][] connections) {
-    Map<Integer, Set<Integer>> map = new HashMap<>();
-    Set<String> set = new HashSet<>();
-    for (int[] connection : connections) {
-      map.computeIfAbsent(connection[0], k -> new HashSet<>()).add(connection[1]);
-      map.computeIfAbsent(connection[1], k -> new HashSet<>()).add(connection[0]);
-      set.add(connection[0] + "->" + connection[1]);
-    }
-    Queue<Integer> queue = new LinkedList<>();
-    queue.add(0);
-    int numOfReorders = 0;
-    boolean[] visited = new boolean[n];
-    visited[0] = true;
-    while (!queue.isEmpty()) {
-      int removed = queue.remove();
-      for (int connection : map.getOrDefault(removed, new HashSet<>())) {
-        if (visited[connection]) {
-          continue;
+    public int minReorder(int n, int[][] connections) {
+        Map<Integer, List<List<Integer>>> graph = new HashMap<>();
+        for (int[] conn : connections) {
+            graph.computeIfAbsent(conn[0], k -> new ArrayList<>()).add(List.of(conn[1], 1));
+            graph.computeIfAbsent(conn[1], k -> new ArrayList<>()).add(List.of(conn[0], 0));
         }
-        visited[connection] = true;
-        if (!set.contains(connection + "->" + removed)) {
-          numOfReorders++;
-        }
-        queue.add(connection);
-      }
+        int[] count = {0};
+        bfs(0, n, graph, count);
+        return count[0];
     }
-    return numOfReorders;
-  }
+    
+    private void bfs(int node, int n, Map<Integer, List<List<Integer>>> graph, int[] count) {
+        Queue<Integer> queue = new LinkedList<>();
+        boolean[] visited = new boolean[n];
+        visited[node] = true;
+        queue.add(node);
+        while (!queue.isEmpty()) {
+            int removed = queue.remove();
+            for (List<Integer> conn : graph.getOrDefault(removed, new ArrayList<>())) {
+                int neighbor = conn.get(0);
+                int direction = conn.get(1);
+                if (!visited[neighbor]) {
+                    count[0] += direction;
+                    visited[neighbor] = true;
+                    queue.add(neighbor);
+                }
+            }
+        }
+    }
 }
