@@ -14,35 +14,30 @@
  * }
  */
 class Solution {
-  public int widthOfBinaryTree(TreeNode root) {
-    int maxWidth = 0;
-    Queue<TreeNode> queue = new LinkedList<>();
-    Map<TreeNode, Integer> map = new HashMap<>();
-    map.put(root, 1);
-    queue.add(root);
-    while (!queue.isEmpty()) {
-      int size = queue.size();
-      int start = 0;
-      int end = 0;
-      for (int i = 0; i < size; i++) {
-        TreeNode node = queue.poll();
-        if (i == 0) {
-          start = map.get(node);
+    public int widthOfBinaryTree(TreeNode root) {
+        if (root == null) {
+            return 0;
         }
-        if (i == size - 1) {
-          end = map.get(node);
+        Queue<NodeColIndex> queue = new LinkedList<>();
+        queue.add(new NodeColIndex(root, 0));
+        int maxWidth = 0;
+        while (!queue.isEmpty()) {
+            NodeColIndex head = queue.peek();
+            int levelSize = queue.size();
+            for (int i = 0; i < levelSize; i++) {
+                NodeColIndex removed = queue.remove();
+                TreeNode node = removed.node;
+                if (node.left != null) {
+                    queue.add(new NodeColIndex(node.left, 2 * removed.colIdx));
+                }
+                if (node.right != null) {
+                    queue.add(new NodeColIndex(node.right, 2 * removed.colIdx + 1));
+                }
+                maxWidth = Math.max(maxWidth, removed.colIdx - head.colIdx + 1);
+            }
         }
-        if (node.left != null) {
-          map.put(node.left, map.get(node) * 2);
-          queue.add(node.left);
-        }
-        if (node.right != null) {
-          map.put(node.right, map.get(node) * 2 + 1);
-          queue.add(node.right);
-        }
-      }
-      maxWidth = Math.max(maxWidth, end - start + 1);
+        return maxWidth;
     }
-    return maxWidth;
-  }
+    
+    private record NodeColIndex(TreeNode node, int colIdx) {}
 }
