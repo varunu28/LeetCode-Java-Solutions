@@ -1,31 +1,31 @@
 class Solution {
-  public void nextPermutation(int[] nums) {
-    int idx = nums.length - 2;
-    while (idx >= 0 && nums[idx + 1] <= nums[idx]) {
-      idx--;
+    public void nextPermutation(int[] nums) {
+        int n = nums.length;
+        int pivot = n - 1;
+        // Find the first value where decreasing order doesn't holds
+        while (pivot > 0 && nums[pivot] <= nums[pivot - 1]) {
+            pivot--;
+        }
+        if (pivot != 0) {
+            int i = n - 1;
+            // Find the first value from right to left which is greater than element at
+            // pivot - 1
+            while (nums[i] <= nums[pivot - 1]) {
+                i--;
+            }
+            swap(nums, pivot - 1, i);
+        }
+        // Reverse the complete array
+        int left = pivot;
+        int right = n - 1;
+        while (left < right) {
+            swap(nums, left++, right--);
+        }
     }
-    if (idx >= 0) {
-      int endIdx = nums.length - 1;
-      while (nums[endIdx] <= nums[idx]) {
-        endIdx--;
-      }
-      swap(nums, idx, endIdx);
+
+    private void swap(int[] nums, int idxOne, int idxTwo) {
+        int temp = nums[idxOne];
+        nums[idxOne] = nums[idxTwo];
+        nums[idxTwo] = temp;
     }
-    reverse(nums, idx + 1);
-  }
-  
-  private void reverse(int[] nums, int startIdx) {
-    int endIdx = nums.length - 1;
-    while (startIdx < endIdx) {
-      swap(nums, startIdx, endIdx);
-      startIdx++;
-      endIdx--;
-    }
-  }
-  
-  private void swap(int[] nums, int i, int j) {
-    int temp = nums[i];
-    nums[i] = nums[j];
-    nums[j] = temp;
-  }
 }
