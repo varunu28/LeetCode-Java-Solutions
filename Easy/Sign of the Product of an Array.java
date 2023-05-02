@@ -1,12 +1,12 @@
 class Solution {
-  public int arraySign(int[] nums) {
-    int negativeCount = 0;
-    for (int num : nums) {
-      if (num == 0) {
-        return 0;
-      }
-      negativeCount += num < 0 ? 1 : 0;
+    public int arraySign(int[] nums) {
+        int negCount = 0;
+        for (int num : nums) {
+            if (num == 0) {
+                return 0;
+            }
+            negCount += num > 0 ? 0 : 1;
+        }
+        return negCount % 2 == 0 ? 1 : -1;
     }
-    return negativeCount % 2 == 0 ? 1 : -1;
-  }
 }
