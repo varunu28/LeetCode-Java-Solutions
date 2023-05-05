@@ -1,32 +1,23 @@
 class Solution {
-  public int maxVowels(String s, int k) {
-    Map<Character, Integer> map = new HashMap<>();
-    String vowels = "aeiou";
-    int count = 0;
-    int maxCount = 0;
-    int start = 0;
-    int end = 0;
-    int n = s.length();
-    while (end < (k - 1)) {
-      if (vowels.indexOf(s.charAt(end)) != -1) {
-        map.put(s.charAt(end), map.getOrDefault(s.charAt(end), 0) + 1);
-        count++;
-      }
-      end++;
+    public int maxVowels(String s, int k) {
+        int currCount = 0;
+        Set<Character> vowels = Set.of('a', 'e', 'i', 'o', 'u');
+        for (int i = 0; i < k - 1; i++) {
+            if (vowels.contains(s.charAt(i))) {
+                currCount++;
+            }
+        }
+        int maxCount = 0;
+        int start = 0;
+        for (int i = k - 1; i < s.length(); i++) {
+            if (vowels.contains(s.charAt(i))) {
+                currCount++;
+            }
+            maxCount = Math.max(maxCount, currCount);
+            if (vowels.contains(s.charAt(start++))) {
+                currCount--;
+            }
+        }
+        return maxCount;
     }
-    while (end < n) {
-       if (vowels.indexOf(s.charAt(end)) != -1) {
-        map.put(s.charAt(end), map.getOrDefault(s.charAt(end), 0) + 1);
-         count++;
-      }
-      end++;
-      maxCount = Math.max(maxCount, count);
-      if (vowels.indexOf(s.charAt(start)) != -1) {
-        map.put(s.charAt(start), map.getOrDefault(s.charAt(start), 0) - 1);
-        count--;
-      }
-      start++;
-    }
-    return maxCount;
-  }
 }
