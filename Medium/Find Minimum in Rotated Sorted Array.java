@@ -1,30 +1,17 @@
 class Solution {
-  public int findMin(int[] nums) {
-    if (nums.length == 1) {
-      return nums[0];
+    public int findMin(int[] nums) {
+        int start = 0;
+        int end = nums.length - 1;
+        int minValue = 5001;
+        while (start <= end) {
+            int mid = (start + end) / 2;
+            minValue = Math.min(minValue, nums[mid]);
+            if (nums[end] > nums[mid]) {
+                end = mid - 1;
+            } else {
+                start = mid + 1;
+            }
+        }
+        return minValue;
     }
-    int left = 0;
-    int right = nums.length - 1;
-    // Sorted but not rotated
-    if (nums[right] > nums[left]) {
-      return nums[left];
-    }
-    while (left <= right) {
-      int mid = (left + right) / 2;
-      // mid + 1 is point of rotation
-      if (nums[mid] > nums[mid + 1]) {
-        return nums[mid + 1];
-      }
-      // mid is point of rotation
-      if (nums[mid - 1] > nums[mid]) {
-        return nums[mid];
-      }
-      if (nums[mid] > nums[0]) {
-        left = mid + 1;
-      } else {
-        right = mid - 1;
-      }
-    }
-    return Integer.MAX_VALUE;
-  }
 }
