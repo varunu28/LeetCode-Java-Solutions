@@ -1,23 +1,21 @@
 class Solution {
-  Integer[][] dp;
-  public int maxUncrossedLines(int[] A, int[] B) {
-    dp = new Integer[A.length][B.length];
-    return helper(A, 0, B, 0);
-  } 
-  
-  private int helper(int[] A, int idxA, int[] B, int idxB) {
-    if (idxA == A.length || idxB == B.length) {
-      return 0;
-    } 
-    if (dp[idxA][idxB] != null) {
-      return dp[idxA][idxB];
+    public int maxUncrossedLines(int[] nums1, int[] nums2) {
+        Integer[][] dp = new Integer[nums1.length][nums2.length];
+        return helper(nums1, 0, nums2, 0, dp);
     }
-    if (A[idxA] == B[idxB]) {
-      dp[idxA][idxB] = 1 + helper(A, idxA + 1, B, idxB + 1);
+    
+    private int helper(int[] nums1, int idxOne, int[] nums2, int idxTwo, Integer[][] dp) {
+        if (idxOne == nums1.length || idxTwo == nums2.length) {
+            return 0;
+        }
+        if (dp[idxOne][idxTwo] != null) {
+            return dp[idxOne][idxTwo];
+        }
+        if (nums1[idxOne] == nums2[idxTwo]) {
+            return dp[idxOne][idxTwo] = 1 + helper(nums1, idxOne + 1, nums2, idxTwo + 1, dp);
+        }
+        return dp[idxOne][idxTwo] = Math.max(
+            helper(nums1, idxOne, nums2, idxTwo + 1, dp), 
+            helper(nums1, idxOne + 1, nums2, idxTwo, dp));
     }
-    else {
-      dp[idxA][idxB] = Math.max(helper(A, idxA + 1, B, idxB), helper(A, idxA, B, idxB + 1));
-    }
-    return dp[idxA][idxB];
-  }
 }
