@@ -1,104 +1,148 @@
+import java.util.Optional;
+
 class FileSystem {
 
-  private final FileNode root;
+    private final Node root;
 
-  public FileSystem() {
-    this.root = new FileNode("ROOT", FileType.FOLDER);
-  }
-
-  /*
-   * If path is a file path, returns a list that only contains this file's name.
-   * If path is a directory path, returns the list of file and directory names in this directory.
-   * */
-  public List<String> ls(String path) {
-    String[] split = path.split("/");
-    FileNode currNode = root;
-    for (int i = 1; i < split.length; i++) {
-      currNode = currNode.subFiles.get(split[i]);
-    }
-    if (currNode.fileType.equals(FileType.FILE)) {
-      return List.of(currNode.value);
-    } else {
-      return currNode.subFiles.keySet().stream().sorted().collect(Collectors.toList());
-    }
-  }
-
-  /*
-   * Makes a new directory according to the given path. The given directory path does not exist.
-   * If the middle directories in the path do not exist, you should create them as well.
-   * */
-  public void mkdir(String path) {
-    String[] splits = path.split("/");
-    FileNode currNode = root;
-    for (int i = 1; i < splits.length; i++) {
-      String fileName = splits[i];
-      if (!currNode.subFiles.containsKey(fileName)) {
-        currNode.subFiles.put(fileName, new FileNode(fileName, FileType.FOLDER));
-      }
-      currNode = currNode.subFiles.get(fileName);
-    }
-  }
-
-  /*
-   * If filePath does not exist, creates that file containing given content.
-   * If filePath already exists, appends the given content to original content.
-   * */
-  public void addContentToFile(String filePath, String content) {
-    String[] splits = filePath.split("/");
-    FileNode currNode = root;
-    for (int i = 1; i < splits.length - 1; i++) {
-      String folderName = splits[i];
-      if (!currNode.subFiles.containsKey(folderName)) {
-        currNode.subFiles.put(folderName, new FileNode(folderName, FileType.FOLDER));
-      }
-      currNode = currNode.subFiles.get(folderName);
-    }
-    String fileName = splits[splits.length - 1];
-    if (!currNode.subFiles.containsKey(fileName) ||
-        !currNode.subFiles.get(fileName).fileType.equals(FileType.FILE)) {
-      currNode.subFiles.put(fileName, new FileNode(fileName, FileType.FILE));
-    }
-    currNode = currNode.subFiles.get(fileName);
-    currNode.addContentToFile(content);
-  }
-
-  /*
-   * Returns the content in the file at filePath.
-   * */
-  public String readContentFromFile(String filePath) {
-    String[] splits = filePath.split("/");
-    FileNode currNode = root;
-    for (int i = 1; i < splits.length; i++) {
-      String folderName = splits[i];
-      currNode = currNode.subFiles.get(folderName);
-    }
-    return currNode.fileContent.toString();
-  }
-
-  enum FileType {
-    FILE, FOLDER
-  }
-
-  static class FileNode {
-
-    private final String value;
-    private final Map<String, FileNode> subFiles;
-    private final FileType fileType;
-    private StringBuilder fileContent;
-
-    public FileNode(String value, FileType fileType) {
-      this.value = value;
-      this.fileType = fileType;
-      this.subFiles = new HashMap<>();
+    public FileSystem() {
+        this.root = new DirectoryNode("/");
     }
 
-    public void addContentToFile(String content) {
-      if (fileContent == null) {
-        fileContent = new StringBuilder();
-      }
-      fileContent.append(content);
+    public List<String> ls(String path) {
+        String[] splits = path.split("/");
+        if (splits.length == 0) {
+            return buildlsResult((DirectoryNode) root);
+        }
+        Node curr = root;
+        for (int i = 1; i < splits.length - 1; i++) {
+            curr = ((DirectoryNode) curr).getNode(splits[i]).get();
+        }
+        Node lastNode = ((DirectoryNode) curr).getNode(splits[splits.length - 1]).get();
+        if (lastNode.isFile()) {
+            return Collections.singletonList(lastNode.getName());
+        }
+        return buildlsResult((DirectoryNode) lastNode);
     }
-  }
+
+    public void mkdir(String path) {
+        String[] splits = path.split("/");
+        createIfNotExists(splits);
+    }
+
+    public void addContentToFile(String filePath, String content) {
+        String[] splits = filePath.split("/");
+        DirectoryNode directoryNode = createIfNotExists(Arrays.copyOfRange(splits, 0, splits.length));
+        String fileName = splits[splits.length - 1];
+        if (directoryNode.getNode(fileName).isEmpty()) {
+            FileNode fileNode = new FileNode(fileName);
+            directoryNode.addContent(fileName, fileNode);
+        }
+        FileNode fileNode = (FileNode) directoryNode.getNode(fileName).get();
+        fileNode.addContent(content);
+    }
+
+    public String readContentFromFile(String filePath) {
+        String[] splits = filePath.split("/");
+        DirectoryNode directoryNode = createIfNotExists(Arrays.copyOfRange(splits, 0, splits.length));
+        String fileName = splits[splits.length - 1];
+        FileNode fileNode = (FileNode) directoryNode.getNode(fileName).get();
+        return fileNode.getContents();
+    }
+
+    private static List<String> buildlsResult(DirectoryNode curr) {
+        return curr
+                .getContents()
+                .stream()
+                .map(Node::getName)
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    private DirectoryNode createIfNotExists(String[] splits) {
+        DirectoryNode curr = (DirectoryNode) root;
+        for (int i = 1; i < splits.length; i++) {
+            Optional<Node> nextDirectory = curr.getNode(splits[i]);
+            if (nextDirectory.isEmpty()) {
+                DirectoryNode node = new DirectoryNode(splits[i]);
+                curr.addContent(splits[i], node);
+                curr = node;
+            } else {
+                curr = (DirectoryNode) nextDirectory.get();
+            }
+        }
+        return curr;
+    }
+
+    private static class FileNode implements Node {
+
+        private final String name;
+
+        private final StringBuilder contents;
+
+        public FileNode(String name) {
+            this.name = name;
+            this.contents = new StringBuilder();
+        }
+
+        public void addContent(String content) {
+            this.contents.append(content);
+        }
+
+        public String getContents() {
+            return contents.toString();
+        }
+
+        @Override
+        public String getName() {
+            return this.name;
+        }
+
+        @Override
+        public boolean isFile() {
+            return true;
+        }
+    }
+
+    private static class DirectoryNode implements Node {
+
+        private String name;
+
+        private final Map<String, Node> contents;
+
+        public DirectoryNode(String name) {
+            this.name = name;
+            this.contents = new HashMap<>();
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public boolean isFile() {
+            return false;
+        }
+
+        public void addContent(String key, Node node) {
+            contents.put(key, node);
+        }
+
+        public List<Node> getContents() {
+            return contents.values().stream().toList();
+        }
+
+        public Optional<Node> getNode(String nodeName) {
+            return Optional.ofNullable(contents.getOrDefault(nodeName, null));
+        }
+    }
+
+    private interface Node {
+
+        String getName();
+
+        boolean isFile();
+    }
 }
 
 /**
