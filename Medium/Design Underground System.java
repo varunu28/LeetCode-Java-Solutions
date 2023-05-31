@@ -1,33 +1,37 @@
 class UndergroundSystem {
-  
-  private Map<String, Integer> totalTimeFromStartToEndStation;
-  private Map<String, Integer> numberOfCustomersFromStartToEndStation;
-  private Map<Integer, Integer> customerIdToStartTime;
-  private Map<Integer, String> customerIdToStartStation;
-  
-  public UndergroundSystem() {
-    this.totalTimeFromStartToEndStation = new HashMap<>();
-    this.numberOfCustomersFromStartToEndStation = new HashMap<>();
-    this.customerIdToStartTime = new HashMap<>();
-    this.customerIdToStartStation = new HashMap<>();
-  }
+    
+    private final Map<Integer, StationTimePair> customerToCheckInMapping;
+    private final Map<String, Integer> startEndStationTotalTimeMapping;
+    private final Map<String, Integer> startEndStationCountMapping;
 
-  public void checkIn(int id, String stationName, int t) {
-    this.customerIdToStartTime.put(id, t);
-    this.customerIdToStartStation.put(id, stationName);
-  }
-
-  public void checkOut(int id, String stationName, int t) {
-    int totalTime = t - this.customerIdToStartTime.get(id);
-    String key = this.customerIdToStartStation.get(id) + "|" + stationName;
-    this.totalTimeFromStartToEndStation.put(key, this.totalTimeFromStartToEndStation.getOrDefault(key, 0) + totalTime);
-    this.numberOfCustomersFromStartToEndStation.put(key, this.numberOfCustomersFromStartToEndStation.getOrDefault(key, 0) + 1);
-  }
-
-  public double getAverageTime(String startStation, String endStation) {
-    String key = startStation + "|" + endStation;
-    return this.totalTimeFromStartToEndStation.get(key) / (double) (this.numberOfCustomersFromStartToEndStation.get(key));
-   }
+    public UndergroundSystem() {
+        this.customerToCheckInMapping = new HashMap<>();
+        this.startEndStationTotalTimeMapping = new HashMap<>();
+        this.startEndStationCountMapping = new HashMap<>();
+    }
+    
+    public void checkIn(int id, String stationName, int t) {
+        StationTimePair pair = new StationTimePair(stationName, t);
+        customerToCheckInMapping.put(id, pair);
+    }
+    
+    public void checkOut(int id, String stationName, int t) {
+        StationTimePair pair = customerToCheckInMapping.get(id);
+        String key = pair.station() + "|" + stationName;
+        int totalTime = t - pair.time();
+        startEndStationTotalTimeMapping.put(key, startEndStationTotalTimeMapping.getOrDefault(key, 0) + totalTime);
+        startEndStationCountMapping.put(key, startEndStationCountMapping.getOrDefault(key, 0) + 1);
+    }
+    
+    public double getAverageTime(String startStation, String endStation) {
+        String key = startStation + "|" + endStation;
+        if (!startEndStationTotalTimeMapping.containsKey(key)) {
+            return 0.0;
+        }
+        return ((double) startEndStationTotalTimeMapping.get(key)) / startEndStationCountMapping.get(key);
+    }
+    
+    static record StationTimePair(String station, int time) {}
 }
 
 /**
