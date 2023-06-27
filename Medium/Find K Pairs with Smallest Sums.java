@@ -1,54 +1,26 @@
-class Solution {
-    public List<int[]> kSmallestPairs(int[] nums1, int[] nums2, int k) {
-        List<int[]> ans = new ArrayList<>();
-
-        if (nums1.length == 0 || nums2.length == 0 || k == 0) {
-            return ans;
-        }
-
-        PriorityQueue<Element> pq = new PriorityQueue<>(new Comparator<Element>() {
-            @Override
-            public int compare(Element o1, Element o2) {
-                return (o1.x + o1.y) - (o2.x + o2.y);
-            }
-        });
-
-        for (int i=0; i<nums2.length && i < k; i++) {
-            pq.offer(new Element(0, nums2[i], nums1[0]));
-        }
-
+class Solution {
+    public List<List<Integer>> kSmallestPairs(int[] nums1, int[] nums2, int k) {
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> a[2] - b[2]);
+        List<List<Integer>> result = new ArrayList<>();
+        Set<Pair<Integer, Integer>> visited = new HashSet<>();
+        pq.add(new int[]{0, 0, nums1[0] + nums2[0]});
+        visited.add(new Pair<Integer, Integer>(0, 0));
         while (k-- > 0 && !pq.isEmpty()) {
-            Element temp = pq.poll();
-            ans.add(new int[]{temp.y, temp.x});
-
-            if (temp.idx >= nums1.length-1) {
-                continue;
+            int[] removed = pq.poll();
+            int i = removed[0];
+            int j = removed[1];
+            result.add(List.of(nums1[i], nums2[j]));
+            Pair<Integer, Integer> nums1Pair = new Pair<Integer, Integer>(i + 1, j);
+            Pair<Integer, Integer> nums2Pair = new Pair<Integer, Integer>(i, j + 1);
+            if (i + 1 < nums1.length && !visited.contains(nums1Pair)) {
+                pq.add(new int[]{i + 1, j, nums1[i + 1] + nums2[j]});
+                visited.add(nums1Pair);
             }
-
-            pq.offer(new Element(temp.idx+1, temp.x, nums1[temp.idx+1]));
+            if (j + 1 < nums2.length && !visited.contains(nums2Pair)) {
+                pq.add(new int[]{i, j + 1, nums1[i] + nums2[j + 1]});
+                visited.add(nums2Pair);
+            }
         }
-
-        return ans;
-    }
-
-    class Element {
-        int idx;
-        int x;
-        int y;
-
-        public Element(int val, int x, int y) {
-            this.idx = val;
-            this.x = x;
-            this.y = y;
-        }
-
-        @Override
-        public String toString() {
-            return "Element{" +
-                    "idx=" + idx +
-                    ", x=" + x +
-                    ", y=" + y +
-                    '}';
-        }
+        return result;
     }
 }
