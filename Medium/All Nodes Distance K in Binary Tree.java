@@ -8,49 +8,48 @@
  * }
  */
 class Solution {
-  public List<Integer> distanceK(TreeNode root, TreeNode target, int k) {
-    List<Integer> result = new ArrayList<>();
-    dfs(root, target, k, result);
-    return new ArrayList<>(result);
-  }
-  
-  private int dfs(TreeNode node, TreeNode target, int k, List<Integer> result) {
-    if (node == null) {
-      return -1;
+    public List<Integer> distanceK(TreeNode root, TreeNode target, int k) {
+        List<Integer> result = new ArrayList<>();
+        dfs(root, target, k, result);
+        return result;
     }
-    if (node == target) {
-      addToResult(node, 0, result, k);
-      return 1;
-    } else {
-      int left = dfs(node.left, target, k, result);
-      int right = dfs(node.right, target, k, result);
-      if (left != -1) {
-        if (left == k) {
-          result.add(node.val);
+    
+    private int dfs(TreeNode node, TreeNode target, int k, List<Integer> result) {
+        if (node == null) {
+            return -1;
         }
-        addToResult(node.right, left + 1, result, k);
-        return left + 1;
-      } else if (right != -1) {
-        if (right == k) {
-          result.add(node.val);
+        if (node == target) {
+            dfs(node, 0, k, result);
+            return 1;
         }
-        addToResult(node.left, right + 1, result, k);
-        return right + 1;
-      } else {
+        int left = dfs(node.left, target, k, result);
+        if (left != -1) {
+            if (left == k) {
+               result.add(node.val);
+            }
+            dfs(node.right, left + 1, k, result);
+            return left + 1;
+        }
+        int right = dfs(node.right, target, k, result);
+        if (right != -1) {
+            if (right == k) {
+               result.add(node.val);
+            }
+            dfs(node.left, right + 1, k, result);
+            return right + 1;
+        }
         return -1;
-      }
     }
-  }
-  
-  private void addToResult(TreeNode node, int dist, List<Integer> result, int k) {
-    if (node == null || dist > k) {
-      return;
+    
+    private void dfs(TreeNode node, int distance, int k, List<Integer> result) {
+        if (node == null || distance > k) {
+            return;
+        }
+        if (distance == k) {
+            result.add(node.val);
+            return;
+        }
+        dfs(node.left, distance + 1, k, result);
+        dfs(node.right, distance + 1, k, result);
     }
-    if (dist == k) {
-      result.add(node.val);
-    } else {
-      addToResult(node.left, dist + 1, result, k);
-      addToResult(node.right, dist + 1, result, k);
-    }
-  }
 }
