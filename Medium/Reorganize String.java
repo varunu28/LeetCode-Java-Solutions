@@ -1,37 +1,38 @@
 class Solution {
-  public String reorganizeString(String s) {
-    Map<Character, Integer> map = new HashMap<>();
-    for (char c : s.toCharArray()) {
-      map.put(c, map.getOrDefault(c, 0) + 1);
-    }
-    PriorityQueue<Character> pq = new PriorityQueue<>(
-        (o1, o2) -> map.get(o2).compareTo(map.get(o1)));
-    pq.addAll(map.keySet());
-    StringBuilder sb = new StringBuilder();
-    while (!pq.isEmpty()) {
-      char removed = pq.poll();
-      if (!sb.isEmpty() && sb.charAt(sb.length() - 1) == removed) {
-        if (pq.isEmpty()) {
-          return "";
+    public String reorganizeString(String s) {
+        Map<Character, Integer> map = new HashMap<>();
+        int maxFrequency = 0;
+        char maxFrequencyLetter = ' ';
+        int n = s.length();
+        for (char c : s.toCharArray()) {
+            map.put(c, map.getOrDefault(c, 0) + 1);
+            if (maxFrequency < map.get(c)) {
+                maxFrequency = map.get(c);
+                maxFrequencyLetter = c;
+            }
         }
-        char secondRemoved = pq.poll();
-        pq.add(removed);
-        sb.append(secondRemoved);
-        updateStructure(map, pq, secondRemoved);
-      } else {
-        sb.append(removed);
-        updateStructure(map, pq, removed);
-      }
+        if (maxFrequency > (n + 1) / 2) {
+            return "";
+        }
+        char[] letters = new char[s.length()];
+        int idx = 0;
+        idx = insertLetter(n, map, maxFrequencyLetter, letters, idx);
+        map.remove(maxFrequencyLetter);
+        for (Character key : map.keySet()) {
+            idx = insertLetter(n, map, key, letters, idx);
+        }
+        return String.valueOf(letters);
     }
-    return sb.toString();
-  }
 
-  private void updateStructure(Map<Character, Integer> map, PriorityQueue<Character> pq, char c) {
-    map.put(c, map.get(c) - 1);
-    if (map.get(c) > 0) {
-      pq.add(c);
-    } else {
-      map.remove(c);
+    private static int insertLetter(int n, Map<Character, Integer> map, char maxFrequencyLetter, char[] letters, int idx) {
+        while (map.get(maxFrequencyLetter) > 0) {
+            if (idx >= n) {
+                idx = 1;
+            }
+            letters[idx] = maxFrequencyLetter;
+            idx += 2;
+            map.put(maxFrequencyLetter, map.get(maxFrequencyLetter) - 1);
+        }
+        return idx;
     }
-  }
 }
