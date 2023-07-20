@@ -1,26 +1,33 @@
 class Solution {
-  public int[] asteroidCollision(int[] asteroids) {
-    Stack<Integer> stack = new Stack<>();
-    for (int asteroid : asteroids) {
-      if (asteroid < 0) {
-        while (!stack.isEmpty() && stack.peek() > 0 && stack.peek() < Math.abs(asteroid)) {
-          stack.pop();
+    public int[] asteroidCollision(int[] asteroids) {
+        List<Integer> result = new ArrayList<>();
+        int idx = 0;
+        while (idx < asteroids.length && asteroids[idx] < 0) {
+            result.add(asteroids[idx++]);
         }
-        if (!stack.isEmpty() && stack.peek() > 0) {
-          if (stack.peek() == Math.abs(asteroid)) {
-            stack.pop();
-          }
-        } else {
-          stack.push(asteroid);
+        while (idx < asteroids.length) {
+            if (asteroids[idx] > 0) {
+                result.add(asteroids[idx++]);
+            } else {
+                if (result.isEmpty() || result.get(result.size() - 1) < 0) {
+                    result.add(asteroids[idx]);
+                } else {
+                    while (!result.isEmpty() && 
+                           result.get(result.size() - 1) > 0 && 
+                           result.get(result.size() - 1) < Math.abs(asteroids[idx])) {
+                        result.remove(result.size() - 1);
+                    }
+                    if (!result.isEmpty() && result.get(result.size() - 1) > 0) {
+                        if (result.get(result.size() - 1) == Math.abs(asteroids[idx])) {
+                            result.remove(result.size() - 1);
+                        } 
+                    } else {
+                        result.add(asteroids[idx]);
+                    }
+                }
+                idx++;
+            }
         }
-      } else {
-        stack.push(asteroid);
-      }
+        return result.stream().mapToInt(Integer::valueOf).toArray();
     }
-    int[] result = new int[stack.size()];
-    for (int i = result.length - 1; i >= 0; i--) {
-      result[i] = stack.pop();
-    }
-    return result;
-  }
 }
