@@ -1,23 +1,19 @@
 class Solution {
-  public String parseTernary(String expression) {
-    if (expression == null || expression.length() == 0) {
-      return "";
+    public String parseTernary(String expression) {
+        Stack<Character> stack = new Stack<>();
+        int idx = expression.length() - 1;
+        while (idx >= 0) {
+            char c = expression.charAt(idx);
+            if (c >= '0' && c <= '9' || c == 'T' || c == 'F') {
+                stack.push(c);
+            } else if (c == '?') {
+                char trueValue = stack.pop();
+                char falseValue = stack.pop();
+                stack.push(expression.charAt(idx - 1) == 'T' ? trueValue : falseValue);
+                idx--;
+            }
+            idx--;
+        }
+        return String.valueOf(stack.pop());
     }
-    Deque<Character> stack = new LinkedList<>();
-    int n = expression.length();
-    for (int i = n - 1; i >= 0; i--) {
-      char c = expression.charAt(i);
-      if (!stack.isEmpty() && stack.peek() == '?') {
-        stack.pop();  // Pop ?
-        char first = stack.pop();
-        stack.pop();  // Pop :
-        char second = stack.pop();
-        stack.push(c == 'T' ? first : second);
-      }
-      else {
-        stack.push(c);
-      }
-    }
-    return String.valueOf(stack.peek());
-  }
 }
