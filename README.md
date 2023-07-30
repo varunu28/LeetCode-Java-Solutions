@@ -2,7 +2,7 @@
 
 ## Solutions to Leetcode problems in Java
 
-## [Current Leetcode profile: Solved 1300+ Problems](https://leetcode.com/varunsjsu/)
+## [Current Leetcode profile: Solved 1400+ Problems](https://leetcode.com/varunsjsu/)
 ## [Previous Leetcode profile: Solved 759 Problems](https://leetcode.com/varunu28/)
 
 Problem Category | Count
