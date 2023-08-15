@@ -9,38 +9,35 @@
  * }
  */
 class Solution {
-  public ListNode partition(ListNode head, int x) {
-    ListNode lessThanHead = null;
-    ListNode lessThan = null;
-    ListNode greaterThan = null;
-    ListNode greaterThanHead = null;
-    while (head != null) {
-      ListNode nextNode = head.next;
-      if (head.val < x) {
-        if (lessThan == null) {
-          lessThan = head;
-          lessThanHead = lessThan;
-        } else {
-          lessThan.next = head;
-          lessThan = lessThan.next;
+    public ListNode partition(ListNode head, int x) {
+        ListNode lessHead = null;
+        ListNode lessCurr = null;
+        ListNode greaterHead = null;
+        ListNode greaterCurr = null;
+        while (head != null) {
+            if (head.val < x) {
+                if (lessCurr == null) {
+                    lessCurr = new ListNode(head.val);
+                    lessHead = lessCurr;
+                } else {
+                    lessCurr.next = new ListNode(head.val);
+                    lessCurr = lessCurr.next;
+                }
+            } else {
+                if (greaterCurr == null) {
+                    greaterCurr = new ListNode(head.val);
+                    greaterHead = greaterCurr;
+                } else {
+                    greaterCurr.next = new ListNode(head.val);
+                    greaterCurr = greaterCurr.next;
+                }
+            }
+            head = head.next;
         }
-        lessThan.next = null;
-      } else {
-        if (greaterThan == null) {
-          greaterThan = head;
-          greaterThanHead = greaterThan;
-        } else {
-          greaterThan.next = head;
-          greaterThan = greaterThan.next;
+        if (lessHead == null) {
+            return greaterHead;
         }
-        greaterThan.next = null;
-      }
-      head = nextNode;
+        lessCurr.next = greaterHead;
+        return lessHead;
     }
-    if (lessThanHead == null || greaterThanHead == null) {
-      return lessThan == null ? greaterThanHead : lessThanHead;
-    }
-    lessThan.next = greaterThanHead;
-    return lessThanHead;
-  }
 }
