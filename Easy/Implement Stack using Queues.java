@@ -1,52 +1,51 @@
 class MyStack {
-  
-  private Queue<Integer> primaryQueue;
-  private Queue<Integer> secondaryQueue;
-  
-  public MyStack() {
-    this.primaryQueue = new LinkedList<>();
-    this.secondaryQueue = new LinkedList<>();
-  }
+    
+    private final Queue<Integer> mainQueue;
+    private final Queue<Integer> backupQueue;
 
-  public void push(int x) {
-    this.primaryQueue.add(x);
-  }
-
-  public int pop() {
-    int result = moveFromPrimaryToSecondary();
-    moveFromSecondaryToPrimary(true);
-    return result;
-  }
-
-  public int top() {
-    int result = moveFromPrimaryToSecondary();
-    moveFromSecondaryToPrimary(false);
-    return result;
-  }
-  
-  public boolean empty() {
-    return this.primaryQueue.isEmpty();
-  }
-  
-  private int moveFromPrimaryToSecondary() {
-    int last = this.primaryQueue.peek();
-    while (!this.primaryQueue.isEmpty()) {
-      last = this.primaryQueue.peek();
-      this.secondaryQueue.add(this.primaryQueue.remove());
+    public MyStack() {
+        this.mainQueue = new LinkedList<>();
+        this.backupQueue = new LinkedList<>();
     }
-    return last;
-  }
-  
-  private void moveFromSecondaryToPrimary(boolean removeLast) {
-    while (this.secondaryQueue.size() > 1) {
-      this.primaryQueue.add(this.secondaryQueue.remove());
+    
+    public void push(int x) {
+        this.mainQueue.add(x);
     }
-    if (removeLast) {
-      this.secondaryQueue.remove();
-    } else {
-      this.primaryQueue.add(this.secondaryQueue.remove());
+    
+    public int pop() {
+        int lastElement = moveToBackupQueue();
+        moveToMainQueue(true);
+        return lastElement;
     }
-  }
+    
+    public int top() {
+        int lastElement = moveToBackupQueue();
+        moveToMainQueue(false);
+        return lastElement;
+    }
+    
+    public boolean empty() {
+        return this.mainQueue.isEmpty();
+    }
+    
+    private int moveToBackupQueue() {
+        int lastElement = this.mainQueue.peek();
+        while (!this.mainQueue.isEmpty()) {
+            lastElement = this.mainQueue.peek();
+            this.backupQueue.add(this.mainQueue.poll());
+        }
+        return lastElement;
+    }
+    
+    private void moveToMainQueue(boolean removeLast) {
+        int sizeLimit = removeLast ? 1 : 0;
+        while (this.backupQueue.size() > sizeLimit) {
+            this.mainQueue.add(this.backupQueue.poll());
+        }
+        if (removeLast) {
+            this.backupQueue.remove();
+        }
+    }
 }
 
 /**
