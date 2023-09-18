@@ -1,33 +1,35 @@
 class Solution {
-  public int minimumSemesters(int n, int[][] relations) {
-    Map<Integer, List<Integer>> graph = new HashMap<>();
-    int[] indegree = new int[n + 1];
-    for (int[] relation : relations) {
-      graph.computeIfAbsent(relation[0], k -> new ArrayList<>()).add(relation[1]);
-      indegree[relation[1]]++;
-    }
-    Queue<Integer> queue = new LinkedList<>();
-    int numOfSemesters = 0;
-    Set<Integer> coursesTaken = new HashSet<>();
-    for (int i = 1; i <= n; i++) {
-      if (indegree[i] == 0) {
-        queue.add(i);
-      }
-    }
-    while (!queue.isEmpty()) {
-      int size = queue.size();
-      while (size-- > 0) {
-        int course = queue.remove();
-        coursesTaken.add(course);
-        for (int dependentCourse : graph.getOrDefault(course, new ArrayList<>())) {
-          indegree[dependentCourse]--;
-          if (indegree[dependentCourse] <= 0 && !coursesTaken.contains(dependentCourse)) {
-            queue.add(dependentCourse);
-          }
+    public int minimumSemesters(int n, int[][] relations) {
+        Map<Integer, Set<Integer>> graph = new HashMap<>();
+        int[] indegree = new int[n];
+        for (int[] relation : relations) {
+            int course = relation[0];
+            int dependency = relation[1];
+            indegree[course - 1]++;
+            graph.computeIfAbsent(dependency, k -> new HashSet<>()).add(course);
         }
-      }
-      numOfSemesters++;
+        Queue<Integer> queue = new LinkedList<>();
+        int numOfSemesters = 0;
+        int coursesTaken = 0;
+        for (int i = 0; i < n; i++) {
+            if (indegree[i] == 0) {
+                queue.add(i + 1);
+            }
+        }
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            while (size-- > 0) {
+                int removed = queue.remove();
+                coursesTaken++;
+                for (Integer dependent : graph.getOrDefault(removed, new HashSet<>())) {
+                    indegree[dependent - 1]--;
+                    if (indegree[dependent - 1] == 0) {
+                        queue.add(dependent);
+                    }
+                }
+            }
+            numOfSemesters++;
+        }
+        return coursesTaken == n ? numOfSemesters : -1;
     }
-    return coursesTaken.size() == n ? numOfSemesters : -1;
-  }
 }
