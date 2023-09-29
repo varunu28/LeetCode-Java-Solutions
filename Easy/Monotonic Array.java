@@ -1,21 +1,19 @@
 class Solution {
-  public boolean isMonotonic(int[] nums) {
-    int idx = 0;
-    int sign = 0;
-    while (idx < nums.length - 1 && sign == 0) {
-      if (nums[idx] < nums[idx + 1]) {
-        sign = 1;
-      } else if (nums[idx] > nums[idx + 1]) {
-        sign = -1;
-      }
-      idx++;
+    public boolean isMonotonic(int[] nums) {
+        int idx = 0;
+        while (idx + 1 < nums.length && nums[idx] == nums[idx + 1]) {
+            idx++;
+        } 
+        boolean increasing = idx + 1 < nums.length && nums[idx] < nums[idx + 1];
+        while (idx + 1 < nums.length) {
+            if (nums[idx] > nums[idx + 1] && increasing) {
+                return false;
+            }
+            if (nums[idx] < nums[idx + 1] && !increasing) {
+                return false;
+            }
+            idx++;
+        }
+        return true;
     }
-    while (idx < nums.length - 1) {
-      if ((sign == 1 && nums[idx] > nums[idx + 1]) || (sign == -1 && nums[idx] < nums[idx + 1])) {
-        return false;
-      }
-      idx++;
-    }
-    return true;
-  }
 }
