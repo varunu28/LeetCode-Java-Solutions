@@ -1,25 +1,23 @@
 class Solution {
-  public boolean find132pattern(int[] nums) {
-    if (nums.length < 3) {
-      return false;
-    }
-    int[] minTillIndex = new int[nums.length];
-    minTillIndex[0] = nums[0];
-    for (int idx = 1; idx < nums.length; idx++) {
-      minTillIndex[idx] = Math.min(minTillIndex[idx - 1], nums[idx]);
-    }
-    Stack<Integer> stack = new Stack<>();
-    for (int idx = nums.length - 1; idx >= 0; idx--) {
-      if (nums[idx] > minTillIndex[idx]) {
-        while (!stack.isEmpty() && stack.peek() <= minTillIndex[idx]) {
-          stack.pop();
+    public boolean find132pattern(int[] nums) {
+        int n = nums.length;
+        int[] uptoIdxMin = new int[n];
+        uptoIdxMin[0] = nums[0];
+        for (int i = 1; i < n; i++) {
+            uptoIdxMin[i] = Math.min(uptoIdxMin[i - 1], nums[i]);
         }
-        if (!stack.isEmpty() && stack.peek() < nums[idx]) {
-          return true;
+        Stack<Integer> stack = new Stack<>();
+        for (int i = n - 1; i >= 0; i--) {
+            if (nums[i] > uptoIdxMin[i]) {
+                while (!stack.isEmpty() && stack.peek() <= uptoIdxMin[i]) {
+                    stack.pop();
+                }
+                if (!stack.isEmpty() && stack.peek() < nums[i]) {
+                    return true;
+                }
+                stack.push(nums[i]);
+            }
         }
-        stack.push(nums[idx]);
-      }
+        return false;
     }
-    return false;
-  }
 }
