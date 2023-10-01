@@ -1,23 +1,30 @@
 class Solution {
-  public String reverseWords(String s) {
-    int idx = 0;
-    int n = s.length();
-    StringBuilder sb = new StringBuilder();
-    int start = 0;
-    while (idx < n) {
-      while (idx < n && s.charAt(idx) != ' ') {
-        idx++;
-      }
-      int curr = idx - 1;
-      while (curr >= start) {
-        sb.append(s.charAt(curr--));
-      }
-      if (idx != n) {
-        sb.append(" ");
-      }
-      idx++;
-      start = idx;
+    public String reverseWords(String s) {
+        int start = 0;
+        int end = 0;
+        char[] chars = s.toCharArray();
+        while (end < s.length()) {
+            if (chars[end] == ' ') {
+                if (start < end - 1) {
+                    reverse(chars, start, end - 1);
+                }
+                end++;
+                start = end;
+            } else {
+                end++;
+            }
+        }
+        if (start < end) {
+            reverse(chars, start, end - 1);
+        }
+        return String.valueOf(chars);
     }
-    return sb.toString();
-  }
+
+    private void reverse(char[] chars, int start, int end) {
+        while (start < end) {
+            char temp = chars[start];
+            chars[start++] = chars[end];
+            chars[end--] = temp;
+        }
+    }
 }
