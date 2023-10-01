@@ -1,62 +1,67 @@
-public class Trie {
+import java.util.Optional;
 
-    private final TrieNode root;
+
+class Trie {
+
+    private final Node root;
 
     public Trie() {
-        this.root = new TrieNode();
+        root = new Node();
     }
 
     public void insert(String word) {
-        TrieNode curr = root;
+        Node curr = root;
         for (char c : word.toCharArray()) {
             if (!curr.children.containsKey(c)) {
-                curr.children.put(c, new TrieNode());
+                curr.children.put(c, new Node());
             }
             curr = curr.children.get(c);
             curr.startingWordCount++;
         }
-        curr.completeWordCount++;
+        curr.endingWordCount++;
     }
 
     public int countWordsEqualTo(String word) {
-        TrieNode endNode = searchWord(word);
-        return endNode == null ? 0 : endNode.completeWordCount;
+        Optional<Node> curr = search(word);
+        return curr.map(node -> node.endingWordCount).orElse(0);
     }
 
     public int countWordsStartingWith(String prefix) {
-        TrieNode endNode = searchWord(prefix);
-        return endNode == null ? 0 : endNode.startingWordCount;
+        Optional<Node> curr = search(prefix);
+        return curr.map(node -> node.startingWordCount).orElse(0);
     }
 
     public void erase(String word) {
-        TrieNode curr = root;
+        Node curr = root;
         for (char c : word.toCharArray()) {
             curr = curr.children.get(c);
             curr.startingWordCount--;
         }
-        curr.completeWordCount--;
+        curr.endingWordCount--;
     }
 
-    private TrieNode searchWord(String word) {
-        TrieNode curr = root;
+    private Optional<Node> search(String word) {
+        Node curr = root;
         for (char c : word.toCharArray()) {
             if (!curr.children.containsKey(c)) {
-                return null;
+                return Optional.empty();
             }
             curr = curr.children.get(c);
         }
-        return curr;
+        return Optional.of(curr);
     }
 
-    private static class TrieNode {
-        Map<Character, TrieNode> children;
-        int completeWordCount;
-        int startingWordCount;
+    private static class Node {
 
-        public TrieNode() {
-            this.children = new HashMap<>();
-            this.completeWordCount = 0;
+        private int startingWordCount;
+        private int endingWordCount;
+
+        private final Map<Character, Node> children;
+
+        public Node() {
             this.startingWordCount = 0;
+            this.endingWordCount = 0;
+            this.children = new HashMap<>();
         }
     }
 }
