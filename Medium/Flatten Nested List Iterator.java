@@ -17,31 +17,34 @@
  */
 public class NestedIterator implements Iterator<Integer> {
 
-  private Stack<NestedInteger> stack;
-  
-  public NestedIterator(List<NestedInteger> nestedList) {
-    this.stack = new Stack<>();
-    for (int i = nestedList.size() - 1; i >= 0; i--) {
-      this.stack.push(nestedList.get(i));
-    }
-  }
+    private Stack<NestedInteger> stack;
 
-  @Override
-  public Integer next() {
-    int value = this.stack.pop().getInteger();
-    return value;
-  }
-
-  @Override
-  public boolean hasNext() {
-    while (!this.stack.isEmpty() && !this.stack.peek().isInteger()) {
-      List<NestedInteger> ni = this.stack.pop().getList();
-      for (int i = ni.size() - 1; i >= 0; i--) {
-        this.stack.push(ni.get(i));
-      }
+    public NestedIterator(List<NestedInteger> nestedList) {
+        this.stack = new Stack<>();
+        for (int i = nestedList.size() - 1; i >= 0; i--) {
+            this.stack.push(nestedList.get(i));
+        }
     }
-    return !this.stack.isEmpty();
-  }
+
+    @Override
+    public Integer next() {
+        return stack.pop().getInteger();
+    }
+
+    @Override
+    public boolean hasNext() {
+        while (!stack.isEmpty() && !stack.peek().isInteger()) {
+            NestedInteger popped = stack.pop();
+            if (popped == null) {
+                continue;
+            }
+            List<NestedInteger> list = popped.getList();
+            for (int i = list.size() - 1; i >= 0; i--) {
+                stack.push(list.get(i));
+            }
+        }
+        return !stack.isEmpty();
+    }
 }
 
 /**
