@@ -4,32 +4,38 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-  public List<Integer> largestValues(TreeNode root) {
-    List<Integer> list = new ArrayList<>();
-    if (root == null) {
-      return list;
-    }
-    Queue<TreeNode> queue = new LinkedList<>();
-    queue.add(root);
-    while (!queue.isEmpty()) {
-      int maxVal = Integer.MIN_VALUE;
-      int size = queue.size();
-      while (size-- > 0) {
-        TreeNode removed = queue.remove();
-        maxVal = Math.max(maxVal, removed.val);
-        if (removed.left != null) {
-          queue.add(removed.left);
+    public List<Integer> largestValues(TreeNode root) {
+        if (root == null) {
+            return new ArrayList<>();
         }
-        if (removed.right != null) {
-          queue.add(removed.right);
+        List<Integer> result = new ArrayList<>();
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            int maxValue = queue.peek().val;
+            while (size-- > 0) {
+                TreeNode removed = queue.remove();
+                maxValue = Math.max(maxValue, removed.val);
+                if (removed.left != null) {
+                    queue.add(removed.left);
+                }
+                if (removed.right != null) {
+                    queue.add(removed.right);
+                }
+            }
+            result.add(maxValue);
         }
-      }
-      list.add(maxVal);
+        return result;
     }
-    return list;
-  }
 }
