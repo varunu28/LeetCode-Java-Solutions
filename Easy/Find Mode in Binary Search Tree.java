@@ -14,44 +14,53 @@
  * }
  */
 class Solution {
-  Integer prev = null;
-  int count = 1;
-  int max = 0;
-  public int[] findMode(TreeNode root) {
-    if (root == null) {
-      return new int[0];
+    public int[] findMode(TreeNode root) {
+        ResultWrapper resultWrapper = new ResultWrapper();
+        inorder(root, resultWrapper);
+        return resultWrapper.result.stream().mapToInt(Integer::intValue).toArray();
     }
-    List<Integer> list = new ArrayList<>();
-    traverse(root, list);
-    int[] ans = new int[list.size()];
-    for (int i = 0; i < list.size(); i++) {
-      ans[i] = list.get(i);
+
+    private void inorder(TreeNode node, ResultWrapper resultWrapper) {
+        if (node == null) {
+            return;
+        }
+        inorder(node.left, resultWrapper);
+        int val = node.val;
+        resultWrapper.recordStreak(val);
+        resultWrapper.updateResult(val);
+        inorder(node.right, resultWrapper);
     }
-    return ans;
-  }
-  
-  private void traverse(TreeNode root, List<Integer> list) {
-    if (root == null) {
-      return;
+
+    private static class ResultWrapper {
+        private int maxStreak;
+        private int currStreak;
+        private Integer curr;
+        private List<Integer> result;
+
+        public ResultWrapper() {
+            this.maxStreak = 0;
+            this.currStreak = 0;
+            this.curr = 0;
+            this.result = new ArrayList<>();
+        }
+
+        public void recordStreak(int num) {
+            if (num == curr) {
+                currStreak++;
+            } else {
+                currStreak = 1;
+                curr = num;
+            }
+        }
+
+        public void updateResult(int num) {
+            if (currStreak > maxStreak) {
+                result.clear();
+                maxStreak = currStreak;
+            }
+            if (currStreak == maxStreak) {
+                result.add(num);
+            }
+        }
     }
-    traverse(root.left, list);
-    if (prev != null) {
-      if (root.val == prev) {
-        count++;
-      }
-      else {
-        count = 1;
-      }
-    }
-    if (count > max) {
-      max = count;
-      list.clear();
-      list.add(root.val);
-    }
-    else if (count == max) {
-      list.add(root.val);
-    }
-    prev = root.val;
-    traverse(root.right, list);
-  }
 }
