@@ -1,23 +1,21 @@
 class SeatManager {
 
-  PriorityQueue<Integer> pq;
-  int count;
+    private PriorityQueue<Integer> seats;
 
-  public SeatManager(int n) {
-    pq = new PriorityQueue<>();
-    count = 1;
-  }
-
-  public int reserve() {
-    if (pq.size() == 0) {
-      return count++;
+    public SeatManager(int n) {
+        this.seats = new PriorityQueue<>();
+        for (int i = 1; i <= n; i++) {
+            this.seats.add(i);
+        }
     }
-    return pq.remove();
-  }
-
-  public void unreserve(int seatNumber) {
-    pq.add(seatNumber);
-  }
+    
+    public int reserve() {
+        return this.seats.poll();
+    }
+    
+    public void unreserve(int seatNumber) {
+        this.seats.add(seatNumber);
+    }
 }
 
 /**
