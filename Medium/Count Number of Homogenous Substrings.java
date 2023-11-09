@@ -1,18 +1,18 @@
 class Solution {
-  private final int MOD = 1000000007;
-  public int countHomogenous(String s) {
-    int count = 0;
-    int start = 0;
-    int end = 0;
-    int n = s.length();
-    while (end < n) {
-      if (s.charAt(start) == s.charAt(end)) {
-        count = (count + (end - start + 1)) % MOD;
-        end++;
-      } else {
-        start++;
-      }
+
+    private static final int MOD = 1_000_000_007;
+
+    public int countHomogenous(String s) {
+        int result = 0;
+        int streak = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (i == 0 || s.charAt(i) == s.charAt(i - 1)) {
+                streak++;
+            } else {
+                streak = 1;
+            }
+            result = (result + streak) % MOD;
+        }
+        return result;
     }
-    return count;
-  }
 }
