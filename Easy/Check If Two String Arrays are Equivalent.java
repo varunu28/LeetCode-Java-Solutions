@@ -1,27 +1,24 @@
 class Solution {
-  public boolean arrayStringsAreEqual(String[] word1, String[] word2) {
-    int wordIdxOne = 0;
-    int wordIdxTwo = 0;
-    int idxOne = 0;
-    int idxTwo = 0;
-    while (wordIdxOne < word1.length && wordIdxTwo < word2.length) {
-      if (idxOne == word1[wordIdxOne].length() || idxTwo == word2[wordIdxTwo].length()) {
-        if (idxOne == word1[wordIdxOne].length()) {
-          wordIdxOne++;
-          idxOne = 0;
+    public boolean arrayStringsAreEqual(String[] word1, String[] word2) {
+        int idxOne = 0;
+        int idxTwo = 0;
+        int wordIdxOne = 0;
+        int wordIdxTwo = 0;
+        while (idxOne < word1.length && idxTwo < word2.length) {
+            if (word1[idxOne].charAt(wordIdxOne) != word2[idxTwo].charAt(wordIdxTwo)) {
+                return false;
+            }
+            wordIdxOne++;
+            wordIdxTwo++;
+            if (wordIdxOne == word1[idxOne].length()) {
+                wordIdxOne = 0;
+                idxOne++;
+            }
+            if (wordIdxTwo == word2[idxTwo].length()) {
+                wordIdxTwo = 0;
+                idxTwo++;
+            }
         }
-        if (idxTwo == word2[wordIdxTwo].length()) {
-          wordIdxTwo++;
-          idxTwo = 0;
-        }
-      } else {
-        if (word1[wordIdxOne].charAt(idxOne) != word2[wordIdxTwo].charAt(idxTwo)) {
-          return false;
-        }
-        idxOne++;
-        idxTwo++;
-      }
+        return idxOne == word1.length && idxTwo == word2.length;
     }
-    return wordIdxOne == word1.length && wordIdxTwo == word2.length;
-  }
 }
