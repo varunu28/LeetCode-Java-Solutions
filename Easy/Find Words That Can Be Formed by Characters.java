@@ -1,27 +1,24 @@
 class Solution {
-  public int countCharacters(String[] words, String chars) {
-    Map<Character, Integer> frequency = getFrequencyMap(chars);
-    return Arrays.stream(words)
-      .filter(word -> canBeFormed(word, frequency))
-      .map(word -> word.length())
-      .reduce(0, Integer::sum);
-  }
-  
-  private boolean canBeFormed(String word, Map<Character, Integer> frequency) {
-    Map<Character, Integer> wordFrequency = getFrequencyMap(word);
-    for (Character key : wordFrequency.keySet()) {
-      if (frequency.getOrDefault(key, 0) < wordFrequency.get(key)) {
-        return false;
-      }
+    public int countCharacters(String[] words, String chars) {
+        Map<Character, Long> targetMap = buildFrequencyMap(chars);
+        return Arrays.stream(words)
+                .filter(word -> doesIntersect(buildFrequencyMap(word), targetMap))
+                .mapToInt(String::length)
+                .sum();
     }
-    return true;
-  }
-  
-  private Map<Character, Integer> getFrequencyMap(String s) {
-    Map<Character, Integer> frequency = new HashMap<>();
-    for (char c : s.toCharArray()) {
-      frequency.put(c, frequency.getOrDefault(c, 0) + 1);
+
+    private static boolean doesIntersect(Map<Character, Long> currMap, Map<Character, Long> targetMap) {
+        for (Character key : currMap.keySet()) {
+            if (targetMap.getOrDefault(key, 0L) < currMap.get(key)) {
+                return false;
+            }
+        }
+        return true;
     }
-    return frequency;
-  }
+
+    private static Map<Character, Long> buildFrequencyMap(String s) {
+        return s.chars()
+                .mapToObj(c -> (char) c)
+                .collect(Collectors.groupingBy(Function.identity(), HashMap::new, Collectors.counting()));
+    }
 }
