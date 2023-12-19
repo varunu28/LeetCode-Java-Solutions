@@ -1,49 +1,27 @@
 class Solution {
-    public int[][] imageSmoother(int[][] M) {
-        
-        int[][] res = new int[M.length][M[0].length];
-        for (int i=0;i<M.length;i++) {
-            for (int j=0;j<M[0].length;j++) {
+
+    private static final int[][] DIRS = {{0, 1}, {1, 0}, {-1, 0}, {0, -1}, {1, -1}, {-1, 1}, {1, 1}, {-1, -1}};
+
+    public int[][] imageSmoother(int[][] img) {
+        int rows = img.length;
+        int cols = img[0].length;
+        int[][] result = new int[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                double sum = img[i][j];
                 int count = 1;
-                int sum = M[i][j];
-                
-                if(j-1 >= 0) {
-                    count++;
-                    sum += M[i][j-1];
+                for (int[] dir : DIRS) {
+                    int row = i + dir[0];
+                    int col = j + dir[1];
+                    if (row >= 0 && row < rows && col >= 0 && col < cols) {
+                        sum += img[row][col];
+                        count++;
+                    }
                 }
-                if(j+1 < M[0].length) {
-                    count++;
-                    sum += M[i][j+1];
-                }
-                if(i-1 >= 0) {
-                    count++;
-                    sum += M[i-1][j];
-                }
-                if(i+1 < M.length) {
-                    count++;
-                    sum += M[i+1][j];
-                }
-                if(i+1 < M.length && j+1 < M[0].length) {
-                    count++;
-                    sum += M[i+1][j+1];
-                }
-                if(i+1 < M.length && j-1 >= 0) {
-                    count++;
-                    sum += M[i+1][j-1];
-                }
-                if(i-1 >= 0 && j-1 >= 0) {
-                    count++;
-                    sum += M[i-1][j-1];
-                }
-                if(i-1 >= 0 && j+1 < M[0].length) {
-                    count++;
-                    sum += M[i-1][j+1];
-                }
-                
-                res[i][j] = (int)Math.floor(sum/count);
+                double smoothImage = sum / count;
+                result[i][j] = (int) smoothImage;
             }
         }
-        
-        return res;
+        return result;
     }
 }
