@@ -1,27 +1,31 @@
 class Solution {
-  Map<String, Integer> map = new HashMap<>();
-  final int MODULO = 1000000007;
-  public int numRollsToTarget(int d, int f, int target) {
-    if (d == 0 && target == 0) {
-      return 1;
+
+    private static final int MOD = 1000_000_007;
+
+    public int numRollsToTarget(int n, int k, int target) {
+        Map<Integer, Integer> map = new HashMap<>();
+        return helper(n, k, target, map);
     }
-    if (d == 0 || target == 0) {
-      return 0;
+
+    private int helper(int n, int k, int target, Map<Integer, Integer> map) {
+        if (n == 0 && target == 0) {
+            return 1;
+        }
+        if (n == 0 || target == 0) {
+            return 0;
+        }
+        int key = n * 1000 + target;
+        if (map.containsKey(key)) {
+            return map.get(key);
+        }
+        int result = 0;
+        for (int i = 1; i <= k; i++) {
+            if (target < i) {
+                break;
+            }
+            result = (result + helper(n - 1, k, target - i, map)) % MOD;
+        }
+        map.put(key, result);
+        return result;
     }
-    String key = d + "|" + target;
-    if (map.containsKey(key)) {
-      return map.get(key);
-    }
-    int res = 0;
-    for (int i = 1; i <= f; i++) {
-      if (target >= i) {
-        res = (res + numRollsToTarget(d - 1, f, target - i)) % MODULO;
-      }
-      else {
-        break;
-      }
-    }
-    map.put(key, res);
-    return map.get(key);
-  }
 }
