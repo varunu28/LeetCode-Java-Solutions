@@ -1,30 +1,28 @@
 class Solution {
-  int minDist;
-  public int assignBikes(int[][] workers, int[][] bikes) {
-    minDist = Integer.MAX_VALUE;
-    dfs(new boolean[bikes.length], workers, 0, bikes, 0);
-    return minDist;
-  }
-  
-  private void dfs(boolean[] visited, int[][] workers, int currIdx, int[][] bikes, int distance) {
-    if (currIdx >= workers.length) {
-      minDist = Math.min(minDist, distance);
-      return;
+    public int assignBikes(int[][] workers, int[][] bikes) {
+        Integer[] dp = new Integer[1024];
+        return minDistance(workers, bikes, 0, 0, dp);
     }
-    if (distance > minDist) {
-      return;
+
+    private int minDistance(int[][] workers, int[][] bikes, int workerIdx, int mask, Integer[] dp) {
+        if (workerIdx >= workers.length) {
+            return 0;
+        }
+        if (dp[mask] != null) {
+            return dp[mask];
+        }
+        int distance = Integer.MAX_VALUE;
+        for (int i = 0; i < bikes.length; i++) {
+            // if bike is available
+            if ((mask & (1 << i)) == 0) {
+                // assign the bike & traverse for remaining bikes
+                distance = Math.min(distance, calculateManhattanDistance(workers[workerIdx], bikes[i]) + minDistance(workers, bikes, workerIdx + 1, mask | (1 << i), dp));
+            }
+        }
+        return dp[mask] = distance;
     }
-    for (int i = 0; i < bikes.length; i++) {
-      if (visited[i]) {
-        continue;
-      }
-      visited[i] = true;
-      dfs(visited, workers, currIdx + 1, bikes, distance + getManahattanDist(bikes[i], workers[currIdx]));
-      visited[i] = false;
+
+    private static int calculateManhattanDistance(int[] worker, int[] bike) {
+        return Math.abs(worker[0] - bike[0]) + Math.abs(worker[1] - bike[1]);
     }
-  }
-  
-  private int getManahattanDist(int[] p1, int[] p2) {
-    return Math.abs(p1[0] - p2[0]) + Math.abs(p1[1] - p2[1]);
-  }
 }
