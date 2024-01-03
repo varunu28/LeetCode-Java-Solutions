@@ -1,15 +1,17 @@
 class Solution {
-  public int numberOfBeams(String[] bank) {
-    int prevLaserCount = 0;
-    int totalNumberOfBeams = 0;
-    for (String beam : bank) {
-      if (beam.indexOf('1') != -1) {
-        int currentBeamCount = (int) beam.chars().mapToObj(c -> (char) c).filter(c -> c == '1')
-            .count();
-        totalNumberOfBeams += prevLaserCount * currentBeamCount;
-        prevLaserCount = currentBeamCount;
-      }
+    public int numberOfBeams(String[] bank) {
+        int beamCount = 0;
+        int prevLaserCount = 0;
+        for (String row : bank) {
+            int count = 0;
+            for (char c : row.toCharArray()) {
+                count += c == '1' ? 1 : 0;
+            }
+            if (count > 0) {
+                beamCount += prevLaserCount * count;
+                prevLaserCount = count;
+            }
+        }
+        return beamCount;
     }
-    return totalNumberOfBeams;
-  }
 }
