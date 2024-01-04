@@ -1,15 +1,15 @@
 class Solution {
     public int minOperations(int[] nums) {
-        Map<Integer, Long> map = Arrays.stream(nums)
-        .boxed()
-        .collect(
-            Collectors.groupingBy(Function.identity(), HashMap::new, Collectors.counting()));
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int num : nums) {
+            map.put(num, map.getOrDefault(num, 0) + 1);
+        }
         int operations = 0;
-        for (Long value : map.values()) {
+        for (Integer value : map.values()) {
             if (value == 1) {
                 return -1;
             }
-            operations += (int) (value / 3 + (value % 3 != 0 ? 1 : 0));
+            operations += value / 3 + (value % 3 == 0 ? 0 : 1);
         }
         return operations;
     }
