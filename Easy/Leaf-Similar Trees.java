@@ -15,22 +15,28 @@
  */
 class Solution {
     public boolean leafSimilar(TreeNode root1, TreeNode root2) {
-        StringBuilder leavesOne = new StringBuilder();
-        StringBuilder leavesTwo = new StringBuilder();
-        populateLeaves(root1, leavesOne);
-        populateLeaves(root2, leavesTwo);
-        return leavesOne.toString().equals(leavesTwo.toString());
+        return getLeaves(root1).equals(getLeaves(root2));
     }
-    
-    private void populateLeaves(TreeNode root, StringBuilder leaves) {
+
+    private static List<Integer> getLeaves(TreeNode root) {
         if (root == null) {
-            return;
+            return new ArrayList<>();
         }
-        if (root.left == null && root.right == null) {
-            leaves.append(root.val).append(",");
-            return;
+        List<Integer> result = new ArrayList<>();
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            TreeNode removed = stack.pop();
+            if (removed.left == null && removed.right == null) {
+                result.add(removed.val);
+            }
+            if (removed.right != null) {
+                stack.push(removed.right);
+            }
+            if (removed.left != null) {
+                stack.push(removed.left);
+            }
         }
-        populateLeaves(root.left, leaves);
-        populateLeaves(root.right, leaves);
+        return result;
     }
 }
