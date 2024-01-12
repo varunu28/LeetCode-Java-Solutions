@@ -1,14 +1,20 @@
 class Solution {
-  private static final String VOWELS = "aeiouAEIOU";
-  public boolean halvesAreAlike(String s) {
-    return getVowelCount(s.substring(0, s.length() / 2)).equals(getVowelCount(s.substring(s.length() / 2)));
-  }
-  
-  private Long getVowelCount(String s) {
-    return s.chars().mapToObj(c -> (char) c).filter(Solution::isVowel).count();
-  }
-  
-  private static boolean isVowel(char c) {
-    return VOWELS.indexOf(c) != -1;
-  }
+
+    private static final Set<Character> VOWELS = Set.of(
+        'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'
+    );
+
+    public boolean halvesAreAlike(String s) {
+        int count = 0;
+        int n = s.length();
+        for (int i = 0; i < n / 2; i++) {
+            if (VOWELS.contains(s.charAt(i))) {
+                count++;
+            }
+            if (VOWELS.contains(s.charAt(i + n / 2))) {
+                count--;
+            }
+        }
+        return count == 0;
+    }
 }
