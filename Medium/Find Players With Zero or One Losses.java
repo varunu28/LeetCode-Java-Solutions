@@ -1,24 +1,22 @@
 class Solution {
-  public List<List<Integer>> findWinners(int[][] matches) {
-    Map<Integer, Integer> lossCount = new HashMap<>();
-    Set<Integer> players = new HashSet<>();
-    for (int[] match : matches) {
-      lossCount.put(match[1], lossCount.getOrDefault(match[1], 0) + 1);
-      players.add(match[0]);
-      players.add(match[1]);
+    public List<List<Integer>> findWinners(int[][] matches) {
+        Map<Integer, Integer> playerToLossCount = new HashMap<>();
+        for (int[] match : matches) {
+            int winner = match[0];
+            int loser = match[1];
+            playerToLossCount.putIfAbsent(winner, 0);
+            playerToLossCount.put(loser, playerToLossCount.getOrDefault(loser, 0) + 1);
+        }
+        List<List<Integer>> result = new ArrayList<>(
+            Arrays.asList(new ArrayList<>(), new ArrayList<>())
+        );
+        for (Map.Entry<Integer, Integer> entry : playerToLossCount.entrySet()) {
+            if (entry.getValue() <= 1) {
+                result.get(entry.getValue()).add(entry.getKey());
+            }
+        }
+        Collections.sort(result.get(0));
+        Collections.sort(result.get(1));
+        return result;
     }
-    List<Integer> noLoss = new ArrayList<>();
-    List<Integer> exactlyOneLoss = new ArrayList<>();
-    for (Integer player : players) {
-      if (!lossCount.containsKey(player)) {
-        noLoss.add(player);
-      }
-      if (lossCount.getOrDefault(player, 0) == 1) {
-        exactlyOneLoss.add(player);
-      }
-    }
-    Collections.sort(noLoss);
-    Collections.sort(exactlyOneLoss);
-    return Arrays.asList(noLoss, exactlyOneLoss);
-  }
 }
