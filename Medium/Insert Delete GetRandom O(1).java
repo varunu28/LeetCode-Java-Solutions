@@ -1,40 +1,41 @@
 class RandomizedSet {
 
-  private List<Integer> randomizedSet;
-  private Map<Integer, Integer> indexMap;
-  private int currSize;
-  
-  public RandomizedSet() {
-    this.randomizedSet = new ArrayList<>();
-    this.indexMap = new HashMap<>();
-    this.currSize = 0;
-  }
+    private final List<Integer> values;
+    private final Map<Integer, Integer> valToIndexMap;
 
-  public boolean insert(int val) {
-    if (this.indexMap.containsKey(val)) {
-      return false;
+    public RandomizedSet() {
+        this.values = new ArrayList<>();
+        this.valToIndexMap = new HashMap<>();
     }
-    this.randomizedSet.add(val);
-    this.indexMap.put(val, this.currSize++);
-    return true;
-  }
 
-  public boolean remove(int val) {
-    if (!this.indexMap.containsKey(val)) {
-      return false;
+    public boolean insert(int val) {
+        if (valToIndexMap.containsKey(val)) {
+            return false;
+        }
+        values.add(val);
+        valToIndexMap.put(val, values.size() - 1);
+        return true;
     }
-    int valIdx = this.indexMap.get(val);
-    this.indexMap.put(this.randomizedSet.get(this.currSize - 1), valIdx);
-    this.randomizedSet.set(valIdx, this.randomizedSet.get(this.currSize - 1));
-    this.randomizedSet.remove(this.currSize - 1);
-    this.indexMap.remove(val);
-    this.currSize--;
-    return true;
-  }
 
-  public int getRandom() {
-    return this.randomizedSet.get(new Random().nextInt(this.currSize));
-  }
+    public boolean remove(int val) {
+        if (!valToIndexMap.containsKey(val)) {
+            return false;
+        }
+        int valIdx = valToIndexMap.get(val);
+        int valAtLastIdx = values.get(values.size() - 1);
+        // update index for last element
+        values.set(valIdx, valAtLastIdx);
+        valToIndexMap.put(valAtLastIdx, valIdx);
+        // remove value
+        values.remove(values.size() - 1);
+        valToIndexMap.remove(val);
+        return true;
+    }
+
+    public int getRandom() {
+        int idx = new Random().nextInt(values.size());
+        return values.get(idx);
+    }
 }
 
 /**
