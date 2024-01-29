@@ -1,38 +1,38 @@
 class MyQueue {
-    
-    private final Stack<Integer> stackOne;
-    private final Stack<Integer> stackTwo;
+
+    private final Stack<Integer> first;
+    private final Stack<Integer> second;
 
     public MyQueue() {
-        this.stackOne = new Stack<>();
-        this.stackTwo = new Stack<>();
+        this.first = new Stack<>();
+        this.second = new Stack<>();
     }
     
     public void push(int x) {
-        this.stackOne.push(x);
+        first.push(x);
     }
     
     public int pop() {
-        exchangeElements(stackOne, stackTwo);
-        int popped = stackTwo.pop();
-        exchangeElements(stackTwo, stackOne);
-        return popped;
+        move(first, second);
+        int result = second.pop();
+        move(second, first);
+        return result;
     }
     
     public int peek() {
-        exchangeElements(stackOne, stackTwo);
-        int peeked = stackTwo.peek();
-        exchangeElements(stackTwo, stackOne);
-        return peeked;
+        move(first, second);
+        int result = second.peek();
+        move(second, first);
+        return result;
     }
     
     public boolean empty() {
-        return stackOne.isEmpty();
+        return first.isEmpty();
     }
-    
-    private void exchangeElements(Stack<Integer> stack1, Stack<Integer> stack2) {
-        while (!stack1.isEmpty()) {
-            stack2.push(stack1.pop());
+
+    private void move(Stack<Integer> from, Stack<Integer> to) {
+        while (!from.isEmpty()) {
+            to.push(from.pop());
         }
     }
 }
