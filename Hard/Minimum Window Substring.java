@@ -1,38 +1,38 @@
 class Solution {
-  public String minWindow(String s, String t) {
-    Map<Character, Integer> map = new HashMap<>();
-    for (char c : t.toCharArray()) {
-      map.put(c, map.getOrDefault(c, 0) + 1);
+    public String minWindow(String s, String t) {
+        Map<Character, Integer> map = new HashMap<>();
+        for (char c : t.toCharArray()) {
+            map.put(c, map.getOrDefault(c, 0) + 1);
+        }
+        int targetSize = map.size();
+        int start = 0;
+        int minLength = Integer.MAX_VALUE;
+        int minStart = -1;
+        int minEnd = -1;
+        int n = s.length();
+        for (int i = 0; i < n; i++) {
+            if (map.containsKey(s.charAt(i))) {
+                map.put(s.charAt(i), map.get(s.charAt(i)) - 1);
+                if (map.get(s.charAt(i)) == 0) {
+                    targetSize--;
+                }
+            }
+            while (start <= i && targetSize == 0) {
+                int currLength = i - start;
+                if (minLength > currLength) {
+                    minLength = currLength;
+                    minStart = start;
+                    minEnd = i + 1;
+                }   
+                if (map.containsKey(s.charAt(start))) {
+                    map.put(s.charAt(start), map.get(s.charAt(start)) + 1);
+                    if (map.get(s.charAt(start)) == 1) {
+                        targetSize++;
+                    }
+                }
+                start++;
+            }
+        }
+        return minLength == Integer.MAX_VALUE ? "" : s.substring(minStart, minEnd);
     }
-    int count = map.size();
-    int start = 0;
-    int end = 0;
-    int minWindowLength = Integer.MAX_VALUE;
-    int minWindowStart = 0;
-    int minWindowEnd = 0;
-    while (end < s.length()) {
-      char c = s.charAt(end++);
-      if (map.containsKey(c)) {
-        map.put(c, map.get(c) - 1);
-        if (map.get(c) == 0) {
-          count--;
-        }
-      }
-      while (count == 0 && start < end) {
-        if (end - start < minWindowLength) {
-          minWindowLength = end - start;
-          minWindowStart = start;
-          minWindowEnd = end;
-        }
-        char temp = s.charAt(start++);
-        if (map.containsKey(temp)) {
-          map.put(temp, map.get(temp) + 1);
-          if (map.get(temp) == 1) {
-            count++;
-          }
-        }
-      }
-    }
-    return s.substring(minWindowStart, minWindowEnd);
-  }
 }
