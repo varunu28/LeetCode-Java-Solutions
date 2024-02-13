@@ -1,9 +1,8 @@
 class Solution {
-  public String firstPalindrome(String[] words) {
-    return Arrays.stream(words).filter(Solution::isPalindrome).findFirst().orElse("");
-  }
-  
-  public static boolean isPalindrome(String s) {
-    return new StringBuilder().append(s).reverse().toString().equals(s);
-  }
+    public String firstPalindrome(String[] words) {
+        return Arrays.stream(words)
+            .filter(word -> word.equals(new StringBuilder(word).reverse().toString()))
+            .findFirst()
+            .orElse("");
+    }
 }
