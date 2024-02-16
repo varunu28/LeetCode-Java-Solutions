@@ -1,28 +1,19 @@
 class Solution {
-  public int findLeastNumOfUniqueInts(int[] arr, int k) {
-    Map<Integer, Integer> map = new HashMap<>();
-    List<Integer> list = new ArrayList<>();
-    for (int num : arr) {
-      if (!map.containsKey(num)) {
-        list.add(num);
-      }
-      map.put(num, map.getOrDefault(num, 0) + 1);
+    public int findLeastNumOfUniqueInts(int[] arr, int k) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int num : arr) {
+            map.put(num, map.getOrDefault(num, 0) + 1);
+        }
+        PriorityQueue<Integer> pq = new PriorityQueue<>((a, b) -> map.get(a).compareTo(map.get(b)));
+        pq.addAll(map.keySet());
+        while (k > 0 && !pq.isEmpty()) {
+            int count = map.get(pq.peek());
+            if (count > k) {
+                break;
+            }
+            k -= count;
+            pq.poll();
+        }
+        return pq.size();
     }
-    Collections.sort(list, new Comparator<Integer>(){
-      public int compare(Integer o1, Integer o2) {
-        return map.get(o1) - map.get(o2);
-      }
-    });
-    for (Integer num : list) {
-      int count = map.get(num);
-      k -= count;
-      if (k >= 0) {
-        map.remove(num);
-      }
-      else {
-       break; 
-      }
-    }
-    return map.size();
-  }
 }
