@@ -14,36 +14,31 @@
  * }
  */
 class Solution {
-  public boolean isEvenOddTree(TreeNode root) {
-    Queue<TreeNode> queue = new LinkedList<>();
-    queue.add(root);
-    int remainderExpected = 1;
-    while (!queue.isEmpty()) {
-      int size = queue.size();
-      Integer prev = null;
-      while (size-- > 0) {
-        TreeNode removed = queue.remove();
-        if (removed.val % 2 != remainderExpected) {
-          return false;
+    public boolean isEvenOddTree(TreeNode root) {
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        boolean even = true;
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            int prev = even ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+            while (size-- > 0) {
+                TreeNode removed = queue.remove();
+                if ((even && removed.val % 2 == 0) || (!even && removed.val % 2 != 0)) {
+                    return false;
+                }
+                if ((even && removed.val <= prev) || (!even && removed.val >= prev)) {
+                    return false;
+                }
+                prev = removed.val;
+                if (removed.left != null) {
+                    queue.add(removed.left);
+                }
+                if (removed.right != null) {
+                    queue.add(removed.right);
+                }
+            }
+            even = !even;
         }
-        if (prev != null) {
-          if (remainderExpected == 1 && removed.val <= prev) {
-            return false;
-          } 
-          if (remainderExpected == 0 && removed.val >= prev) {
-            return false;
-          } 
-        }
-        prev = removed.val;
-        if (removed.left != null) {
-          queue.add(removed.left);
-        }
-        if (removed.right != null) {
-          queue.add(removed.right);
-        }
-      }
-      remainderExpected = remainderExpected == 1 ? 0 : 1;
+        return true;
     }
-    return true;
-  }
 }
