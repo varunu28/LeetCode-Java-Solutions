@@ -1,26 +1,18 @@
 class Solution {
-  public int[] sortedSquares(int[] nums) {
-    int negativeIdx = 0;
-    int positiveIdx = nums.length - 1;
-    int[] result = new int[nums.length];
-    int resultIdx = nums.length - 1;
-    while(resultIdx >= 0) {
-      if (nums[negativeIdx] < 0 && nums[positiveIdx] >= 0) {
-        if (Math.abs(nums[negativeIdx]) > nums[positiveIdx]) {
-          result[resultIdx--] = nums[negativeIdx] * nums[negativeIdx];
-          negativeIdx++;
-        } else {
-          result[resultIdx--] = nums[positiveIdx] * nums[positiveIdx];
-          positiveIdx--;
+    public int[] sortedSquares(int[] nums) {
+        int n = nums.length;
+        int start = 0;
+        int end = n - 1;
+        int[] result = new int[n];
+        for (int i = n - 1; i >= 0; i--) {
+            if (Math.abs(nums[start]) >= Math.abs(nums[end])) {
+                result[i] = nums[start] * nums[start];
+                start++;
+            } else {
+                result[i] = nums[end] * nums[end];
+                end--;
+            }
         }
-      } else if (nums[negativeIdx] < 0 && nums[positiveIdx] < 0) {
-        result[resultIdx--] = nums[negativeIdx] * nums[negativeIdx];
-        negativeIdx++;
-      } else {
-        result[resultIdx--] = nums[positiveIdx] * nums[positiveIdx];
-        positiveIdx--;  
-      }
+        return result;
     }
-    return result;
-  }
 }
