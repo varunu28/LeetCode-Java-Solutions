@@ -1,23 +1,23 @@
 class Solution {
-  public int bagOfTokensScore(int[] tokens, int power) {
-    int score = 0;
-    Arrays.sort(tokens);
-    int leftIdx = 0;
-    int rightIdx = tokens.length - 1;
-    int currScore = 0;
-    while (leftIdx <= rightIdx) {
-      if (power >= tokens[leftIdx]) {
-        currScore++;
-        power -= tokens[leftIdx++];
-      } else {
-        if (currScore == 0) {
-          break;
+    public int bagOfTokensScore(int[] tokens, int power) {
+        int score = 0;
+        int currScore = 0;
+        Arrays.sort(tokens);
+        int left = 0;
+        int right = tokens.length - 1;
+        while (left <= right) {
+            if (power >= tokens[left]) {
+                currScore++;
+                power -= tokens[left++];
+            } else {
+                if (currScore == 0) {
+                    break;
+                }
+                currScore--;
+                power += tokens[right--];
+            }
+            score = Math.max(score, currScore);
         }
-        currScore--;
-        power += tokens[rightIdx--];
-      }
-      score = Math.max(score, currScore);
+        return score;
     }
-    return score;
-  }
 }
