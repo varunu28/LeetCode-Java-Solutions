@@ -1,32 +1,19 @@
 class Solution {
-  public int[][] insert(int[][] intervals, int[] newInterval) {
-    List<int[]> result = new ArrayList<>();
-    int idx = 0;
-    int newStart = newInterval[0];
-    int newEnd = newInterval[1];
-    while (idx < intervals.length && newStart > intervals[idx][0]) {
-      result.add(intervals[idx++]);
+    public int[][] insert(int[][] intervals, int[] newInterval) {
+        List<int[]> result = new ArrayList<>();
+        int idx = 0;
+        while (idx < intervals.length && intervals[idx][1] < newInterval[0]) {
+            result.add(intervals[idx++]);
+        }
+        while (idx < intervals.length && newInterval[1] >= intervals[idx][0]) {
+            newInterval[0] = Math.min(newInterval[0], intervals[idx][0]);
+            newInterval[1] = Math.max(newInterval[1], intervals[idx][1]);
+            idx++;
+        }
+        result.add(newInterval);
+        while (idx < intervals.length) {
+            result.add(intervals[idx++]);
+        }
+        return result.toArray(new int[result.size()][]);
     }
-    int[] currInterval = new int[2];
-    if (result.isEmpty() || result.get(result.size() - 1)[1] < newStart) {
-      result.add(newInterval);
-    } else {
-      currInterval = result.remove(result.size() - 1);
-      currInterval[1] = Math.max(currInterval[1], newEnd);
-      result.add(currInterval);
-    }
-    while (idx < intervals.length) {
-      currInterval = intervals[idx++];
-      int start = currInterval[0];
-      int end = currInterval[1];
-      if (result.get(result.size() - 1)[1] < start) {
-        result.add(currInterval);
-      } else {
-        currInterval = result.remove(result.size() - 1);
-        currInterval[1] = Math.max(currInterval[1], end);
-        result.add(currInterval);
-      }
-    }
-    return result.toArray(new int[result.size()][2]);
-  }
 }
