@@ -9,27 +9,22 @@
  * }
  */
 class Solution {
-  public ListNode mergeInBetween(ListNode list1, int a, int b, ListNode list2) {
-    ListNode currList1 = list1;
-    // Stop just before a and record the pointer
-    for (int i = 0; i < a - 1; i++) {
-      currList1 = currList1.next;
+    public ListNode mergeInBetween(ListNode list1, int a, int b, ListNode list2) {
+        ListNode curr = list1;
+        for (int i = 1; i < a; i++) {
+            curr = curr.next;
+        }
+        ListNode start = curr;
+        for (int i = a - 1; i <= b; i++) {
+            curr = curr.next;
+        }
+        ListNode end = curr;
+        start.next = list2;
+        curr = list2;
+        while (curr.next != null) {
+            curr = curr.next;
+        }
+        curr.next = end;
+        return list1;
     }
-    ListNode currCopy = currList1;
-    // Cover a to b
-    for (int i = a; i <= b; i++) {
-      currList1 = currList1.next;
-    } 
-    // Record what is remaining after b
-    ListNode remaining = currList1.next;
-    // Find end of list2
-    ListNode list2End = list2;
-    while (list2End != null && list2End.next != null) {
-      list2End = list2End.next;
-    }
-    // Pointer manipulation
-    currCopy.next = list2;
-    list2End.next = remaining;
-    return list1;
-  }
 }
