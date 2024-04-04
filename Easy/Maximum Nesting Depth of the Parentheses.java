@@ -1,11 +1,13 @@
 class Solution {
-  public int maxDepth(String s) {
-    int currCount = 0;
-    int maxCount = 0;
-    for (char c : s.toCharArray()) {
-      currCount += c == '(' ? 1 : (c == ')' ? -1 : 0);
-      maxCount = Math.max(maxCount, currCount);
+    public int maxDepth(String s) {
+        int count = 0;
+        int result = 0;
+        for (char c : s.toCharArray()) {
+            if (c == '(' || c == ')') {
+                count += c == '(' ? 1 : -1;
+            }
+            result = Math.max(result, count);
+        }
+        return result;
     }
-    return maxCount;
-  }
 }
