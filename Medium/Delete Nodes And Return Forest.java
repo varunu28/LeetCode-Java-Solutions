@@ -14,33 +14,34 @@
  * }
  */
 class Solution {
-  public List<TreeNode> delNodes(TreeNode root, int[] to_delete) {
-    List<TreeNode> result = new ArrayList<>();
-    Set<Integer> deleteSet = Arrays.stream(to_delete).boxed().collect(Collectors.toSet());
-    helper(root, deleteSet, result, null);
-    return result;
-  }
-  
-  private void helper(TreeNode node, Set<Integer> deleteSet, List<TreeNode> result, TreeNode parent) {
-    if (node == null) {
-      return;
-    }
-    TreeNode nextParent = null;
-    if (deleteSet.contains(node.val)) {
-      if (parent != null) {
-        if (parent.left == node) {
-          parent.left = null;
-        } else {
-          parent.right = null;
+    public List<TreeNode> delNodes(TreeNode root, int[] toDelete) {
+        Set<Integer> set = new HashSet<>();
+        for (int val : toDelete) {
+            set.add(val);
         }
-      }
-    } else {
-      if (parent == null) {
-        result.add(node); 
-      }
-      nextParent = node;
+        List<TreeNode> result = new ArrayList<>();
+        recurse(root, result, set, null);
+        return result;
     }
-    helper(node.left, deleteSet, result, nextParent);
-    helper(node.right, deleteSet, result, nextParent);
-  }
+
+    private void recurse(TreeNode root, List<TreeNode> result, Set<Integer> set, TreeNode parent) {
+        if (root == null) {
+            return;
+        }
+        if (set.contains(root.val)) {
+            if (parent != null && parent.left == root) {
+                parent.left = null;
+            } else if (parent != null && parent.right == root) {
+                parent.right = null;
+            }
+            recurse(root.left, result, set, null);
+            recurse(root.right, result, set, null);
+            return;
+        }
+        if (parent == null) {
+            result.add(root);
+        }
+        recurse(root.left, result, set, root);
+        recurse(root.right, result, set, root);
+    }
 }
