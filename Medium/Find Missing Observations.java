@@ -1,17 +1,21 @@
 class Solution {
-  public int[] missingRolls(int[] rolls, int mean, int n) {
-    int currSum = Arrays.stream(rolls).sum();
-    int missingSum = mean * (n + rolls.length) - currSum;
-    if (missingSum > n * 6 || missingSum < n) {
-      return new int[]{};
+    public int[] missingRolls(int[] rolls, int mean, int n) {
+        int m = rolls.length;
+        int sum = 0;
+        for (int roll : rolls) {
+            sum += roll;
+        }
+        int expectedSum = mean * (n + m);
+        int remaining = expectedSum - sum;
+        if (remaining > 6 * n || remaining < n) {
+            return new int[]{};
+        }
+        int[] result = new int[n];
+        Arrays.fill(result, remaining / n);
+        remaining = remaining % n;
+        for (int i = 0; i < remaining; i++) {
+            result[i]++;
+        }        
+        return result;
     }
-    int[] ans = new int[n];
-    int part = missingSum / n;
-    int remainder = missingSum % n;
-    Arrays.fill(ans, part);
-    for (int i = 0; i < remainder; i++) {
-      ans[i]++;
-    }
-    return ans;
-  }
 }
