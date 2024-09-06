@@ -1,90 +1,62 @@
 class Solution {
-        public boolean isNumber(String s) {
-        s = s.trim();
-        char[] ch = s.toCharArray();
+    public boolean isNumber(String s) {
         int idx = 0;
-        int n = ch.length;
-        boolean signFound = false;
-        boolean decimalFound = false;
-        boolean numFound = false;
-        boolean expoFound = false;
-
-        while (idx < n) {
-            if (ch[idx] == '+' || ch[idx] == '-') {
-                if (numFound || signFound || decimalFound) {
-                    return false;
-                }
-
-                signFound = true;
-            }
-            else if (ch[idx] == '.') {
-                if (decimalFound) {
-                    return false;
-                }
-                decimalFound = true;
-            }
-            else if (Character.isLetter(ch[idx])) {
-                if (ch[idx] == 'e') {
-                    if (!numFound) {
-                        return false;
-                    }
-                    idx++;
-                    expoFound = true;
-                    break;
-                }
-                else {
-                    return false;
-                }
-            }
-            else if (Character.isDigit(ch[idx])) {
-                numFound = true;
-            }
-            else if (ch[idx] == ' ') {
-                if (numFound || signFound || decimalFound) {
-                    return false;
-                }
-            }
-
+        boolean isDecimal = false;
+        boolean isDigit = false;
+        boolean digitsBeforeDecimal = false;
+        boolean digitsAfterDecimal = false;
+        int n = s.length();
+        if (s.charAt(idx) == '-' || s.charAt(idx) == '+') {
             idx++;
         }
-
-        if (!numFound) {
-            return false;
-        }
-
-        if (expoFound && idx == n) {
-            return false;
-        }
-
-        signFound = false;
-        numFound = false;
         while (idx < n) {
-            if (ch[idx] == '.') {
-                return false;
-            }
-            else if (ch[idx] == '+' || ch[idx] == '-') {
-                if (signFound) {
+            if (s.charAt(idx) == '.') {
+                if (isDecimal) {
                     return false;
                 }
-                if (numFound) {
+                isDecimal = true;
+            } else if (s.charAt(idx) == 'e' || s.charAt(idx) == 'E') {
+                if (!isDigit) {
                     return false;
                 }
-                signFound = true;
-            }
-            else if (Character.isDigit(ch[idx])) {
-                numFound = true;
-            }
-            else {
+                boolean valid = isValidExponent(s, idx + 1);
+                if (!valid) {
+                    return false;
+                }
+                break;
+            } else if (Character.isDigit(s.charAt(idx))) {
+                if (isDecimal) {
+                    digitsAfterDecimal = true;
+                } else {
+                    digitsBeforeDecimal = true;
+                }
+                isDigit = true;
+            } else {
                 return false;
             }
-
             idx++;
         }
+        if (isDecimal) {
+            return digitsBeforeDecimal || digitsAfterDecimal;
+        }
+        return isDigit;
+    } 
 
-        if (expoFound && !numFound) {
+    private boolean isValidExponent(String s, int idx) {
+        if (idx == s.length()) {
             return false;
         }
-
-        return true;
+        if (s.charAt(idx) == '-' || s.charAt(idx) == '+') {
+            idx++;
+        }
+        boolean digitFound = false;
+        while (idx < s.length()) {
+            if (!Character.isDigit(s.charAt(idx))) {
+                return false;
+            }
+            digitFound = true;
+            idx++;
+        }
+        return digitFound;
     }
 }
