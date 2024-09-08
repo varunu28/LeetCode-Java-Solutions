@@ -1,25 +1,27 @@
 class Solution {
-  public int minTime(int n, int[][] edges, List<Boolean> hasApple) {
-    Map<Integer, Set<Integer>> tree = new HashMap<>();
-    for (int[] edge : edges) {
-      tree.computeIfAbsent(edge[0], k -> new HashSet<>()).add(edge[1]);
-      tree.computeIfAbsent(edge[1], k -> new HashSet<>()).add(edge[0]);
+    public int minTime(int n, int[][] edges, List<Boolean> hasApple) {
+        Map<Integer, List<Integer>> map = new HashMap<>();
+        for (int[] edge : edges) {
+            map.computeIfAbsent(edge[0], k -> new ArrayList<>()).add(edge[1]);
+            map.computeIfAbsent(edge[1], k -> new ArrayList<>()).add(edge[0]);
+        }
+        return recurse(0, -1, map, hasApple);
     }
-    Set<Integer> visited = new HashSet<>();
-    return dfs(0, hasApple, visited, tree);
-  }
-  
-  private int dfs(int node, List<Boolean> hasApple, Set<Integer> visited, Map<Integer, Set<Integer>> tree) {
-    visited.add(node);
-    int result = 0;
-    for (Integer child : tree.getOrDefault(node, new HashSet<>())) {
-      if (!visited.contains(child)) {
-        result += dfs(child, hasApple, visited, tree);
-      }
+
+    private int recurse(int node, int parent, Map<Integer, List<Integer>> graph, List<Boolean> hasApple) {
+        if (!graph.containsKey(node)) {
+            return 0;
+        }
+        int time = 0;
+        for (Integer conn: graph.get(node)) {
+            if (conn == parent) {
+                continue;
+            }
+            int connTime = recurse(conn, node, graph, hasApple);
+            if (connTime > 0 || hasApple.get(conn)) {
+                time += connTime + 2;
+            }
+        }
+        return time;
     }
-    if ((result > 0 || hasApple.get(node)) && node != 0) {
-      result += 2;
-    }
-    return result;
-  }
 }
