@@ -1,39 +1,28 @@
 class Solution {
-  public boolean isOneEditDistance(String s, String t) {
-    int lengthDiff = Math.abs(s.length() - t.length());
-    if (s.equals(t) || lengthDiff > 1) {
-      return false;
-    }
-    if (s.length() == 0 || t.length() == 0) {
-      return true;
-    }
-    int idxOne = 0;
-    int idxTwo = 0;
-    boolean changeDone = false;
-    while (idxOne < s.length() && idxTwo < t.length()) {
-      if (s.charAt(idxOne) == t.charAt(idxTwo)) {
-        idxOne++;
-        idxTwo++;
-        continue;
-      }
-      if (changeDone) {
-        return false;
-      }
-      if (lengthDiff != 0) {
-        if (s.length() > t.length()) {
-          idxOne++;
-        } else {
-          idxTwo++;
+    public boolean isOneEditDistance(String s, String t) {
+        int diff = Math.abs(s.length() - t.length());
+        if (s.equals(t) || diff > 1) {
+            return false;
         }
-      } else {
-        idxOne++;
-        idxTwo++;
-      }
-      changeDone = true;
+        int idx = 0;
+        while (idx < s.length() && idx < t.length()) {
+            if (s.charAt(idx) != t.charAt(idx)) {
+                // Replace character
+                if (s.substring(idx + 1).equals(t.substring(idx + 1))) {
+                    return true;
+                }
+                // Delete 1 character from s
+                if (s.substring(idx + 1).equals(t.substring(idx))) {
+                    return true;
+                }
+                // Delete 1 character from t
+                if (s.substring(idx).equals(t.substring(idx + 1))) {
+                    return true;
+                }
+                return false;
+            }
+            idx++;
+        }
+        return true;
     }
-    if (changeDone && (idxOne != s.length() || idxTwo != t.length())) {
-      return false;
-    }
-    return true;
-  }
 }
