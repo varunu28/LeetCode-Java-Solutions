@@ -1,27 +1,31 @@
 class Solution {
-    public List<List<String>> partition(String a) {
-        List<List<String>> ans = new ArrayList<>();
-        helper(ans, new ArrayList<String>(), a, 0);
-        return ans;
+    public List<List<String>> partition(String s) {
+        List<List<String>> result = new ArrayList<>();
+        backtrack(result, new ArrayList<>(), s, 0);
+        return result;
     }
- 
-    private void helper(List<List<String>> ans, List<String> temp, String a, int idx) {
-        if (idx == a.length()) {
-            ans.add(new ArrayList<>(temp));
+
+    private void backtrack(List<List<String>> result, List<String> currentList,
+                           String s, int idx) {
+        if (idx == s.length()) {
+            result.add(new ArrayList<>(currentList));
             return;
         }
-        for (int i=idx; i<a.length(); i++) {
-            String sb = a.substring(idx, i+1);
- 
-            if (isPalindrome(sb)) {
-                temp.add(sb);
-                helper(ans, temp, a, i+1);
-                temp.remove(temp.size()-1);
+        for (int i = idx; i < s.length(); i++) {
+            if (isPalindrome(s, idx, i)) {
+                currentList.add(s.substring(idx, i + 1));
+                backtrack(result, currentList, s, i + 1);
+                currentList.removeLast();
             }
         }
     }
- 
-    private boolean isPalindrome(String s) {
-        return new StringBuilder(s).reverse().toString().equals(s);
+
+    private boolean isPalindrome(String s, int startIdx, int endIdx) {
+        while (startIdx < endIdx) {
+            if (s.charAt(startIdx++) != s.charAt(endIdx--)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
