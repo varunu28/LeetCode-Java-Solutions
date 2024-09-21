@@ -1,72 +1,59 @@
 class Solution {
-    List<Long> list;
-    double[] ans;
-    boolean isEven;
-
-    public double[] medianSlidingWindow(int[] nums, int k) {
-        list = new ArrayList<>();
-        ans = new double[nums.length - k + 1];
-        isEven = k % 2 == 0;
-
-        for (int i=0; i<k; i++) {
-            list.add((long) nums[i]);
+    public double[] medianSlidingWindow(int[] nums, int windowSize) {
+        double[] medians = new double[nums.length - windowSize + 1];
+        Map<Integer, Integer> delayedRemovals = new HashMap<>();
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());  
+        PriorityQueue<Integer> minHeap = new PriorityQueue<>();                          
+        int currentIndex = 0;
+        while (currentIndex < windowSize) {
+            maxHeap.add(nums[currentIndex++]);
         }
-
-        Collections.sort(list);
-        int idx = 0;
-        ans[idx++] = getMedian();
-
-        for (int i=k; i<nums.length; i++) {
-            removeElement(nums[idx - 1]);
-            int tempIdx = getBinarySearchIdx(nums[i]);
-            list.add(tempIdx, (long) nums[i]);
-
-            ans[idx++] = getMedian();
+        for (int j = 0; j < windowSize / 2; j++) {
+            minHeap.add(maxHeap.poll());
         }
-
-        return ans;
-    }
-
-    private int getBinarySearchIdx(int num) {
-        if (list.size() == 0 || num < list.get(0)) {
-            return 0;
-        }
-        if (num > list.get(list.size() - 1)) {
-            return list.size();
-        }
-
-        int start = 0;
-        int end = list.size();
-
-        while (start < end) {
-            int mid = (start + end) / 2;
-
-            if (list.get(mid) < num) {
-                start = mid + 1;
+        int medianIndex = 0;
+        while (true) {
+            if (windowSize % 2 == 1) {
+                medians[medianIndex++] = maxHeap.peek();
+            } else {
+                medians[medianIndex++] = ((double) maxHeap.peek() + (double) minHeap.peek()) / 2.0;
             }
-            else {
-                end = mid;
-            }
-        }
-
-        return end;
-    }
-
-    private void removeElement(int num) {
-        for (int i=0; i<list.size(); i++) {
-            if (list.get(i) == num) {
-                list.remove(i);
+            if (currentIndex >= nums.length) {
                 break;
             }
+            int outNum = nums[currentIndex - windowSize];  
+            int inNum = nums[currentIndex++];             
+            int balance = 0;                        
+            // Handle outgoing number
+            balance += (outNum <= maxHeap.peek() ? -1 : 1);
+            delayedRemovals.put(outNum, delayedRemovals.getOrDefault(outNum, 0) + 1);
+            // Handle incoming number
+            if (!maxHeap.isEmpty() && inNum <= maxHeap.peek()) {
+                balance++;
+                maxHeap.add(inNum);
+            } else {
+                balance--;
+                minHeap.add(inNum);
+            }
+            // Rebalance heaps
+            if (balance < 0) {
+                maxHeap.add(minHeap.poll());
+                balance++;
+            }
+            if (balance > 0) {
+                minHeap.add(maxHeap.poll());
+                balance--;
+            }
+            // Remove invalid numbers from the top of the heaps
+            while (delayedRemovals.getOrDefault(maxHeap.peek(), 0) > 0) {
+                delayedRemovals.put(maxHeap.peek(), delayedRemovals.get(maxHeap.peek()) - 1);
+                maxHeap.poll();
+            }
+            while (!minHeap.isEmpty() && delayedRemovals.getOrDefault(minHeap.peek(), 0) > 0) {
+                delayedRemovals.put(minHeap.peek(), delayedRemovals.get(minHeap.peek()) - 1);
+                minHeap.poll();
+            }
         }
-    }
-
-    private double getMedian() {
-        if (isEven) {
-            return (double) (list.get(list.size()/2) + list.get(list.size()/2 - 1)) / 2;
-        }
-        else {
-            return (double) list.get(list.size()/2);
-        }
+        return medians;
     }
 }
