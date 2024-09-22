@@ -14,49 +14,47 @@
  * }
  */
 class BSTIterator {
-  
-  private Deque<TreeNode> stack;
-  private List<Integer> arr;
-  private TreeNode lastNode;
-  private int pointer;
-  
-  public BSTIterator(TreeNode root) {
-    this.stack = new ArrayDeque();
-    this.arr = new ArrayList<>();
-    this.lastNode = root;
-    this.pointer = -1;
-  }
 
-  public boolean hasNext() {
-    return !this.stack.isEmpty() || lastNode != null || this.pointer < arr.size() - 1;
-  }
+    private final Deque<TreeNode> primary;
+    private final List<Integer> secondary;
+    private int index;
 
-  public int next() {
-    this.pointer++;
-    if (this.pointer == this.arr.size()) {
-      updateStack(lastNode);
-      TreeNode curr = this.stack.pop();
-      lastNode = curr.right;
-      this.arr.add(curr.val);
+    public BSTIterator(TreeNode root) {
+        this.primary = new ArrayDeque<>();
+        this.secondary = new ArrayList<>();
+        this.index = -1;
+        traverse(root);
     }
-    return this.arr.get(this.pointer);
-  }
-
-  public boolean hasPrev() {
-    return this.pointer > 0;
-  }
-
-  public int prev() {
-    this.pointer--;
-    return this.arr.get(this.pointer);
-  }
-  
-  private void updateStack(TreeNode node) {
-    while (node != null) {
-      this.stack.push(node);
-      node = node.left;
+    
+    public boolean hasNext() {
+        return !primary.isEmpty() || index < secondary.size() - 1;
     }
-  }
+    
+    public int next() {
+        index++;
+        if (index == secondary.size()) {
+            TreeNode curr = primary.pop();
+            secondary.add(curr.val);
+            traverse(curr.right);
+        }
+        return secondary.get(index);
+    }
+    
+    public boolean hasPrev() {
+        return index > 0;
+    }
+    
+    public int prev() {
+        index--;
+        return secondary.get(index);
+    }
+
+    private void traverse(TreeNode root) {
+        while (root != null) {
+            primary.push(root);
+            root = root.left;
+        }
+    }
 }
 
 /**
