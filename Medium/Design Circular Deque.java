@@ -1,104 +1,90 @@
 class MyCircularDeque {
-  
-  private Node head;
-  private Node tail;
-  private int k;
-  private int currSize;
 
-  public MyCircularDeque(int k) {
-    this.k = k;
-    this.currSize = 0;
-    this.head = new Node(-1);
-    this.tail = new Node(-1);
-    this.head.next = this.tail;
-    this.tail.prev = this.head;
-  }
+    private final Node head;
+    private final Node tail;
+    private final int capacity;
+    private int size;
 
-  public boolean insertFront(int value) {
-    if (isFull()) {
-      return false;
+    public MyCircularDeque(int k) {
+        head = new Node(-1);
+        tail = new Node(-1);
+        head.next = tail;
+        tail.prev = head;
+        capacity = k;
+        size = 0;
     }
-    Node node = new Node(value);
-    Node nextToHead = head.next;
-    head.next = node;
-    node.prev = head;
-    node.next = nextToHead;
-    nextToHead.prev = node;
-    currSize++;
-    return true;
-  }
 
-  public boolean insertLast(int value) {
-    if (isFull()) {
-      return false;
+    public boolean insertFront(int value) {
+        if (size == capacity) {
+            return false;
+        }
+        Node node = new Node(value);
+        node.next = head.next;
+        node.prev = head;
+        head.next.prev = node;
+        head.next = node;
+        size++;
+        return true;
     }
-    Node node = new Node(value);
-    Node prevToTail = tail.prev;
-    tail.prev = node;
-    node.next = tail;
-    prevToTail.next = node;
-    node.prev = prevToTail;
-    currSize++;
-    return true;
-  }
 
-  public boolean deleteFront() {
-    if (isEmpty()) {
-      return false;
+    public boolean insertLast(int value) {
+        if (size == capacity) {
+            return false;
+        }
+        Node node = new Node(value);
+        node.prev = tail.prev;
+        node.next = tail;
+        tail.prev.next = node;
+        tail.prev = node;
+        size++;
+        return true;
     }
-    Node toDelete = head.next;
-    deleteNode(toDelete);
-    return true;
-  }
 
-  public boolean deleteLast() {
-    if (isEmpty()) {
-      return false;
+    public boolean deleteFront() {
+        if (size == 0) {
+            return false;
+        }
+        head.next.next.prev = head;
+        head.next = head.next.next;
+        size--;
+        return true;
     }
-    Node toDelete = tail.prev;
-    deleteNode(toDelete);
-    return true;
-  }
 
-  public int getFront() {
-    if (isEmpty()) {
-      return -1;
+    public boolean deleteLast() {
+        if (size == 0) {
+            return false;
+        }
+        tail.prev.prev.next = tail;
+        tail.prev = tail.prev.prev;
+        size--;
+        return true;
     }
-    return head.next.val;
-  }
 
-  public int getRear() {
-    if (isEmpty()) {
-      return -1;
+    public int getFront() {
+        return head.next.value;
     }
-    return tail.prev.val;
-  }
 
-  public boolean isEmpty() {
-    return currSize == 0;
-  }
-
-  public boolean isFull() {
-    return currSize == k;
-  }
-  
-  private void deleteNode(Node node) {
-    Node prevToNode = node.prev;
-    Node nextToNode = node.next;
-    prevToNode.next = nextToNode;
-    nextToNode.prev = prevToNode;
-    currSize--;
-  }
-  
-  private static class Node {
-    int val;
-    Node next;
-    Node prev;
-    
-    public Node(int val) {
-      this.val = val;
+    public int getRear() {
+        return tail.prev.value;
     }
-  }
+
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    public boolean isFull() {
+        return size == capacity;
+    }
+
+    static class Node {
+        int value;
+        Node next;
+        Node prev;
+
+        Node(int value) {
+            this.value = value;
+        }
+    }
 }
 
 /**
