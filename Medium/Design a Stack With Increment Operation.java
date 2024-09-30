@@ -1,40 +1,40 @@
 class CustomStack {
-  
-  private Stack<Integer> stack;
-  private int[] incrementArray;
-  private int maxSize;
-  
-  public CustomStack(int maxSize) {
-    this.stack = new Stack<>();
-    this.incrementArray = new int[maxSize];
-    this.maxSize = maxSize;
-  }
 
-  public void push(int x) {
-    if (this.stack.size() < this.maxSize) {
-      this.stack.push(x);
-    }
-  }
+    private final int maxSize;
+    private final Stack<Integer> stack;
+    private int[] increment;
 
-  public int pop() {
-    int idx = this.stack.size() - 1;
-    if (idx < 0) {
-      return -1;
+    public CustomStack(int maxSize) {
+        this.maxSize = maxSize;
+        this.stack = new Stack<>();
+        this.increment = new int[maxSize];
     }
-    if (idx > 0) {
-      this.incrementArray[idx - 1] += this.incrementArray[idx];
+    
+    public void push(int x) {
+        if (stack.size() < maxSize) {
+            stack.push(x);
+        }
     }
-    int result = this.stack.pop() + this.incrementArray[idx];
-    this.incrementArray[idx] = 0;
-    return result;
-  }
-
-  public void increment(int k, int val) {
-    int idx = Math.min(k, this.stack.size()) - 1;
-    if (idx >= 0) {
-      this.incrementArray[idx] += val;
+    
+    public int pop() {
+        int idx = stack.size() - 1;
+        if (idx < 0) {
+            return -1;
+        }
+        if (idx > 0) {
+            increment[idx - 1] += increment[idx];
+        }
+        int result = stack.pop() + increment[idx];
+        increment[idx] = 0;
+        return result;
     }
-  }
+    
+    public void increment(int k, int val) {
+        int idx = Math.min(k, stack.size()) - 1;
+        if (idx >= 0) {
+            increment[idx] += val;
+        }
+    }
 }
 
 /**
