@@ -1,31 +1,26 @@
 class Solution {
-  public boolean areSentencesSimilar(String sentence1, String sentence2) {
-    return isSimilar(sentence1.split(" "), sentence2.split(" ")) || isSimilar(sentence2.split(" "),
-        sentence1.split(" "));
-  }
-
-  private boolean isSimilar(String[] matcher, String[] target) {
-    int targetStartIdx = 0;
-    int matcherCurrentIdx = 0;
-    while (targetStartIdx < target.length && matcherCurrentIdx < matcher.length) {
-      if (!matcher[matcherCurrentIdx].equals(target[targetStartIdx])) {
-        break;
-      }
-      targetStartIdx++;
-      matcherCurrentIdx++;
+    public boolean areSentencesSimilar(String sentence1, String sentence2) {
+        int idxOneStart = 0;
+        int idxTwoStart = 0;
+        String[] wordsOne = sentence1.split("\\s+"); 
+        String[] wordsTwo = sentence2.split("\\s+"); 
+        while (idxOneStart < wordsOne.length && idxOneStart < wordsTwo.length && wordsOne[idxOneStart].equals(wordsTwo[idxTwoStart])) {
+            idxOneStart++;
+            idxTwoStart++;
+        }
+        boolean startFound = idxOneStart > 0;
+        if (idxOneStart == wordsOne.length && idxTwoStart == wordsTwo.length) {
+            return true;
+        }
+        int idxOneEnd = wordsOne.length - 1;
+        int idxTwoEnd = wordsTwo.length - 1;
+        while (idxOneEnd >= idxOneStart && idxTwoEnd >= idxTwoStart && wordsOne[idxOneEnd].equals(wordsTwo[idxTwoEnd])) {
+            idxOneEnd--;
+            idxTwoEnd--;
+        }
+        if (idxOneEnd != idxOneStart - 1 && idxTwoEnd != idxTwoStart - 1) {
+            return false;
+        }
+        return true;
     }
-    if (targetStartIdx == target.length) {
-      return true;
-    }
-    int targetEndIdx = target.length - 1;
-    matcherCurrentIdx = matcher.length - 1;
-    while (targetEndIdx >= targetStartIdx && matcherCurrentIdx >= 0) {
-      if (!matcher[matcherCurrentIdx].equals(target[targetEndIdx])) {
-        return false;
-      }
-      targetEndIdx--;
-      matcherCurrentIdx--;
-    }
-    return targetEndIdx == targetStartIdx - 1;
-  }
 }
