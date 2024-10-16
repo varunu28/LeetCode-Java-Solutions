@@ -1,42 +1,42 @@
 class Solution {
-  public String longestDiverseString(int a, int b, int c) {
-    PriorityQueue<int[]> priorityQueue = new PriorityQueue<>((o1, o2) -> o2[1] - o1[1]);
-    if (a > 0) {
-      priorityQueue.add(new int[]{0, a});
-    }
-    if (b > 0) {
-      priorityQueue.add(new int[]{1, b});
-    }
-    if (c > 0) {
-      priorityQueue.add(new int[]{2, c});
-    }
-    StringBuilder sb = new StringBuilder("zz");
-    while (!priorityQueue.isEmpty()) {
-      int[] temp = {-1, -1};
-      char peekChar = (char) ('a' + priorityQueue.peek()[0]);
-      if (peekChar == sb.charAt(sb.length() - 1) && 
-          peekChar == sb.charAt(sb.length() - 2)) {
-        temp[0] = priorityQueue.peek()[0];
-        temp[1] = priorityQueue.peek()[1];
-        priorityQueue.poll();
-        if (priorityQueue.isEmpty()) {
-          break;
+    public String longestDiverseString(int a, int b, int c) {
+        PriorityQueue<LetterFrequencyPair> pq =
+                new PriorityQueue<>((p, q) -> q.frequency() - p.frequency());
+        if (a > 0) {
+            pq.add(new LetterFrequencyPair('a', a));
         }
-      }
-      peekChar = (char) ('a' + priorityQueue.peek()[0]);
-      if (peekChar != sb.charAt(sb.length() - 1) || 
-          peekChar != sb.charAt(sb.length() - 2)) {
-        int[] removed = priorityQueue.poll();
-        sb.append(peekChar);
-        removed[1]--;
-        if (removed[1] > 0) {
-          priorityQueue.add(removed);
+        if (b > 0) {
+            pq.add(new LetterFrequencyPair('b', b));
         }
-      }
-      if (temp[0] != -1) {
-        priorityQueue.add(temp);
-      }
+        if (c > 0) {
+            pq.add(new LetterFrequencyPair('c', c));
+        }
+        StringBuilder sb = new StringBuilder();
+        while (!pq.isEmpty()) {
+            LetterFrequencyPair removed = pq.remove();
+            int frequency = removed.frequency();
+            int resultLength = sb.length();
+            if (resultLength >= 2 &&
+                    sb.charAt(resultLength - 1) == removed.letter() &&
+                    sb.charAt(resultLength - 2) == removed.letter()) {
+                if (pq.isEmpty()) {
+                    break;
+                }
+                LetterFrequencyPair temp = pq.remove();
+                sb.append(temp.letter());
+                if (temp.frequency() - 1 > 0) {
+                    pq.add(new LetterFrequencyPair(temp.letter(), temp.frequency() - 1));
+                }
+            } else {
+                sb.append(removed.letter());
+                frequency--;
+            }
+            if (frequency > 0) {
+                pq.add(new LetterFrequencyPair(removed.letter(), frequency));
+            }
+        }
+        return sb.toString();
     }
-    return sb.substring(2).toString();
-  }
+
+    private record LetterFrequencyPair(char letter, int frequency) {}
 }
