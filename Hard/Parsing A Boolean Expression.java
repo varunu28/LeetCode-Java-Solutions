@@ -1,72 +1,43 @@
 class Solution {
     public boolean parseBoolExpr(String expression) {
-        char[] chars = expression.toCharArray();
-        Stack<Character> operations = new Stack<>();
-        Stack<Character> boolValues = new Stack<>();
-
-        for (int i = 0; i < chars.length; i++) {
-            char c = chars[i];
-            if (c == '!' || c == '&' || c == '|') {
-                operations.push(c);
-            }
-            else if (c == '(') {
-                boolValues.push('#');
-            }
-            else if (c == 't' || c == 'f') {
-                boolValues.push(chars[i]);
-            }
-            else if (c == ',') {
-                continue;
-            }
-            else {
-                List<Character> list = new ArrayList<>();
-                while (!boolValues.isEmpty()) {
-                    char temp = boolValues.pop();
-                    if (temp == '#') {
-                        break;
-                    }
-
-                    list.add(temp);
+        Stack<Character> stack = new Stack<>();
+        for (char c : expression.toCharArray()) {
+            if (c == ')') {
+                List<Character> values = new ArrayList<>();
+                while (stack.peek() != '(') {
+                    values.add(stack.pop());
                 }
-                
-                boolValues.push(performOperation(list, operations.pop()));
+                stack.pop();
+                char operation = stack.pop();
+                char result = evaluate(operation, values);
+                stack.push(result);
+            } else if (c != ',') {
+                stack.push(c);
             }
         }
-
-        return boolValues.peek() == 't' ? true : false;
+        return stack.peek() == 't';
     }
 
-    private Character performOperation(List<Character> list, Character operation) {
+    private static char evaluate(char operation, List<Character> values) {
+        if (operation == '!') {
+            return values.get(0) == 't' ? 'f' : 't';
+        }
+        if (operation == '&') {
+            for (char value : values) {
+                if (value == 'f') {
+                    return 'f';
+                }
+            }
+            return 't';
+        }
         if (operation == '|') {
-            return performOr(list);
+            for (char value : values) {
+                if (value == 't') {
+                    return 't';
+                }
+            }
+            return 'f';
         }
-        else if (operation == '&') {
-            return performAnd(list);
-        }
-        else {
-            return list.get(0) == 't' ? 'f' : 't';
-        }
-    }
-
-    private Character performAnd(List<Character> list) {
-        boolean val = getBooleanValue(list.get(0));
-        for (int i = 1; i < list.size(); i++) {
-            val &= getBooleanValue(list.get(i));
-        }
-
-        return val ? 't' : 'f';
-    }
-
-    private Character performOr(List<Character> list) {
-        boolean val = getBooleanValue(list.get(0));
-        for (int i = 1; i < list.size(); i++) {
-            val |= getBooleanValue(list.get(i));
-        }
-
-        return val ? 't' : 'f';
-    }
-
-    private boolean getBooleanValue(Character character) {
-        return character == 't' ? true : false;
+        return 'f';
     }
 }
