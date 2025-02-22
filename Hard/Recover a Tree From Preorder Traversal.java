@@ -4,41 +4,45 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-    public TreeNode recoverFromPreorder(String S) {
-        Map<Integer, TreeNode> map = new HashMap<>();
+    public TreeNode recoverFromPreorder(String traversal) {
+        Stack<TreeNode> stack = new Stack<>();
         int idx = 0;
-        int n = S.length();
-
-        while (idx < n) {
-            int level = 0;
-            StringBuilder sb = new StringBuilder();
-
-            while (idx < n && S.charAt(idx) == '-') {
-                level++;
+        while (idx < traversal.length()) {
+            int depth = 0;
+            while (idx < traversal.length() && traversal.charAt(idx) == '-') {
+                depth++;
                 idx++;
             }
-
-            while (idx < n && Character.isDigit(S.charAt(idx))) {
-                sb.append(S.charAt(idx++));
+            int value = 0;
+            while (idx < traversal.length() && Character.isDigit(traversal.charAt(idx))) {
+                value = value * 10 + Character.getNumericValue(traversal.charAt(idx++));
             }
-
-            TreeNode currNode = new TreeNode(Integer.parseInt(sb.toString()));
-            map.put(level, currNode);
-            if (level > 0) {
-                TreeNode parent = map.get(level - 1);
-                if (parent.left == null) {
-                    parent.left = currNode;
-                }
-                else {
-                    parent.right = currNode;
+            TreeNode node = new TreeNode(value);
+            while (stack.size() > depth) {
+                stack.pop();
+            }
+            if (!stack.isEmpty()) {
+                if (stack.peek().left == null) {
+                    stack.peek().left = node;
+                } else {
+                    stack.peek().right = node;
                 }
             }
+            stack.push(node);
         }
-
-        return map.get(0);
+        while (stack.size() > 1) {
+            stack.pop();
+        }
+        return stack.peek();
     }
 }
