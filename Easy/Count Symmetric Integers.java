@@ -1,17 +1,27 @@
 class Solution {
     public int countSymmetricIntegers(int low, int high) {
-        int result = 0;
+        int count = 0;
         for (int i = low; i <= high; i++) {
-            String s = String.valueOf(i);
-            int diff = 0;
-            int n = s.length();
-            for (int j = 0; j < n / 2; j++) {
-                diff += s.charAt(j) - s.charAt(n - j - 1);
-            }
-            if (n % 2 == 0 && diff == 0) {
-                result++;
+            if (isSymmetric(i)) {
+                count++;
             }
         }
-        return result;
+        return count;
+    }
+
+    private static boolean isSymmetric(int num) {
+        String s = String.valueOf(num);
+        int n = s.length();
+        if (n % 2 != 0) {
+            return false;
+        }
+        int sum = 0;
+        for (int i = 0; i < n / 2; i++) {
+            sum += Character.getNumericValue(s.charAt(i));
+        }
+        for (int i = n / 2; i < n; i++) {
+            sum -= Character.getNumericValue(s.charAt(i));
+        }
+        return sum == 0;
     }
 }
