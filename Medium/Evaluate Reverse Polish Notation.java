@@ -1,26 +1,21 @@
 class Solution {
-    
-    private static final Set<String> OPERATIONS = Set.of("*", "+", "/", "-");
-    
+
+    private static final Map<String, BiFunction<Integer, Integer, Integer>> VALID_OPERATIONS = Map.of(
+            "+", Integer::sum,
+            "-", (a, b) -> b - a,
+            "*", (a, b) -> b * a,
+            "/", (a, b) -> b / a
+    );
+
     public int evalRPN(String[] tokens) {
         Stack<Integer> stack = new Stack<>();
         for (String token : tokens) {
-            if (OPERATIONS.contains(token)) {
-                stack.push(performOperation(stack.pop(), stack.pop(), token));
+            if (VALID_OPERATIONS.containsKey(token)) {
+                stack.push(VALID_OPERATIONS.get(token).apply(stack.pop(), stack.pop()));
             } else {
                 stack.push(Integer.parseInt(token));
             }
         }
         return stack.pop();
-    }
-    
-    private static int performOperation(int num2, int num1, String operation) throws UnsupportedOperationException {
-        return switch(operation) {
-            case "+" -> num1 + num2;
-            case "-" -> num1 - num2;
-            case "*" -> num1 * num2;
-            case "/" -> num1 / num2;
-            default -> throw new UnsupportedOperationException("Operation not supported");
-        };
     }
 }
