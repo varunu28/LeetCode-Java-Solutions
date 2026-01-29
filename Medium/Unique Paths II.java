@@ -1,29 +1,25 @@
 class Solution {
     public int uniquePathsWithObstacles(int[][] obstacleGrid) {
-        int[][] dp = new int[obstacleGrid.length][obstacleGrid[0].length];
-
-        for (int i=0; i<dp.length; i++) {
-            if (obstacleGrid[i][0] == 1) {
-                break;
-            }
-            dp[i][0] = 1;
-        }
-
-        for (int i=0; i<dp[0].length; i++) {
-            if (obstacleGrid[0][i] == 1) {
-                break;
-            }
-            dp[0][i] = 1;
-        }
-
-        for (int i=1; i<dp.length; i++) {
-            for (int j=1; j<dp[0].length; j++) {
-                if (obstacleGrid[i][j] != 1) {
-                    dp[i][j] = dp[i-1][j] + dp[i][j-1];
-                }
-            }
-        }
-        
-        return dp[obstacleGrid.length-1][obstacleGrid[0].length-1];
+        int rows = obstacleGrid.length;
+        int cols = obstacleGrid[0].length;
+        Integer[][] dp = new Integer[rows][cols];
+        return recurse(dp, rows - 1, cols - 1, obstacleGrid);
     }
+
+    private int recurse(Integer[][] dp, int row, int col, int[][] obstacleGrid) {
+        if (row >= 0 && col >= 0 && obstacleGrid[row][col] == 1) {
+            return 0;
+        }
+        if (row == 0 && col == 0) {
+            return 1;
+        }
+        if (row < 0 || col < 0) {
+            return 0;
+        }
+        if (dp[row][col] != null) {
+            return dp[row][col];
+        }
+        dp[row][col] = recurse(dp, row - 1, col, obstacleGrid) + recurse(dp, row, col - 1, obstacleGrid);
+        return dp[row][col];
+    }   
 }
