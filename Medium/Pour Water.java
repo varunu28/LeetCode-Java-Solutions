@@ -1,23 +1,25 @@
 class Solution {
-    public int[] pourWater(int[] heights, int V, int k) {
-        while (V-- > 0) {
-            int curr = k;
-            
-            while (curr > 0 && heights[curr] >= heights[curr-1]) {
-                curr--;
+    public int[] pourWater(int[] heights, int volume, int k) {
+        while (volume-- > 0) {
+            boolean foundBest = false;
+            for (int d = -1; d <= 1 && !foundBest; d += 2) {
+                int idx = k;
+                int best = k;
+                while (idx + d >= 0 && idx + d < heights.length && heights[idx + d] <= heights[idx]) {
+                    if (heights[idx + d] < heights[idx]) {
+                        best = idx + d;
+                    }
+                    idx += d;
+                }
+                if (heights[best] < heights[k]) {
+                    heights[best]++;
+                    foundBest = true;
+                }
             }
-            
-            while (curr < heights.length-1 && heights[curr] >= heights[curr+1]) {
-                curr++;
+            if (!foundBest) {
+                heights[k]++;
             }
-            
-            while (curr > k && heights[curr] >= heights[curr-1]) {
-                curr--;
-            }
-            
-            heights[curr]++;
         }
-        
         return heights;
     }
-} 
+}
