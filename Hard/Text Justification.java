@@ -1,56 +1,48 @@
 class Solution {
     public List<String> fullJustify(String[] words, int maxWidth) {
-        List<String> list = new ArrayList<>();
+        List<String> result = new ArrayList<>();
         int idx = 0;
-        int n = words.length;
-
-        while (idx < n) {
-            int count = 0;
-            int currLength = 0;
-            int oldIdx = idx;
-            int totalWordLength = 0;
-
-            while (idx < n && currLength + words[idx].length() <= maxWidth) {
-                count++;
-                currLength += words[idx].length() + 1;
-                totalWordLength += words[idx].length();
-                idx++;
-            }
-
-            StringBuilder sb = new StringBuilder();
-            // Left Justify
-            if (count == 1 || idx == n) {
-                while (oldIdx < idx) {
-                    sb.append(words[oldIdx++]);
-                    if (!words[oldIdx-1].endsWith(".") && oldIdx != idx) {
+        List<String> line = new ArrayList<>();
+        int currLineLength = 0;
+        StringBuilder sb = new StringBuilder();
+        while (idx < words.length) {
+            if (line.size() + currLineLength + words[idx].length() > maxWidth) {
+                int spaces = maxWidth - currLineLength;
+                if (line.size() == 1) {
+                    result.add(line.get(0) + " ".repeat(spaces));
+                    line.clear();
+                    currLineLength = 0;
+                    continue;
+                }
+                int spacesPerWord = spaces / (line.size() - 1);
+                int extraSpaces = spaces % (line.size() - 1);
+                for (int i = 0; i < line.size() - 1; i++) {
+                    sb.append(line.get(i));
+                    sb.append(" ".repeat(spacesPerWord));
+                    if (extraSpaces-- > 0) {
                         sb.append(" ");
                     }
                 }
-
-                while (sb.length() < maxWidth) {
-                    sb.append(" ");
-                }
+                sb.append(line.getLast());
+                result.add(sb.toString());
+                sb.setLength(0);
+                line.clear();
+                currLineLength = 0;
+                continue;
             }
-            // Left & Right Justify
-            else {
-                int spacing = (maxWidth - totalWordLength) / (count - 1);
-                int extraSpacing = maxWidth - totalWordLength - spacing * (count - 1);
-                int tempIdx = oldIdx;
-                while (tempIdx < idx) {
-                    sb.append(words[tempIdx++]);
-                    if (tempIdx != idx) {
-                        int totalSpace = spacing + (extraSpacing > 0 ? 1 : 0);
-                        extraSpacing--;
-                        for (int j = 0; j < totalSpace; j++) {
-                            sb.append(" ");
-                        }
-                    }
-                }
-            }
-
-            list.add(sb.toString());
+            line.add(words[idx]);
+            currLineLength += words[idx].length();
+            idx++;
         }
-
-        return list;
+        for (int i = 0; i < line.size(); i++) {
+            sb.append(line.get(i));
+            if (i != line.size() - 1) {
+                sb.append(" ");
+            }
+        }
+        int trailSpaceLength = maxWidth - sb.length();
+        sb.append(" ".repeat(trailSpaceLength));
+        result.add(sb.toString());
+        return result;
     }
 }
