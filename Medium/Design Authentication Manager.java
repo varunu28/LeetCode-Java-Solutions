@@ -1,27 +1,36 @@
 class AuthenticationManager {
 
-  Map<String, Integer> map;
-  int timeToLive;
+    private final int timeToLive;
+    private final LinkedHashMap<String, Integer> tokens;
 
-  public AuthenticationManager(int timeToLive) {
-    map = new HashMap<>();
-    this.timeToLive = timeToLive;
-  }
-
-  public void generate(String tokenId, int currentTime) {
-    map.put(tokenId, currentTime);
-  }
-
-  public void renew(String tokenId, int currentTime) {
-    if (map.containsKey(tokenId) && map.get(tokenId) + timeToLive > currentTime) {
-      map.put(tokenId, currentTime);
+    public AuthenticationManager(int timeToLive) {
+        this.timeToLive = timeToLive;
+        this.tokens = new LinkedHashMap<>();
     }
-  }
-
-  public int countUnexpiredTokens(int currentTime) {
-    return (int) map.entrySet().stream()
-        .filter(entry -> entry.getValue() + timeToLive > currentTime).count();
-  }
+    
+    public void generate(String tokenId, int currentTime) {
+        tokens.put(tokenId, currentTime + timeToLive);
+    }
+    
+    public void renew(String tokenId, int currentTime) {
+        Integer expiration = tokens.get(tokenId);
+        if (expiration == null || expiration <= currentTime) {
+            if (expiration != null) {
+                tokens.remove(tokenId);
+            }
+            return;
+        }
+        tokens.remove(tokenId);
+        tokens.put(tokenId, currentTime + timeToLive);
+    }
+    
+    public int countUnexpiredTokens(int currentTime) {
+        Iterator<Map.Entry<String, Integer>> iterator = tokens.entrySet().iterator();
+        while (iterator.hasNext() && iterator.next().getValue() <= currentTime) {
+            iterator.remove();
+        }
+        return tokens.size();
+    }
 }
 
 /**
