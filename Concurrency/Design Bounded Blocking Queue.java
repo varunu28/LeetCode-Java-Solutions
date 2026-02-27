@@ -1,42 +1,50 @@
 class BoundedBlockingQueue {
-  
-  private final Queue<Integer> queue;
-  private final Semaphore mutex;
-  private final Semaphore items;
-  private final Semaphore capacityTracker;
-  private int currentCapacity;
 
-  public BoundedBlockingQueue(int capacity) {
-    this.queue = new LinkedList<>();
-    this.mutex = new Semaphore(1);
-    this.items = new Semaphore(0);
-    this.capacityTracker = new Semaphore(capacity);
-    this.currentCapacity = 0;
-  }
+    private final Queue<Integer> queue;
+    private final int capacity;
 
-  public void enqueue(int element) throws InterruptedException {
-    this.capacityTracker.acquire();
-    this.mutex.acquire();
-    this.queue.add(element);
-    this.currentCapacity++;
-    this.mutex.release();
-    this.items.release();
-  }
+    private final ReentrantLock lock = new ReentrantLock();
+    private final Condition full = lock.newCondition();
+    private final Condition empty = lock.newCondition();
 
-  public int dequeue() throws InterruptedException {
-    this.items.acquire();
-    this.mutex.acquire();
-    int result = this.queue.remove();
-    this.currentCapacity--;
-    this.mutex.release();
-    this.capacityTracker.release();
-    return result;
-  }
-
-  public int size() throws InterruptedException {
-    this.mutex.acquire();
-    int currentSize = this.currentCapacity;
-    this.mutex.release();
-    return currentSize;
-  }
+    public BoundedBlockingQueue(int capacity) {
+        this.queue = new LinkedList<>();
+        this.capacity = capacity;
+    }
+    
+    public void enqueue(int element) throws InterruptedException {
+        lock.lock();
+        try {
+            while (queue.size() == capacity) {
+                full.await();
+            }
+            queue.add(element);
+            empty.signal();
+        } finally {
+            lock.unlock();
+        }
+    }
+    
+    public int dequeue() throws InterruptedException {
+        lock.lock(); 
+        try {
+            while (queue.isEmpty()) {
+                empty.await();
+            } 
+            int result = queue.remove();
+            full.signal();
+            return result;
+        } finally {
+            lock.unlock();
+        }
+    }
+    
+    public int size() {
+        lock.lock();
+        try {
+            return queue.size();
+        } finally {
+            lock.unlock();
+        }
+    }
 }
