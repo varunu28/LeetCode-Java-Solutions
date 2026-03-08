@@ -1,25 +1,19 @@
 class Solution {
-
-    private static final char[] BINARY_CHARS = {'1', '0'};
-
     public String findDifferentBinaryString(String[] nums) {
+        Set<Integer> decimalNums = new HashSet<>();
+        for (String num : nums) {
+            decimalNums.add(Integer.parseInt(num, 2));
+        }   
         int n = nums.length;
-        Set<String> binaryStrings = new HashSet<>();
-        backtrack(new StringBuilder(), n, binaryStrings);
-        Set<String> binaryStringsPresent = Arrays.stream(nums).collect(Collectors.toSet());
-        binaryStrings.removeAll(binaryStringsPresent);
-        return binaryStrings.isEmpty() ? "" : binaryStrings.iterator().next();
-    }
-
-    private void backtrack(StringBuilder sb, int n, Set<String> binaryStrings) {
-        if (sb.length() == n) {
-            binaryStrings.add(sb.toString());
-            return;
+        for (int num = 0; num <= n; num++) {
+            if (!decimalNums.contains(num)) {
+                String result = Integer.toBinaryString(num);
+                while (result.length() < n) {
+                    result = "0" + result;
+                }
+                return result;
+            }
         }
-        for (char c : BINARY_CHARS) {
-            sb.append(c);
-            backtrack(sb, n, binaryStrings);
-            sb.deleteCharAt(sb.length() - 1);
-        }
+        return "";
     }
 }
