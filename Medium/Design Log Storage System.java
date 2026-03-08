@@ -1,50 +1,61 @@
 class LogSystem {
 
-    List<LogEntry> logEntries;
-    Map<String, Integer> granualityMap = new HashMap<>();
-    String[] grans = "Year:Month:Day:Hour:Minute:Second".split(":");
-    int[] gransIndex = {4,7,10,13,16,19};
+    private static final Map<String, Integer> GRANULARITY_MAP = Map.of(
+        "Year", 0,
+        "Month", 1,
+        "Day", 2,
+        "Hour", 3,
+        "Minute", 4,
+        "Second", 5
+    );
+
+    private final TreeMap<Long, List<Integer>> map;
 
     public LogSystem() {
-        logEntries = new ArrayList<>();
-        for (int i=0; i<grans.length; i++) {
-            granualityMap.put(grans[i], gransIndex[i]);
-        }
+        this.map = new TreeMap<>();
     }
-
+    
     public void put(int id, String timestamp) {
-        logEntries.add(new LogEntry(id, timestamp));
+        int[] numerics = Arrays.stream(timestamp.split(":"))
+        .mapToInt(Integer::parseInt)
+        .toArray();
+        map.computeIfAbsent(convert(numerics), _ -> new ArrayList<>()).add(id);
     }
-
-    public List<Integer> retrieve(String s, String e, String gra) {
-        List<Integer> list = new ArrayList<>();
-        Iterator<LogEntry> logIterator = logEntries.iterator();
-        int substringEnd = granualityMap.get(gra);
-
-        String start = s.substring(0, substringEnd);
-        String end = e.substring(0, substringEnd);
-
-        while (logIterator.hasNext()) {
-            LogEntry entry = logIterator.next();
-            String entryTimeStamp = entry.timestamp;
-
-            if (entryTimeStamp.substring(0, substringEnd).compareTo(start) >= 0 &&
-                entryTimeStamp.substring(0, substringEnd).compareTo(end) <= 0) {
-                list.add(entry.id);
-            }
+    
+    public List<Integer> retrieve(String start, String end, String granularity) {
+        List<Integer> result = new ArrayList<>();
+        long startTime = calculateGranularity(start, granularity, false);
+        long endTime = calculateGranularity(end, granularity, true);
+        for (List<Integer> ids : map.subMap(startTime, endTime).values()) {
+            result.addAll(ids);
         }
-
-        return list;
+        return result;
     }
-}
 
-class LogEntry {
-    int id;
-    String timestamp;
+    private long convert(int[] numerics) {
+        numerics[1] = numerics[1] - (numerics[1] == 0 ? 0 : 1);
+        numerics[2] = numerics[2] - (numerics[2] == 0 ? 0 : 1);
+        return (numerics[0] - 1999L) * (31 * 12) * 24 * 60 * 60 + 
+        numerics[1] * 31 * 24 * 60 * 60 + 
+        numerics[2] * 24 * 60 * 60 + 
+        numerics[3] * 60 * 60 + 
+        numerics[4] * 60 + 
+        numerics[5];
+    }
 
-    public LogEntry(int id, String timestamp) {
-        this.id = id;
-        this.timestamp = timestamp;
+    private long calculateGranularity(String s, String granularity, boolean end) {
+        String[] result = {"1999", "00", "00", "00", "00", "00"};
+        String[] splits = s.split(":");
+        for (int i = 0; i <= GRANULARITY_MAP.get(granularity); i++) {
+            result[i] = splits[i];
+        }
+        int[] numerics = Arrays.stream(result)
+        .mapToInt(Integer::parseInt)
+        .toArray();
+        if (end) {
+            numerics[GRANULARITY_MAP.get(granularity)]++;
+        }
+        return convert(numerics);
     }
 }
 
@@ -52,5 +63,5 @@ class LogEntry {
  * Your LogSystem object will be instantiated and called as such:
  * LogSystem obj = new LogSystem();
  * obj.put(id,timestamp);
- * List<Integer> param_2 = obj.retrieve(s,e,gra);
+ * List<Integer> param_2 = obj.retrieve(start,end,granularity);
  */
