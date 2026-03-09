@@ -1,28 +1,41 @@
 class Solution {
-  public int calculate(String s) {
-    int currNum = 0;
-    int prevNum = 0;
-    int result = 0;
-    char operation = '+';
-    for (int i = 0; i < s.length(); i++) {
-      char c = s.charAt(i);
-      if (Character.isDigit(c)) {
-        currNum = currNum * 10 + Character.getNumericValue(c);
-      } 
-      if ((!Character.isDigit(c) && !Character.isWhitespace(c)) || i == s.length() - 1) {
-        if (operation == '-' || operation == '+') {
-          result += prevNum;
-          prevNum = operation == '+' ? currNum : -currNum;
-        } else if (operation == '*') {
-          prevNum = prevNum * currNum;
-        } else {
-          prevNum = prevNum / currNum;
-        }
-        operation = c;
-        currNum = 0;
-      }
+    public int calculate(String s) {
+        return helper(s, new int[]{0});
     }
-    result += prevNum;
-    return result;
-  }
+
+    private int helper(String s, int[] idx) {
+        Stack<Integer> stack = new Stack<>();
+        int curr = 0;
+        char operator = '+';
+        while (idx[0] < s.length()) {
+            char c = s.charAt(idx[0]++);
+            if (Character.isDigit(c)) {
+                curr = curr * 10 + Character.getNumericValue(c);
+            }
+            if (c == '(') {
+                curr = helper(s, idx);
+            }
+            if ((!Character.isDigit(c) && c != ' ') || idx[0] == s.length()) {
+                if (operator == '+') {
+                    stack.push(curr);
+                } else if (operator == '-') {
+                    stack.push(-1 * curr);
+                } else if (operator == '*') {
+                    stack.push(stack.pop() * curr);
+                } else if (operator == '/') {
+                    stack.push(stack.pop() / curr);
+                }
+                if (c == ')') {
+                    break;
+                }
+                operator = c;
+                curr = 0;
+            }
+        }
+        int result = 0;
+        while (!stack.isEmpty()) {
+            result += stack.pop();
+        }
+        return result;
+    }
 }
