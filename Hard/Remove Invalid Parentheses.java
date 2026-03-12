@@ -1,44 +1,47 @@
 class Solution {
-  Set<String> validStrings;
-  int minimumRemoved;
-  public List<String> removeInvalidParentheses(String s) {
-    validStrings = new HashSet<>();
-    minimumRemoved = Integer.MAX_VALUE;
-    backtrack(s, 0, 0, 0, new StringBuilder(), 0);
-    return new ArrayList<>(validStrings);
-  }
-  
-  private void backtrack(String s, int idx, int leftCount, int rightCount, StringBuilder sb, int removedCount) {
-    if (idx == s.length()) {
-      if (leftCount == rightCount) {
-        if (removedCount <= minimumRemoved) {
-          String possibleAns = sb.toString();
-          if (removedCount < minimumRemoved) {
-            validStrings.clear();
-            minimumRemoved = removedCount;
-          }
-          validStrings.add(possibleAns);
-        }
-      }
+    public List<String> removeInvalidParentheses(String s) {
+        Set<String> result = new HashSet<>();
+        int[] minRemoved = {Integer.MAX_VALUE};
+        backtrack(s, 0, 0, 0, new StringBuilder(), 0, minRemoved, result);
+        return new ArrayList<>(result);
     }
-    else {
-      char c = s.charAt(idx);
-      if (c != '(' && c != ')') {
-        sb.append(c);
-        backtrack(s, idx + 1, leftCount, rightCount, sb, removedCount);
-        sb.deleteCharAt(sb.length() - 1);
-      }
-      else {
-        backtrack(s, idx + 1, leftCount, rightCount, sb, removedCount + 1);
-        sb.append(c);
-        if (c == '(') {
-          backtrack(s, idx + 1, leftCount + 1, rightCount, sb, removedCount);
+
+    private void backtrack(
+        String s, 
+        int idx, 
+        int leftCount,
+        int rightCount, 
+        StringBuilder sb, 
+        int removedCount, 
+        int[] minRemoved,
+        Set<String> result) {
+        if (idx == s.length()) {
+            if (leftCount == rightCount) {
+                if (removedCount <= minRemoved[0]) {
+                    String currResult = sb.toString();
+                    if (removedCount < minRemoved[0]) {
+                        result.clear();
+                        minRemoved[0] = removedCount;
+                    }
+                    result.add(currResult);
+                }
+            }
+            return;
+        } 
+        char c = s.charAt(idx);
+        if (c != '(' && c != ')') {
+            sb.append(c);
+            backtrack(s, idx + 1, leftCount, rightCount, sb, removedCount, minRemoved, result);
+            sb.deleteCharAt(sb.length() - 1);
+        } else {
+            backtrack(s, idx + 1, leftCount, rightCount, sb, removedCount + 1, minRemoved, result);
+            sb.append(c);
+            if (c == '(') {
+                backtrack(s, idx + 1, leftCount + 1, rightCount, sb, removedCount, minRemoved, result);
+            } else if (rightCount < leftCount) {
+                backtrack(s, idx + 1, leftCount, rightCount + 1, sb, removedCount, minRemoved, result);
+            }
+            sb.deleteCharAt(sb.length() - 1);
         }
-        else if (rightCount < leftCount) {
-          backtrack(s, idx + 1, leftCount, rightCount + 1, sb, removedCount);
-        }
-        sb.deleteCharAt(sb.length() - 1);
-      }
     }
-  }
 }
