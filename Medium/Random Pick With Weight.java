@@ -1,31 +1,32 @@
 class Solution {
-  private int[] prefixSum;
-  private int totalPrefixSum;
-  
-  public Solution(int[] w) {
-    this.prefixSum = new int[w.length];
-    int currPrefixSum = 0;
-    for (int i = 0; i < w.length; i++) {
-      currPrefixSum += w[i];
-      this.prefixSum[i] = currPrefixSum;
-    }
-    this.totalPrefixSum = currPrefixSum;
-  }
 
-  public int pickIndex() {
-    double randomTarget = this.totalPrefixSum * Math.random();
-    int left = 0;
-    int right = this.prefixSum.length;
-    while (left < right) {
-      int mid = left + (right - left) / 2;
-      if (randomTarget > this.prefixSum[mid]) {
-        left = mid + 1;
-      } else {
-        right = mid;
-      }
+    private final int[] prefixSum;
+    private final int totalSum;
+
+    public Solution(int[] w) {
+        this.prefixSum = new int[w.length];
+        int sum = 0;
+        for (int i = 0; i < w.length; i++) {
+            sum += w[i];
+            this.prefixSum[i] = sum;
+        }
+        this.totalSum = sum;
     }
-    return left;
-  }
+    
+    public int pickIndex() {
+        double target = totalSum * Math.random();
+        int low = 0;
+        int high = prefixSum.length;
+        while (low < high) {
+            int mid = (low + high) / 2;
+            if (target > prefixSum[mid]) {
+                low = mid + 1;
+            } else {
+                high = mid;
+            }
+        }
+        return low;
+    }
 }
 
 /**
