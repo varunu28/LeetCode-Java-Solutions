@@ -1,28 +1,29 @@
 class Solution {
-    private static final char[] CHARS = {'a', 'b', 'c'};
+
+    private static final char[] LETTERS = {'a', 'b', 'c'};
 
     public String getHappyString(int n, int k) {
-        Set<String> set = new HashSet<>();
-        backtrack(set, new StringBuilder(), n);
-        if (set.size() < k) {
+        List<String> happyStrings = new ArrayList<>();
+        backtrack(n, happyStrings, new StringBuilder());
+        if (happyStrings.size() < k) {
             return "";
         }
-        List<String> list = new ArrayList<>(set);
-        Collections.sort(list);
-        return list.get(k - 1);
+        Collections.sort(happyStrings);
+        return happyStrings.get(k - 1);
     }
 
-    private void backtrack(Set<String> set, StringBuilder sb, int n) {
+    private void backtrack(int n, List<String> happyStrings, StringBuilder sb) {
         if (sb.length() == n) {
-            set.add(sb.toString());
+            happyStrings.add(new String(sb.toString()));
             return;
         }
-        for (char c : CHARS) {
-            if (sb.isEmpty() || sb.charAt(sb.length() - 1) != c) {
-                sb.append(c);
-                backtrack(set, sb, n);
-                sb.deleteCharAt(sb.length() - 1);
+        for (char letter : LETTERS) {
+            if (sb.length() > 0 && sb.charAt(sb.length() - 1) == letter) {
+                continue;
             }
+            sb.append(letter);
+            backtrack(n, happyStrings, sb);
+            sb.deleteCharAt(sb.length() - 1);
         }
     }
 }
