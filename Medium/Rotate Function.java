@@ -1,32 +1,16 @@
 class Solution {
-    public int maxRotateFunction(int[] A) {
-        
-        if (A.length == 0) return 0;
-        int maxVal = Integer.MIN_VALUE;
-        
-        int c = 1;
-        
-        while (c <= A.length) {
-            int temp = 0;
-            for (int i=0;i<A.length;i++) {
-                temp += i*A[i];
-            }
-
-            maxVal = Math.max(maxVal, temp);
-
-            rotateArr(A);
-            c++;
+    public int maxRotateFunction(int[] nums) {
+        int function = 0;
+        int n = nums.length;
+        int sum = Arrays.stream(nums).sum();
+        for (int i = 0; i < n; i++) {
+            function += i * nums[i];
         }
-        
-        return maxVal;
-    }
-    
-    public void rotateArr(int[] arr) {
-        int last = arr[arr.length-1];
-        for (int i = arr.length-1;i>0;i--) {
-            arr[i] = arr[i-1];
+        int result = function;
+        for (int i = n - 1; i > 0; i--) {
+            function += sum - n * nums[i];
+            result = Math.max(result, function);
         }
-        
-        arr[0] = last;
+        return result;
     }
 }
