@@ -1,24 +1,35 @@
 class Solution {
-    public static int[] sortTransformedArray(int[] nums, int a, int b, int c) {
-        int[] ans = new int[nums.length];
-        int start = 0;
-        int end = nums.length-1;
-
-        int index = a >= 0 ? end : start;
-
-        while (start <= end){
+    public int[] sortTransformedArray(int[] nums, int a, int b, int c) {
+        int n = nums.length;
+        int[] result = new int[n];
+        int leftIdx = 0;
+        int rightIdx = n - 1;
+        int resultIdx = a >= 0 ? n - 1 : 0;
+        int resultDelta = a >= 0 ? -1 : 1;
+        while (leftIdx <= rightIdx) {
+            int leftValue = nums[leftIdx];
+            int rightValue = nums[rightIdx];
+            int leftResult = a * (leftValue * leftValue) + b * leftValue + c;
+            int rightResult = a * (rightValue * rightValue) + b * rightValue + c;
             if (a >= 0) {
-                ans[index--] = getQuad(nums[start], a, b, c) >= getQuad(nums[end], a, b, c) ? getQuad(nums[start++], a, b, c) : getQuad(nums[end--], a, b, c);
+                if (leftResult > rightResult) {
+                    result[resultIdx] = leftResult;
+                    leftIdx++;
+                } else {
+                    result[resultIdx] = rightResult;
+                    rightIdx--;
+                }
+            } else {
+                if (leftResult < rightResult) {
+                    result[resultIdx] = leftResult;
+                    leftIdx++;
+                } else {
+                    result[resultIdx] = rightResult;
+                    rightIdx--;
+                }
             }
-            else {
-                ans[index++] = getQuad(nums[start], a, b, c) >= getQuad(nums[end], a, b, c) ? getQuad(nums[end--], a, b, c) : getQuad(nums[start++], a, b, c);
-            }
+            resultIdx += resultDelta;
         }
-
-        return ans;
-    }
-
-    private static int getQuad(int num, int a, int b, int c) {
-        return a *(num * num) + b * num + c;
+        return result;
     }
 }
